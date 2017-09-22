@@ -2,6 +2,7 @@
   #include <stdlib.h>
 
   #define NICE_FORMATTING 1
+
   #define NF_RED  "\x1B[31m"
   #define NF_RESET "\x1B[0m"
   #define YY_USER_ACTION upgradePosition();
