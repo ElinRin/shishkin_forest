@@ -2,6 +2,7 @@
   #include <stdlib.h>
 
   #define NICE_FORMATTING 0
+  #define NICE_COORDINATES 1
 
   #define NF_RED  "\x1B[31m"
   #define NF_RESET "\x1B[0m"
@@ -9,7 +10,6 @@
 
   int lineNumber = 1;
   int columnNumber = 1;
-  long formatCounter = 0;
   void upgradePosition() {
     if( *yytext == '\n' ) {
       lineNumber += 1;
@@ -17,11 +17,16 @@
     } else {
       columnNumber += strlen(yytext);
     }
-    formatCounter += 1;
   }
 
   void showPosition() {
-    printf("%d,%d ", lineNumber, columnNumber - strlen(yytext));
+    printf( "%d,%d ", lineNumber, columnNumber - strlen(yytext) );
+  }
+
+  void onProcessed() {
+    if( NICE_COORDINATES ) {
+        showPosition();
+    }
   }
 %}
 
@@ -80,50 +85,50 @@ INTEGER_NUMBER                  {POSITIVE}({DIGIT})*|{ZERO}
 
 
 %%
-{CLASS}                         printf( "CLASS " ); showPosition();
-{INT}                           printf( "INT " ); showPosition();
-{BOOLEAN}                       printf( "BOOLEAN " ); showPosition();
+{CLASS}                         printf( "CLASS " ); onProcessed();
+{INT}                           printf( "INT " ); onProcessed();
+{BOOLEAN}                       printf( "BOOLEAN " ); onProcessed();
 
-{TRUE}                          printf( "TRUE " ); showPosition();
-{FALSE}                         printf( "FALSE " ); showPosition();
+{TRUE}                          printf( "TRUE " ); onProcessed();
+{FALSE}                         printf( "FALSE " ); onProcessed();
 
-{THIS}                          printf( "THIS " ); showPosition();
-{NEW}                           printf( "NEW " ); showPosition();
-{PUBLIC}                        printf( "PUBLIC " ); showPosition();
-{PRIVATE}                       printf( "PRIVATE " ); showPosition();
-{EXTENDS}                       printf( "EXTENDS " ); showPosition();
-{RETURN}                        printf( "RETURN " ); showPosition();
+{THIS}                          printf( "THIS " ); onProcessed();
+{NEW}                           printf( "NEW " ); onProcessed();
+{PUBLIC}                        printf( "PUBLIC " ); onProcessed();
+{PRIVATE}                       printf( "PRIVATE " ); onProcessed();
+{EXTENDS}                       printf( "EXTENDS " ); onProcessed();
+{RETURN}                        printf( "RETURN " ); onProcessed();
 
-{SEMI}                          printf( "SEMI " ); showPosition();
-{DOT}                           printf( "DOT " ); showPosition();
-{COMMA}                         printf( "COMMA " ); showPosition();
-{ASSIGN}                        printf( "ASSIGN " ); showPosition();
+{SEMI}                          printf( "SEMI " ); onProcessed();
+{DOT}                           printf( "DOT " ); onProcessed();
+{COMMA}                         printf( "COMMA " ); onProcessed();
+{ASSIGN}                        printf( "ASSIGN " ); onProcessed();
 
-{L_PAREN}                       printf( "L_PAREN " ); showPosition();
-{R_PAREN}                       printf( "R_PAREN " ); showPosition();
-{L_SQUARE}                      printf( "L_SQUARE " ); showPosition();
-{R_SQUARE}                      printf( "R_SQUARE " ); showPosition();
-{L_BRACE}                       printf( "L_BRACE " ); showPosition();
-{R_BRACE}                       printf( "R_BRACE " ); showPosition();
+{L_PAREN}                       printf( "L_PAREN " ); onProcessed();
+{R_PAREN}                       printf( "R_PAREN " ); onProcessed();
+{L_SQUARE}                      printf( "L_SQUARE " ); onProcessed();
+{R_SQUARE}                      printf( "R_SQUARE " ); onProcessed();
+{L_BRACE}                       printf( "L_BRACE " ); onProcessed();
+{R_BRACE}                       printf( "R_BRACE " ); onProcessed();
 
-{IF}                            printf( "IF " ); showPosition();
-{ELSE}                          printf( "ELSE " ); showPosition();
-{WHILE}                         printf( "WHILE " ); showPosition();
+{IF}                            printf( "IF " ); onProcessed();
+{ELSE}                          printf( "ELSE " ); onProcessed();
+{WHILE}                         printf( "WHILE " ); onProcessed();
 
-{AND}                           printf( "AND " ); showPosition();
-{LESS}                          printf( "LESS " ); showPosition();
-{PLUS}                          printf( "PLUS " ); showPosition();
-{MINUS}                         printf( "MINUS " ); showPosition();
-{MULT}                          printf( "MULT " ); showPosition();
-{MOD}                           printf( "MOD " ); showPosition();
-{OR}                            printf( "OR " ); showPosition();
-{BANG}                          printf( "BANG " ); showPosition();
+{AND}                           printf( "AND " ); onProcessed();
+{LESS}                          printf( "LESS " ); onProcessed();
+{PLUS}                          printf( "PLUS " ); onProcessed();
+{MINUS}                         printf( "MINUS " ); onProcessed();
+{MULT}                          printf( "MULT " ); onProcessed();
+{MOD}                           printf( "MOD " ); onProcessed();
+{OR}                            printf( "OR " ); onProcessed();
+{BANG}                          printf( "BANG " ); onProcessed();
 
-{PRINT_LINE}                    printf( "PRINT_LINE " ); showPosition();
-{MAIN}                          printf( "MAIN " ); showPosition();
+{PRINT_LINE}                    printf( "PRINT_LINE " ); onProcessed();
+{MAIN}                          printf( "MAIN " ); onProcessed();
 
-{ID}                            printf( "ID(%s) ", yytext ); showPosition();
-{INTEGER_NUMBER}                printf( "INTEGER_NUMBER(%s) ", yytext ); showPosition();
+{ID}                            printf( "ID(%s) ", yytext ); onProcessed();
+{INTEGER_NUMBER}                printf( "INTEGER_NUMBER(%s) ", yytext ); onProcessed();
 
 "//".*
 {STRING_ARG}
