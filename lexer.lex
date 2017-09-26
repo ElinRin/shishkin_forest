@@ -68,7 +68,8 @@ BANG                            "!"
 
 PRINT_LINE                      "System.out.println"
 MAIN                            static[ \t\n]+void[ \t\n]+main
-STRING                          String
+STRING                          String({SPACE})?{L_SQUARE}({SPACE})?{R_SQUARE}
+STRING_ARG                      {STRING}{SPACE}{LETTER}({LETTER}|{DIGIT})*
 
 ID                              {LETTER}({LETTER}|{DIGIT})*
 INTEGER_NUMBER                  {POSITIVE}({DIGIT})*|{ZERO}
@@ -116,12 +117,12 @@ INTEGER_NUMBER                  {POSITIVE}({DIGIT})*|{ZERO}
 
 {PRINT_LINE}                    printf( "PRINT_LINE " );
 {MAIN}                          printf( "MAIN " );
-{STRING}                        printf( "STRING " );
 
 {ID}                            printf( "ID(%s) ", yytext );
 {INTEGER_NUMBER}                printf( "INTEGER_NUMBER(%s) ", yytext );
 
 "//".*
+{STRING_ARG}                    
 \n                              if( NICE_FORMATTING ) {
                                     printf("\n");
                                 }
