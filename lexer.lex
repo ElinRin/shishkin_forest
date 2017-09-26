@@ -1,23 +1,27 @@
 %{
   #include <stdlib.h>
 
-  #define NICE_FORMATTING 1
+  #define NICE_FORMATTING 0
 
   #define NF_RED  "\x1B[31m"
   #define NF_RESET "\x1B[0m"
   #define YY_USER_ACTION upgradePosition();
 
-  int lineNumber = 0;
-  int columnNumber = 0;
+  int lineNumber = 1;
+  int columnNumber = 1;
   long formatCounter = 0;
-  int upgradePosition() {
+  void upgradePosition() {
     if( *yytext == '\n' ) {
       lineNumber += 1;
       columnNumber = 1;
     } else {
-      columnNumber += 1;
+      columnNumber += strlen(yytext);
     }
     formatCounter += 1;
+  }
+
+  void showPosition() {
+    printf("%d,%d ", lineNumber, columnNumber - strlen(yytext));
   }
 %}
 
@@ -76,53 +80,53 @@ INTEGER_NUMBER                  {POSITIVE}({DIGIT})*|{ZERO}
 
 
 %%
-{CLASS}                         printf( "CLASS " );
-{INT}                           printf( "INT " );
-{BOOLEAN}                       printf( "BOOLEAN " );
+{CLASS}                         printf( "CLASS " ); showPosition();
+{INT}                           printf( "INT " ); showPosition();
+{BOOLEAN}                       printf( "BOOLEAN " ); showPosition();
 
-{TRUE}                          printf( "TRUE " );
-{FALSE}                         printf( "FALSE " );
+{TRUE}                          printf( "TRUE " ); showPosition();
+{FALSE}                         printf( "FALSE " ); showPosition();
 
-{THIS}                          printf( "THIS " );
-{NEW}                           printf( "NEW " );
-{PUBLIC}                        printf( "PUBLIC " );
-{PRIVATE}                       printf( "PRIVATE " );
-{EXTENDS}                       printf( "EXTENDS " );
-{RETURN}                        printf( "RETURN " );
+{THIS}                          printf( "THIS " ); showPosition();
+{NEW}                           printf( "NEW " ); showPosition();
+{PUBLIC}                        printf( "PUBLIC " ); showPosition();
+{PRIVATE}                       printf( "PRIVATE " ); showPosition();
+{EXTENDS}                       printf( "EXTENDS " ); showPosition();
+{RETURN}                        printf( "RETURN " ); showPosition();
 
-{SEMI}                          printf( "SEMI " );
-{DOT}                           printf( "DOT " );
-{COMMA}                         printf( "COMMA " );
-{ASSIGN}                        printf( "ASSIGN " );
+{SEMI}                          printf( "SEMI " ); showPosition();
+{DOT}                           printf( "DOT " ); showPosition();
+{COMMA}                         printf( "COMMA " ); showPosition();
+{ASSIGN}                        printf( "ASSIGN " ); showPosition();
 
-{L_PAREN}                       printf( "L_PAREN " );
-{R_PAREN}                       printf( "R_PAREN " );
-{L_SQUARE}                      printf( "L_SQUARE " );
-{R_SQUARE}                      printf( "R_SQUARE " );
-{L_BRACE}                       printf( "L_BRACE " );
-{R_BRACE}                       printf( "R_BRACE " );
+{L_PAREN}                       printf( "L_PAREN " ); showPosition();
+{R_PAREN}                       printf( "R_PAREN " ); showPosition();
+{L_SQUARE}                      printf( "L_SQUARE " ); showPosition();
+{R_SQUARE}                      printf( "R_SQUARE " ); showPosition();
+{L_BRACE}                       printf( "L_BRACE " ); showPosition();
+{R_BRACE}                       printf( "R_BRACE " ); showPosition();
 
-{IF}                            printf( "IF " );
-{ELSE}                          printf( "ELSE " );
-{WHILE}                         printf( "WHILE " );
+{IF}                            printf( "IF " ); showPosition();
+{ELSE}                          printf( "ELSE " ); showPosition();
+{WHILE}                         printf( "WHILE " ); showPosition();
 
-{AND}                           printf( "AND " );
-{LESS}                          printf( "LESS " );
-{PLUS}                          printf( "PLUS " );
-{MINUS}                         printf( "MINUS " );
-{MULT}                          printf( "MULT " );
-{MOD}                           printf( "MOD " );
-{OR}                            printf( "OR " );
-{BANG}                          printf( "BANG " );
+{AND}                           printf( "AND " ); showPosition();
+{LESS}                          printf( "LESS " ); showPosition();
+{PLUS}                          printf( "PLUS " ); showPosition();
+{MINUS}                         printf( "MINUS " ); showPosition();
+{MULT}                          printf( "MULT " ); showPosition();
+{MOD}                           printf( "MOD " ); showPosition();
+{OR}                            printf( "OR " ); showPosition();
+{BANG}                          printf( "BANG " ); showPosition();
 
-{PRINT_LINE}                    printf( "PRINT_LINE " );
-{MAIN}                          printf( "MAIN " );
+{PRINT_LINE}                    printf( "PRINT_LINE " ); showPosition();
+{MAIN}                          printf( "MAIN " ); showPosition();
 
-{ID}                            printf( "ID(%s) ", yytext );
-{INTEGER_NUMBER}                printf( "INTEGER_NUMBER(%s) ", yytext );
+{ID}                            printf( "ID(%s) ", yytext ); showPosition();
+{INTEGER_NUMBER}                printf( "INTEGER_NUMBER(%s) ", yytext ); showPosition();
 
 "//".*
-{STRING_ARG}                    
+{STRING_ARG}
 \n                              if( NICE_FORMATTING ) {
                                     printf("\n");
                                 }
