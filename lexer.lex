@@ -10,7 +10,7 @@
   int lineNumber = 0;
   int columnNumber = 0;
   long formatCounter = 0;
-  int upgradePosition() {
+  void upgradePosition() {
     if( *yytext == '\n' ) {
       lineNumber += 1;
       columnNumber = 1;
