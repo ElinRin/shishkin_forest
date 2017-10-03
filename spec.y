@@ -7,7 +7,9 @@
   #define NF_RESET "\x1B[0m"
 
   void showTokenPosition();
+  
   int yyerror(char* s);
+  int yylex();
 
   void onTokenParsed() {
     if(SHOW_COORDINATES) {
