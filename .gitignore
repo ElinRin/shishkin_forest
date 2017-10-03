@@ -3,4 +3,9 @@
 *.orig
 *.bak
 lex.yy.c
+tokens.h
+parser.c
 *.out
+*.o
+lexer
+parser

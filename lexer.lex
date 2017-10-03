@@ -1,8 +1,10 @@
 %{
   #include <stdlib.h>
 
+  #include "tokens.h"
+
   #define NICE_FORMATTING 0
-  #define NICE_COORDINATES 1
+  #define NICE_COORDINATES 0
 
   #define NF_RED  "\x1B[31m"
   #define NF_RESET "\x1B[0m"
@@ -10,13 +12,27 @@
 
   int lineNumber = 1;
   int columnNumber = 1;
+
+  void setStartPosition() {
+    yylloc.first_line = lineNumber;
+    yylloc.first_column = columnNumber;
+  }
+
+  void setEndPosition() {
+    yylloc.last_line = lineNumber;
+    yylloc.last_column = columnNumber;
+  }
+
   void upgradePosition() {
     if( *yytext == '\n' ) {
       lineNumber += 1;
       columnNumber = 1;
+      setStartPosition();
     } else {
+      setStartPosition();
       columnNumber += strlen(yytext);
     }
+    setEndPosition();
   }
 
   void showPosition() {
@@ -85,50 +101,58 @@ INTEGER_NUMBER                  {POSITIVE}({DIGIT})*|{ZERO}
 
 
 %%
-{CLASS}                         printf( "CLASS " ); onProcessed();
-{INT}                           printf( "INT " ); onProcessed();
-{BOOLEAN}                       printf( "BOOLEAN " ); onProcessed();
+{CLASS}                         {  onProcessed(); return CLASS; }
+{INT}                           {  onProcessed(); return INT; }
+{BOOLEAN}                       {  onProcessed(); return BOOLEAN; }
 
-{TRUE}                          printf( "TRUE " ); onProcessed();
-{FALSE}                         printf( "FALSE " ); onProcessed();
+{TRUE}                          {  onProcessed(); return TRUE; }
+{FALSE}                         {  onProcessed(); return FALSE; }
 
-{THIS}                          printf( "THIS " ); onProcessed();
-{NEW}                           printf( "NEW " ); onProcessed();
-{PUBLIC}                        printf( "PUBLIC " ); onProcessed();
-{PRIVATE}                       printf( "PRIVATE " ); onProcessed();
-{EXTENDS}                       printf( "EXTENDS " ); onProcessed();
-{RETURN}                        printf( "RETURN " ); onProcessed();
+{THIS}                          {  onProcessed(); return THIS; }
+{NEW}                           {  onProcessed(); return NEW; }
+{PUBLIC}                        {  onProcessed(); return PUBLIC; }
+{PRIVATE}                       {  onProcessed(); return PRIVATE; }
+{EXTENDS}                       {  onProcessed(); return EXTENDS; }
+{RETURN}                        {  onProcessed(); return RETURN; }
 
-{SEMI}                          printf( "SEMI " ); onProcessed();
-{DOT}                           printf( "DOT " ); onProcessed();
-{COMMA}                         printf( "COMMA " ); onProcessed();
-{ASSIGN}                        printf( "ASSIGN " ); onProcessed();
+{SEMI}                          {  onProcessed(); return SEMI; }
+{DOT}                           {  onProcessed(); return DOT; }
+{COMMA}                         {  onProcessed(); return COMMA; }
+{ASSIGN}                        {  onProcessed(); return ASSIGN; }
 
-{L_PAREN}                       printf( "L_PAREN " ); onProcessed();
-{R_PAREN}                       printf( "R_PAREN " ); onProcessed();
-{L_SQUARE}                      printf( "L_SQUARE " ); onProcessed();
-{R_SQUARE}                      printf( "R_SQUARE " ); onProcessed();
-{L_BRACE}                       printf( "L_BRACE " ); onProcessed();
-{R_BRACE}                       printf( "R_BRACE " ); onProcessed();
+{L_PAREN}                       {  onProcessed(); return L_PAREN; }
+{R_PAREN}                       {  onProcessed(); return R_PAREN; }
+{L_SQUARE}                      {  onProcessed(); return L_SQUARE; }
+{R_SQUARE}                      {  onProcessed(); return R_SQUARE; }
+{L_BRACE}                       {  onProcessed(); return L_BRACE; }
+{R_BRACE}                       {  onProcessed(); return R_BRACE; }
 
-{IF}                            printf( "IF " ); onProcessed();
-{ELSE}                          printf( "ELSE " ); onProcessed();
-{WHILE}                         printf( "WHILE " ); onProcessed();
+{IF}                            {  onProcessed(); return IF; }
+{ELSE}                          {  onProcessed(); return ELSE; }
+{WHILE}                         {  onProcessed(); return WHILE; }
 
-{AND}                           printf( "AND " ); onProcessed();
-{LESS}                          printf( "LESS " ); onProcessed();
-{PLUS}                          printf( "PLUS " ); onProcessed();
-{MINUS}                         printf( "MINUS " ); onProcessed();
-{MULT}                          printf( "MULT " ); onProcessed();
-{MOD}                           printf( "MOD " ); onProcessed();
-{OR}                            printf( "OR " ); onProcessed();
-{BANG}                          printf( "BANG " ); onProcessed();
+{AND}                           {  onProcessed(); return AND; }
+{LESS}                          {  onProcessed(); return LESS; }
+{PLUS}                          {  onProcessed(); return PLUS; }
+{MINUS}                         {  onProcessed(); return MINUS; }
+{MULT}                          {  onProcessed(); return MULT; }
+{MOD}                           {  onProcessed(); return MOD; }
+{OR}                            {  onProcessed(); return OR; }
+{BANG}                          {  onProcessed(); return BANG; }
 
-{PRINT_LINE}                    printf( "PRINT_LINE " ); onProcessed();
-{MAIN}                          printf( "MAIN " ); onProcessed();
+{PRINT_LINE}                    {  onProcessed(); return PRINT_LINE; }
+{MAIN}                          {  onProcessed(); return MAIN; }
 
-{ID}                            printf( "ID(%s) ", yytext ); onProcessed();
-{INTEGER_NUMBER}                printf( "INTEGER_NUMBER(%s) ", yytext ); onProcessed();
+{ID}                            {
+                                    yylval.stringVal = yytext;
+                                    onProcessed();
+                                    return ID;
+                                }
+{INTEGER_NUMBER}                {
+                                    yylval.intVal = atoi(yytext);
+                                    onProcessed();
+                                    return INTEGER_NUMBER;
+                                }
 
 "//".*
 {STRING_ARG}
@@ -137,8 +161,10 @@ INTEGER_NUMBER                  {POSITIVE}({DIGIT})*|{ZERO}
                                 }
 [ \t\r]+
 <<EOF>>                         {
-                                    printf( "EOF\n" );
+                                  if( NICE_FORMATTING ) {
+                                      printf( "EOF\n" );
+                                  }
                                     return 0;
                                 }
 
-.	printf( NF_RED "\nFucking bullshit at %d,%d\n" NF_RESET, lineNumber, columnNumber );
+.	return ERROR;
