@@ -1,2 +1,2 @@
 #!/bin/bash
-./buildAll.sh && cat $1 | ./parser
+./scripts/buildAll.sh && cat $1 | ./parser
