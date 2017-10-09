@@ -60,6 +60,7 @@
 %token  OR
 %token  BANG
 
+%token  LENGTH
 %token  PRINT_LINE
 %token  MAIN
 
@@ -108,6 +109,7 @@ token :  CLASS                         { printf( "CLASS " ); onTokenParsed(); }
       |  MOD                           { printf( "MOD " ); onTokenParsed(); }
       |  OR                            { printf( "OR " ); onTokenParsed(); }
       |  BANG                          { printf( "BANG " ); onTokenParsed(); }
+      |  LENGTH                        { printf( "LENGTH " ); onTokenParsed(); }
       |  PRINT_LINE                    { printf( "PRINT_LINE " ); onTokenParsed(); }
       |  MAIN                          { printf( "MAIN " ); onTokenParsed(); }
       |  ID                            { printf( "ID(%s) ", yylval.stringVal ); onTokenParsed(); }

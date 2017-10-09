@@ -91,6 +91,7 @@ MOD                             "%"
 OR                              "||"
 BANG                            "!"
 
+LENGTH                          length
 PRINT_LINE                      "System.out.println"
 MAIN                            static[ \t\n]+void[ \t\n]+main
 STRING                          String({SPACE})?{L_SQUARE}({SPACE})?{R_SQUARE}
@@ -144,6 +145,7 @@ BOOLEAN_VALUE                   {TRUE}|{FALSE}
 {OR}                            {  onProcessed(); return OR; }
 {BANG}                          {  onProcessed(); return BANG; }
 
+{LENGTH}                        {  onProcessed(); return LENGTH; }
 {PRINT_LINE}                    {  onProcessed(); return PRINT_LINE; }
 {MAIN}                          {  onProcessed(); return MAIN; }
 
