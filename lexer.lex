@@ -3,7 +3,7 @@
 
   #include "tokens.h"
 
-  #define NICE_FORMATTING 1
+  #define NICE_FORMATTING 0
   #define NICE_COORDINATES 0
 
   #define NF_RED  "\x1B[31m"
