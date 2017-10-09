@@ -3,7 +3,7 @@
 
   #include "tokens.h"
 
-  #define NICE_FORMATTING 0
+  #define NICE_FORMATTING 1
   #define NICE_COORDINATES 0
 
   #define NF_RED  "\x1B[31m"
@@ -98,6 +98,7 @@ STRING_ARG                      {STRING}{SPACE}{LETTER}({LETTER}|{DIGIT})*
 
 ID                              {LETTER}({LETTER}|{DIGIT})*
 INTEGER_NUMBER                  {POSITIVE}({DIGIT})*|{ZERO}
+BOOLEAN_VALUE                   {TRUE}|{FALSE}
 
 
 %%
@@ -105,8 +106,11 @@ INTEGER_NUMBER                  {POSITIVE}({DIGIT})*|{ZERO}
 {INT}                           {  onProcessed(); return INT; }
 {BOOLEAN}                       {  onProcessed(); return BOOLEAN; }
 
-{TRUE}                          {  onProcessed(); return TRUE; }
-{FALSE}                         {  onProcessed(); return FALSE; }
+{BOOLEAN_VALUE}                 {
+                                   yylval.intVal = strcmp("true", yytext) == 0 ? 1 : 0;
+                                   onProcessed();
+                                   return BOOLEAN_VALUE;
+                                }
 
 {THIS}                          {  onProcessed(); return THIS; }
 {NEW}                           {  onProcessed(); return NEW; }

@@ -7,7 +7,7 @@
   #define NF_RESET "\x1B[0m"
 
   void showTokenPosition();
-  
+
   int yyerror(char* s);
   int yylex();
 
@@ -28,8 +28,6 @@
 %token  CLASS
 %token  INT
 %token  BOOLEAN
-%token  TRUE
-%token  FALSE
 %token  THIS
 %token  NEW
 %token  PUBLIC
@@ -67,6 +65,7 @@
 
 %token  <stringVal>  ID
 %token  <intVal>  INTEGER_NUMBER
+%token  <intVal>  BOOLEAN_VALUE
 
 %token  ERROR
 
@@ -77,9 +76,11 @@ tokens: token
       ;
 token :  CLASS                         { printf( "CLASS " ); onTokenParsed(); }
       |  INT                           { printf( "INT " ); onTokenParsed(); }
-      |  BOOLEAN                       { printf( "BOOLEAN " );onTokenParsed();  }
-      |  TRUE                          { printf( "TRUE " ); onTokenParsed(); }
-      |  FALSE                         { printf( "FALSE " ); onTokenParsed(); }
+      |  BOOLEAN                       { printf( "BOOLEAN " );onTokenParsed(); }
+      |  BOOLEAN_VALUE                 {
+                                         printf( "BOOLEAN_VALUE(%s) ", yylval.intVal == 1 ? "TRUE" : "FALSE" );
+                                         onTokenParsed();
+                                       }
       |  THIS                          { printf( "THIS " ); onTokenParsed(); }
       |  NEW                           { printf( "NEW " ); onTokenParsed(); }
       |  PUBLIC                        { printf( "PUBLIC " ); onTokenParsed(); }
@@ -114,7 +115,8 @@ token :  CLASS                         { printf( "CLASS " ); onTokenParsed(); }
       |  ERROR                         {
                                           printf( NF_RED "\nFucking bullshit at %d,%d\n" NF_RESET,
                                               yylloc.first_line, yylloc.first_column );
-                                       onTokenParsed(); }
+                                          onTokenParsed();
+                                       }
       ;
 %%
 
