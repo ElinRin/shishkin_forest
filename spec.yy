@@ -10,7 +10,7 @@
   void showTokenPosition();
 
   int yyerror(char* s);
-  int yylex();
+  extern "C" int yylex();
 
   void onTokenParsed() {
     if(SHOW_COORDINATES) {
