@@ -88,9 +88,6 @@
 
 %%
 
-/*tokens: token
-      | tokens token
-      ;*/
 program : class_main class_seq END          { printf( "program: \n" ); onTokenParsed(); }
         | class_main END                    { printf( "program: main only \n" ); onTokenParsed(); }
         ;
@@ -105,12 +102,12 @@ class_seq : class_seq class                 { printf( "class_seq: class ext \n" 
         | class_ext                         { printf( "class_seq: class_ext first\n" ); onTokenParsed(); }
         ;
 class_ext : CLASS id EXTENDS id L_BRACE
-          var_seq method_seq R_BRACE        { printf( "class_ext: var method \n" ); onTokenParsed(); }
+          var_seq method_seq R_BRACE        { printf( "class_ext: (%s:%s) var method \n", $2, $4 ); onTokenParsed(); }
         | CLASS id EXTENDS id L_BRACE
-          var_seq R_BRACE                   { printf( "class_ext: var \n" ); onTokenParsed(); }
+          var_seq R_BRACE                   { printf( "class_ext: (%s:%s) var \n", $2, $4 ); onTokenParsed(); }
         | CLASS id EXTENDS id L_BRACE
-          method_seq R_BRACE                { printf( "class_ext: method \n" ); onTokenParsed(); }
-        | CLASS id EXTENDS id L_BRACE R_BRACE { printf( "class_ext: empty \n" ); onTokenParsed(); }
+          method_seq R_BRACE                { printf( "class_ext: (%s:%s) method \n", $2, $4 ); onTokenParsed(); }
+        | CLASS id EXTENDS id L_BRACE R_BRACE { printf( "class_ext: (%s:%s) empty \n", $2, $4 ); onTokenParsed(); }
         ;
 class : CLASS id L_BRACE
           var_seq method_seq R_BRACE        { printf( "class: (%s) var method \n", $2 ); onTokenParsed(); }
@@ -187,51 +184,6 @@ exp     : exp AND exp                       { printf( "exp: && \n" ); onTokenPar
         ;
 id      : ID                                { strcpy($$, $1); printf( "id: %s \n", yylval.stringVal ); onTokenParsed(); }
         ;
-/*token   :  CLASS                         { printf( "CLASS " ); onTokenParsed(); }
-        |  INT                           { printf( "INT " ); onTokenParsed(); }
-        |  BOOLEAN                       { printf( "BOOLEAN " );onTokenParsed(); }
-        |  BOOLEAN_VALUE                 {
-                                           printf( "BOOLEAN_VALUE(%s) ", yylval.intVal == 1 ? "TRUE" : "FALSE" );
-                                           onTokenParsed();
-                                         }
-        |  THIS                          { printf( "THIS " ); onTokenParsed(); }
-        |  NEW                           { printf( "NEW " ); onTokenParsed(); }
-        |  PUBLIC                        { printf( "PUBLIC " ); onTokenParsed(); }
-        |  PRIVATE                       { printf( "PRIVATE " ); onTokenParsed(); }
-        |  EXTENDS                       { printf( "EXTENDS " ); onTokenParsed(); }
-        |  RETURN                        { printf( "RETURN " ); onTokenParsed(); }
-        |  SEMI                          { printf( "SEMI " ); onTokenParsed(); }
-        |  DOT                           { printf( "DOT " ); onTokenParsed(); }
-        |  COMMA                         { printf( "COMMA " ); onTokenParsed(); }
-        |  ASSIGN                        { printf( "ASSIGN " ); onTokenParsed(); }
-        |  L_PAREN                       { printf( "L_PAREN " ); onTokenParsed(); }
-        |  R_PAREN                       { printf( "R_PAREN " ); onTokenParsed(); }
-        |  L_SQUARE                      { printf( "L_SQUARE " ); onTokenParsed(); }
-        |  R_SQUARE                      { printf( "R_SQUARE " ); onTokenParsed(); }
-        |  L_BRACE                       { printf( "L_BRACE " ); onTokenParsed(); }
-        |  R_BRACE                       { printf( "R_BRACE " ); onTokenParsed(); }
-        |  IF                            { printf( "IF " ); onTokenParsed(); }
-        |  ELSE                          { printf( "ELSE " ); onTokenParsed(); }
-        |  WHILE                         { printf( "WHILE " ); onTokenParsed(); }
-        |  AND                           { printf( "AND " ); onTokenParsed(); }
-        |  LESS                          { printf( "LESS " ); onTokenParsed(); }
-        |  PLUS                          { printf( "PLUS " ); onTokenParsed(); }
-        |  MINUS                         { printf( "MINUS " ); onTokenParsed(); }
-        |  MULT                          { printf( "MULT " ); onTokenParsed(); }
-        |  MOD                           { printf( "MOD " ); onTokenParsed(); }
-        |  OR                            { printf( "OR " ); onTokenParsed(); }
-        |  BANG                          { printf( "BANG " ); onTokenParsed(); }
-        |  LENGTH                        { printf( "LENGTH " ); onTokenParsed(); }
-        |  PRINT_LINE                    { printf( "PRINT_LINE " ); onTokenParsed(); }
-        |  MAIN                          { printf( "MAIN " ); onTokenParsed(); }
-        |  ID                            { printf( "ID(%s) ", yylval.stringVal ); onTokenParsed(); }
-        |  INTEGER_NUMBER                { printf( "INTEGER_NUMBER(%d) ", yylval.intVal ); onTokenParsed(); }
-        |  ERROR                         {
-                                            printf( NF_RED "\nFucking bullshit at %d,%d\n" NF_RESET,
-                                                yylloc.first_line, yylloc.first_column );
-                                            onTokenParsed();
-                                         }
-        ;*/
 %%
 
 void showTokenPosition() {
