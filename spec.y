@@ -1,7 +1,8 @@
 %{
   #include <stdio.h>
+  #include <string.h>
 
-  #define SHOW_COORDINATES 1
+  #define SHOW_COORDINATES 0
 
   #define NF_RED  "\x1B[31m"
   #define NF_RESET "\x1B[0m"
@@ -72,9 +73,18 @@
 
 %token  ERROR
 
+%type<stringVal>  id
+
+%left   OR
+%left   AND
 %left   MINUS PLUS
 %left   MOD
 %left   MULT
+%left   LESS
+%left   DOT
+%left   L_SQUARE
+
+%right  BANG
 
 %%
 
@@ -82,100 +92,100 @@
       | tokens token
       ;*/
 program : class_main class_seq END          { printf( "program: \n" ); onTokenParsed(); }
-        | class_main END                    { printf( "program: \n" ); onTokenParsed(); }
+        | class_main END                    { printf( "program: main only \n" ); onTokenParsed(); }
         ;
 class_main : CLASS id L_BRACE
-              MAIN L_PAREN R_PAREN L_BRACE
+              PUBLIC MAIN L_PAREN R_PAREN L_BRACE
               stm R_BRACE                   { printf( "main: \n" ); onTokenParsed(); }
             R_BRACE
         ;
-class_seq : class_seq class                 { printf( "class_seq: \n" ); onTokenParsed(); }
-        | class_seq class_ext               { printf( "class_seq: \n" ); onTokenParsed(); }
-        | class                             { printf( "class_seq: \n" ); onTokenParsed(); }
-        | class_ext                         { printf( "class_seq: \n" ); onTokenParsed(); }
+class_seq : class_seq class                 { printf( "class_seq: class ext \n" ); onTokenParsed(); }
+        | class_seq class_ext               { printf( "class_seq: class_ext \n" ); onTokenParsed(); }
+        | class                             { printf( "class_seq: class first \n" ); onTokenParsed(); }
+        | class_ext                         { printf( "class_seq: class_ext first\n" ); onTokenParsed(); }
         ;
 class_ext : CLASS id EXTENDS id L_BRACE
-          var_seq method_seq R_BRACE        { printf( "class_ext: \n" ); onTokenParsed(); }
+          var_seq method_seq R_BRACE        { printf( "class_ext: var method \n" ); onTokenParsed(); }
         | CLASS id EXTENDS id L_BRACE
-          var_seq R_BRACE                   { printf( "class_ext: \n" ); onTokenParsed(); }
+          var_seq R_BRACE                   { printf( "class_ext: var \n" ); onTokenParsed(); }
         | CLASS id EXTENDS id L_BRACE
-          method_seq EXTENDS id R_BRACE     { printf( "class_ext: \n" ); onTokenParsed(); }
-        | CLASS id EXTENDS id L_BRACE R_BRACE { printf( "class_ext: \n" ); onTokenParsed(); }
+          method_seq R_BRACE                { printf( "class_ext: method \n" ); onTokenParsed(); }
+        | CLASS id EXTENDS id L_BRACE R_BRACE { printf( "class_ext: empty \n" ); onTokenParsed(); }
         ;
 class : CLASS id L_BRACE
-          var_seq method_seq R_BRACE        { printf( "class: \n" ); onTokenParsed(); }
+          var_seq method_seq R_BRACE        { printf( "class: (%s) var method \n", $2 ); onTokenParsed(); }
         | CLASS id L_BRACE
-          var_seq R_BRACE                   { printf( "class: \n" ); onTokenParsed(); }
+          var_seq R_BRACE                   { printf( "class: (%s) var \n", $2 ); onTokenParsed(); }
         | CLASS id L_BRACE
-          method_seq R_BRACE                { printf( "class: \n" ); onTokenParsed(); }
-        | CLASS id L_BRACE R_BRACE          { printf( "class: \n" ); onTokenParsed(); }
+          method_seq R_BRACE                { printf( "class: (%s) method \n", $2 ); onTokenParsed(); }
+        | CLASS id L_BRACE R_BRACE          { printf( "class: (%s) empty \n", $2 ); onTokenParsed(); }
         ;
-var_seq : var_seq var
-        | var
+var_seq : var_seq var                       { printf( "var_seq: \n" ); onTokenParsed(); }
+        | var                               { printf( "var_seq_first: \n" ); onTokenParsed(); }
         ;
-var     : type id SEMI
+var     : type id SEMI                      { printf( "var: (%s)\n", $2 ); onTokenParsed(); }
         ;
-method_seq : method_seq method
-        | method
+method_seq : method_seq method              { printf( "method_seq: \n" ); onTokenParsed(); }
+        | method                            { printf( "method_seq_first: \n" ); onTokenParsed(); }
         ;
 method  : qualifier type id L_PAREN arg_seq R_PAREN L_BRACE
-            var_seq stm_seq stm_ret R_BRACE
+            var_seq stm_seq stm_ret R_BRACE { printf( "method: var stm ret \n" ); onTokenParsed(); }
         | qualifier type id L_PAREN arg_seq R_PAREN L_BRACE
-            stm_seq stm_ret R_BRACE
+            stm_seq stm_ret R_BRACE         { printf( "method: stm ret \n" ); onTokenParsed(); }
         | qualifier type id L_PAREN arg_seq R_PAREN L_BRACE
-            var_seq stm_ret R_BRACE
+            var_seq stm_ret R_BRACE         { printf( "method: var ret \n" ); onTokenParsed(); }
         | qualifier type id L_PAREN arg_seq R_PAREN L_BRACE
-            stm_ret R_BRACE
+            stm_ret R_BRACE                 { printf( "method: return \n" ); onTokenParsed(); }
         ;
-qualifier : PUBLIC
-        | PRIVATE
+qualifier : PUBLIC                          { printf( "qualifier: public \n" ); onTokenParsed(); }
+        | PRIVATE                           { printf( "qualifier: private \n" ); onTokenParsed(); }
         ;
-arg_seq : %empty
-        | arg_seq type id
-        | type id
+arg_seq : %empty                            { printf( "arg_seq(empty): empty \n" ); onTokenParsed(); }
+        | arg_seq COMMA type id                   { printf( "arg_seq: comma \n" ); onTokenParsed(); }
+        | type id                           { printf( "arg_seq_first: \n" ); onTokenParsed(); }
         ;
-type    : INT L_SQUARE R_SQUARE
-        | BOOLEAN
-        | INT
-        | id
+type    : INT L_SQUARE R_SQUARE             { printf( "type: int-array \n" ); onTokenParsed(); }
+        | BOOLEAN                           { printf( "type: bool \n" ); onTokenParsed(); }
+        | INT                               { printf( "type: int \n" ); onTokenParsed(); }
+        | id                                { printf( "type: id(%s) \n", yylval.stringVal ); onTokenParsed(); }
         ;
-stm_ret : RETURN exp SEMI
+stm_ret : RETURN exp SEMI                   { printf( "stm_ret: \n" ); onTokenParsed(); }
         ;
-stm_seq : stm_seq stm
-        | stm
+stm_seq : stm_seq stm                       { printf( "stm_seq: \n" ); onTokenParsed(); }
+        | stm                               { printf( "stm_seq_first: \n" ); onTokenParsed(); }
 
-stm     : L_BRACE stm_seq R_BRACE
-        | IF L_PAREN stm R_PAREN ELSE stm
-        | WHILE L_PAREN exp R_PAREN stm
-        | PRINT_LINE L_PAREN exp R_PAREN SEMI
-        | id ASSIGN exp SEMI
-        | id L_SQUARE exp R_SQUARE ASSIGN exp SEMI
+stm     : L_BRACE stm_seq R_BRACE           { printf( "stm: braces \n" ); onTokenParsed(); }
+        | IF L_PAREN exp R_PAREN stm ELSE stm   { printf( "stm: if-else \n" ); onTokenParsed(); }
+        | WHILE L_PAREN exp R_PAREN stm     { printf( "stm: loop \n" ); onTokenParsed(); }
+        | PRINT_LINE L_PAREN exp R_PAREN SEMI { printf( "stm: print \n" ); onTokenParsed(); }
+        | id ASSIGN exp SEMI                { printf( "stm: assign \n" ); onTokenParsed(); }
+        | id L_SQUARE exp R_SQUARE ASSIGN exp SEMI  { printf( "stm: assign_element \n" ); onTokenParsed(); }
         ;
 
-exp_seq : exp_seq COMMA exp
-        | exp
+exp_seq : exp_seq COMMA exp                 { printf( "exp_seq: \n" ); onTokenParsed(); }
+        | exp                               { printf( "exp_seq_first: \n" ); onTokenParsed(); }
         ;
-exp     : exp AND exp
-        | exp LESS exp
-        | exp PLUS exp
-        | exp MINUS exp
-        | exp MULT exp
-        | exp MOD exp
-        | exp OR exp
-        | exp L_SQUARE exp R_SQUARE
-        | exp DOT LENGTH
-        | exp DOT id L_PAREN R_PAREN
-        | exp DOT id L_PAREN exp_seq R_PAREN
-        | INTEGER_NUMBER
-        | BOOLEAN_VALUE
-        | id
-        | THIS
-        | NEW INT L_SQUARE exp R_SQUARE
-        | NEW id L_PAREN R_PAREN
-        | BANG exp
-        | L_PAREN exp R_PAREN
+exp     : exp AND exp                       { printf( "exp: && \n" ); onTokenParsed(); }
+        | exp LESS exp                      { printf( "exp: < \n" ); onTokenParsed(); }
+        | exp PLUS exp                      { printf( "exp: + \n" ); onTokenParsed(); }
+        | exp MINUS exp                     { printf( "exp: - \n" ); onTokenParsed(); }
+        | exp MULT exp                      { printf( "exp: * \n" ); onTokenParsed(); }
+        | exp MOD exp                       { printf( "exp: % \n" ); onTokenParsed(); }
+        | exp OR exp                        { printf( "exp: || \n" ); onTokenParsed(); }
+        | exp L_SQUARE exp R_SQUARE         { printf( "exp: access_element \n" ); onTokenParsed(); }
+        | exp DOT LENGTH                    { printf( "exp: length \n" ); onTokenParsed(); }
+        | exp DOT id L_PAREN R_PAREN        { printf( "exp: call_method \n" ); onTokenParsed(); }
+        | exp DOT id L_PAREN exp_seq R_PAREN  { printf( "exp: call_method_arged \n" ); onTokenParsed(); }
+        | INTEGER_NUMBER                    { printf( "exp: int_value(%d)\n", yylval.intVal ); onTokenParsed(); }
+        | BOOLEAN_VALUE                     { printf( "exp: bool_value(%s) \n", yylval.intVal == 1 ? "true" : "false" ); onTokenParsed(); }
+        | id                                { printf( "exp: id(%s) \n", $1 ); onTokenParsed(); }
+        | THIS                              { printf( "exp: this \n" ); onTokenParsed(); }
+        | NEW INT L_SQUARE exp R_SQUARE     { printf( "exp: new int[] \n" ); onTokenParsed(); }
+        | NEW id L_PAREN R_PAREN            { printf( "exp: new id() \n" ); onTokenParsed(); }
+        | BANG exp                          { printf( "exp: ! \n" ); onTokenParsed(); }
+        | L_PAREN exp R_PAREN               { printf( "exp: () \n" ); onTokenParsed(); }
         ;
-id      : ID
+id      : ID                                { strcpy($$, $1); printf( "id: %s \n", yylval.stringVal ); onTokenParsed(); }
         ;
 /*token   :  CLASS                         { printf( "CLASS " ); onTokenParsed(); }
         |  INT                           { printf( "INT " ); onTokenParsed(); }
