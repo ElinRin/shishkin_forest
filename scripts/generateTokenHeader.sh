@@ -1,2 +1,2 @@
 #!/bin/bash
-bison -d --verbose spec.y && mv spec.tab.h tokens.h && mv spec.tab.c parser.c
+bison -d --verbose spec.yy && mv spec.tab.hh tokens.h && mv spec.tab.cc parser.cpp
