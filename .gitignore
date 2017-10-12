@@ -11,3 +11,8 @@ parser.cpp
 *.o
 lexer
 parser
+*.config
+*.includes
+*.user
+*.files
+*.creator
