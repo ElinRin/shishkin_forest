@@ -2,6 +2,8 @@
   #include <stdio.h>
   #include <string.h>
 
+  #include "SyntaxTree/TreeTypes.h"
+
   #define SHOW_COORDINATES 0
 
   #define NF_RED  "\x1B[31m"
