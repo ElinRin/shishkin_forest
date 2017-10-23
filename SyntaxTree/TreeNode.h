@@ -21,6 +21,10 @@ struct Coordinates
         Row(row),
         Column(column)
     {}
+    Coordinates(const Coordinates& coordinates) :
+        Row(coordinates.Row),
+        Column(coordinates.Column)
+    {}
 };
 
 interface ITreeNode {

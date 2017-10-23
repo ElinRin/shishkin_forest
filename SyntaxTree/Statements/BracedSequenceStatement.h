@@ -2,19 +2,19 @@
 #define BRACEDSEQUENCESTATEMENT_H
 #include "common.h"
 
-#include "StatementSequence.h"
+#include "Statement.h"
 
 struct BraceSequenceStatement : public IStatement
 {
-    StatementSequence* Sequence;
+    const Sequence<IStatement>* BracedSequence;
 
-    BraceSequenceStatement(Coordinates& coords, const StatementSequence* sequence) :
+    BraceSequenceStatement(Coordinates coords, const Sequence<IStatement>* sequence) :
         coords(coords),
-        Sequence(sequence)
+        BracedSequence(sequence)
     {}
 
     ~BraceSequenceStatement() {
-        delete Sequence;
+        delete BracedSequence;
     }
 
     ACCEPT_VISITOR

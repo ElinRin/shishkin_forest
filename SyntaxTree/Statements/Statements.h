@@ -8,6 +8,5 @@
 #include "WhileStatement.h"
 #include "BracedSequenceStatement.h"
 #include "IfElseStatement.h"
-#include "StatementSequence.h"
 
 #endif

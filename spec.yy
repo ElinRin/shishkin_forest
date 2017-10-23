@@ -9,9 +9,12 @@
   #define NF_RED  "\x1B[31m"
   #define NF_RESET "\x1B[0m"
 
+  #define COORDS Coordinates(yylloc.first_line, yylloc.first_column)
+
   void showTokenPosition();
 
   int yyerror(char* s);
+
   extern "C" int yylex();
 
   void onTokenParsed() {
@@ -19,9 +22,28 @@
       showTokenPosition();
     }
   }
+
+  Program* program = nullptr;
 %}
 
 %union {
+  Id* id;
+  IExpression* exp;
+  Sequence<const IExpression>* exp_seq;
+  IStatement* stm;
+  Sequence<const IStatement>* stm_seq;
+  ReturnStatement* stm_ret;
+  Type* type;
+  Qualifier* qualifier;
+  MethodDeclaration* method;
+  Sequence<const MethodDeclaration>* method_seq;
+  VarDeclaration* var;
+  Sequence<const VarDeclaration>* var_seq;
+  ClassDeclaration* class_decl;
+  Sequence<const ClassDeclaration>* class_seq;
+  MainClass* class_main;
+  Program* program;
+
   int intVal;
   char* stringVal;
 }
@@ -75,7 +97,22 @@
 
 %token  ERROR
 
-%type<stringVal>  id
+%type <id> id;
+%type <exp> exp;
+%type <exp_seq> exp_seq;
+%type <stm> stm;
+%type <stm_seq> stm_seq;
+%type <stm_ret> stm_ret;
+%type <type> type;
+%type <qualifier> qualifier;
+%type <method> method;
+%type <method_seq> method_seq;
+%type <var> var;
+%type <var_seq> var_seq arg_seq;
+%type <class_decl> class;
+%type <class_seq> class_seq;
+%type <class_main> class_main;
+%type <program> program;
 
 %left   OR
 %left   AND
@@ -95,8 +132,8 @@ program : class_main class_seq END          { printf( "program: \n" ); onTokenPa
         ;
 class_main : CLASS id L_BRACE
               PUBLIC MAIN L_PAREN R_PAREN L_BRACE
-              stm R_BRACE                   { printf( "main: \n" ); onTokenParsed(); }
-            R_BRACE
+              stm R_BRACE
+            R_BRACE                         { printf( "main: \n" ); onTokenParsed(); }
         ;
 class_seq : class_seq class                 { printf( "class_seq: class ext \n" ); onTokenParsed(); }
         | class_seq class_ext               { printf( "class_seq: class_ext \n" ); onTokenParsed(); }
@@ -162,29 +199,68 @@ stm     : L_BRACE stm_seq R_BRACE           { printf( "stm: braces \n" ); onToke
         ;
 
 exp_seq : exp_seq COMMA exp                 { printf( "exp_seq: \n" ); onTokenParsed(); }
-        | exp                               { printf( "exp_seq_first: \n" ); onTokenParsed(); }
+        | exp                               { $$ = 0; printf( "exp_seq_first: \n" ); onTokenParsed(); }
         ;
-exp     : exp AND exp                       { printf( "exp: && \n" ); onTokenParsed(); }
-        | exp LESS exp                      { printf( "exp: < \n" ); onTokenParsed(); }
-        | exp PLUS exp                      { printf( "exp: + \n" ); onTokenParsed(); }
-        | exp MINUS exp                     { printf( "exp: - \n" ); onTokenParsed(); }
-        | exp MULT exp                      { printf( "exp: * \n" ); onTokenParsed(); }
-        | exp MOD exp                       { printf( "exp: % \n" ); onTokenParsed(); }
-        | exp OR exp                        { printf( "exp: || \n" ); onTokenParsed(); }
-        | exp L_SQUARE exp R_SQUARE         { printf( "exp: access_element \n" ); onTokenParsed(); }
-        | exp DOT LENGTH                    { printf( "exp: length \n" ); onTokenParsed(); }
-        | exp DOT id L_PAREN R_PAREN        { printf( "exp: call_method \n" ); onTokenParsed(); }
-        | exp DOT id L_PAREN exp_seq R_PAREN  { printf( "exp: call_method_arged \n" ); onTokenParsed(); }
-        | INTEGER_NUMBER                    { printf( "exp: int_value(%d)\n", yylval.intVal ); onTokenParsed(); }
-        | BOOLEAN_VALUE                     { printf( "exp: bool_value(%s) \n", yylval.intVal == 1 ? "true" : "false" ); onTokenParsed(); }
-        | id                                { printf( "exp: id(%s) \n", $1 ); onTokenParsed(); }
-        | THIS                              { printf( "exp: this \n" ); onTokenParsed(); }
-        | NEW INT L_SQUARE exp R_SQUARE     { printf( "exp: new int[] \n" ); onTokenParsed(); }
-        | NEW id L_PAREN R_PAREN            { printf( "exp: new id() \n" ); onTokenParsed(); }
-        | BANG exp                          { printf( "exp: ! \n" ); onTokenParsed(); }
-        | L_PAREN exp R_PAREN               { printf( "exp: () \n" ); onTokenParsed(); }
+exp     : exp AND exp                       {
+                                              $$ = new BinaryExpression(COORDS, BET_And, $1, $3);
+                                              printf( "exp: && \n" );
+                                              onTokenParsed();
+                                            }
+        | exp LESS exp                      {
+                                              $$ = new BinaryExpression(COORDS, BET_Less, $1, $3);
+                                              printf( "exp: < \n" );
+                                              onTokenParsed();
+                                            }
+        | exp PLUS exp                      {
+                                              $$ = new BinaryExpression(COORDS, BET_Plus, $1, $3);
+                                              printf( "exp: + \n" );
+                                              onTokenParsed();
+                                            }
+        | exp MINUS exp                     {
+                                              $$ = new BinaryExpression(COORDS, BET_Minus, $1, $3);
+                                              printf( "exp: - \n" );
+                                              onTokenParsed();
+                                            }
+        | exp MULT exp                      {
+                                              $$ = new BinaryExpression(COORDS, BET_Mult, $1, $3);
+                                              printf( "exp: * \n" );
+                                              onTokenParsed();
+                                            }
+        | exp MOD exp                       {
+                                              $$ = new BinaryExpression(COORDS, BET_Mod, $1, $3);
+                                              printf( "exp: % \n" );
+                                              onTokenParsed();
+                                            }
+        | exp OR exp                        {
+                                              $$ = new BinaryExpression(COORDS, BET_Or, $1, $3);
+                                              printf( "exp: || \n" );
+                                              onTokenParsed();
+                                            }
+        | exp L_SQUARE exp R_SQUARE         {
+                                              $$ = new ArrayMemberExpression(COORDS, $1, $3);
+                                              printf( "exp: access_element \n" );
+                                              onTokenParsed();
+                                            }
+        | exp DOT LENGTH                    { $$ = new ArrayLengthExpression(COORDS, $1); printf( "exp: length \n" ); onTokenParsed(); }
+        | exp DOT id L_PAREN R_PAREN        { $$ = new CallMemberExpression(COORDS, $1, $3, nullptr);
+                                              printf( "exp: call_method \n" );
+                                              onTokenParsed();
+                                            }
+        | exp DOT id L_PAREN exp_seq R_PAREN  {
+                                                  $$ = new CallMemberExpression(COORDS, $1, $3, $5);
+                                                  printf( "exp: call_method_arged \n" );
+                                                  onTokenParsed();
+                                              }
+        | INTEGER_NUMBER                    { $$ = new ValueExpression(COORDS, VT_Int, yylval.intVal); printf( "exp: int_value(%d)\n", yylval.intVal ); onTokenParsed(); }
+        | BOOLEAN_VALUE                     { $$ = new ValueExpression(COORDS, VT_Boolean, yylval.intVal == 1 ? 1 : 0); printf( "exp: bool_value(%s) \n", yylval.intVal == 1 ? "true" : "false" ); onTokenParsed(); }
+        | id                                { $$ = new IdExpression(COORDS, $1); printf( "exp: id(%s) \n", $1 ); onTokenParsed(); }
+        | THIS                              { $$ = new ThisExpression(COORDS); printf( "exp: this \n" ); onTokenParsed(); }
+        | NEW INT L_SQUARE exp R_SQUARE     { $$ = new NewIntArrayExpression(COORDS, $4); printf( "exp: new int[] \n" ); onTokenParsed(); }
+        | NEW id L_PAREN R_PAREN            { $$ = new NewObjectExpression(COORDS, $2); printf( "exp: new id() \n" ); onTokenParsed(); }
+        | BANG exp                          { $$ = new NotExpression(COORDS, $2); printf( "exp: ! \n" ); onTokenParsed(); }
+        | L_PAREN exp R_PAREN               { $$ = $2; printf( "exp: () \n" ); onTokenParsed(); }
         ;
-id      : ID                                { strcpy($$, $1); printf( "id: %s \n", yylval.stringVal ); onTokenParsed(); }
+id      : ID                                { $$ = new Id(COORDS, std::string(yylval.stringVal)); printf( "id: %s \n", yylval.stringVal ); onTokenParsed(); }
         ;
 %%
 

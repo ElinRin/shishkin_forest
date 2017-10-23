@@ -3,21 +3,24 @@
 #include "common.h"
 
 #include "Expression.h"
-#include "ExpressionSequence.h"
 
 struct CallMemberExpression : public IExpression{
     const IExpression* BaseExpression;
+    const Id* CalledMember;
     // Nullable
-    const ExpressionSequence* ArgumentSequence;
+    const Sequence<const IExpression>* ArgumentSequence;
 
-    CallMemberExpression(Coordinates& coords, const IExpression* baseExpression,
-                         const ExpressionSequence* sequence) :
+    CallMemberExpression(Coordinates coords, const IExpression* baseExpression,
+                         const Id* calledMember,
+                         const Sequence<const IExpression>* sequence) :
         coords(coords),
         BaseExpression(baseExpression),
+        CalledMember(calledMember),
         ArgumentSequence(sequence) { }
 
     ~CallMemberExpression() {
         delete BaseExpression;
+        delete CalledMember;
         delete ArgumentSequence;
     }
 

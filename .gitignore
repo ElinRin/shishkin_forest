@@ -3,6 +3,7 @@
 *.orig
 *.bak
 lex.yy.c
+lex.yy.cc
 tokens.h
 parser.c
 parser.cpp

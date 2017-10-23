@@ -1,6 +1,7 @@
 %{
   #include <stdlib.h>
 
+  #include "SyntaxTree/TreeTypes.h"
   #include "tokens.h"
 
   #define NICE_FORMATTING 0
@@ -8,7 +9,7 @@
 
   #define NF_RED  "\x1B[31m"
   #define NF_RESET "\x1B[0m"
-  #define YY_USER_ACTION upgradePosition();
+  #define YY_USER_ACTION upgradePosition(yytext);
 
   int lineNumber = 1;
   int columnNumber = 1;
@@ -23,7 +24,7 @@
     yylloc.last_column = columnNumber;
   }
 
-  void upgradePosition() {
+  void upgradePosition(const char* yytext) {
     if( *yytext == '\n' ) {
       lineNumber += 1;
       columnNumber = 1;
@@ -35,16 +36,18 @@
     setEndPosition();
   }
 
-  void showPosition() {
+  void showPosition(const char* yytext) {
     printf( "%d,%d ", lineNumber, columnNumber - strlen(yytext) );
   }
 
-  void onProcessed() {
+  void onProcessed(const char* yytext) {
     if( NICE_COORDINATES ) {
-        showPosition();
+        showPosition(yytext);
     }
   }
 %}
+
+%option c++
 
 SPACE                           [ \t\n]+
 LETTER                          [A-Za-z_]
@@ -103,60 +106,60 @@ BOOLEAN_VALUE                   {TRUE}|{FALSE}
 
 
 %%
-{CLASS}                         {  onProcessed(); return CLASS; }
-{INT}                           {  onProcessed(); return INT; }
-{BOOLEAN}                       {  onProcessed(); return BOOLEAN; }
+{CLASS}                         {  onProcessed(yytext); return CLASS; }
+{INT}                           {  onProcessed(yytext); return INT; }
+{BOOLEAN}                       {  onProcessed(yytext); return BOOLEAN; }
 
 {BOOLEAN_VALUE}                 {
                                    yylval.intVal = strcmp("true", yytext) == 0 ? 1 : 0;
-                                   onProcessed();
+                                   onProcessed(yytext);
                                    return BOOLEAN_VALUE;
                                 }
 
-{THIS}                          {  onProcessed(); return THIS; }
-{NEW}                           {  onProcessed(); return NEW; }
-{PUBLIC}                        {  onProcessed(); return PUBLIC; }
-{PRIVATE}                       {  onProcessed(); return PRIVATE; }
-{EXTENDS}                       {  onProcessed(); return EXTENDS; }
-{RETURN}                        {  onProcessed(); return RETURN; }
+{THIS}                          {  onProcessed(yytext); return THIS; }
+{NEW}                           {  onProcessed(yytext); return NEW; }
+{PUBLIC}                        {  onProcessed(yytext); return PUBLIC; }
+{PRIVATE}                       {  onProcessed(yytext); return PRIVATE; }
+{EXTENDS}                       {  onProcessed(yytext); return EXTENDS; }
+{RETURN}                        {  onProcessed(yytext); return RETURN; }
 
-{SEMI}                          {  onProcessed(); return SEMI; }
-{DOT}                           {  onProcessed(); return DOT; }
-{COMMA}                         {  onProcessed(); return COMMA; }
-{ASSIGN}                        {  onProcessed(); return ASSIGN; }
+{SEMI}                          {  onProcessed(yytext); return SEMI; }
+{DOT}                           {  onProcessed(yytext); return DOT; }
+{COMMA}                         {  onProcessed(yytext); return COMMA; }
+{ASSIGN}                        {  onProcessed(yytext); return ASSIGN; }
 
-{L_PAREN}                       {  onProcessed(); return L_PAREN; }
-{R_PAREN}                       {  onProcessed(); return R_PAREN; }
-{L_SQUARE}                      {  onProcessed(); return L_SQUARE; }
-{R_SQUARE}                      {  onProcessed(); return R_SQUARE; }
-{L_BRACE}                       {  onProcessed(); return L_BRACE; }
-{R_BRACE}                       {  onProcessed(); return R_BRACE; }
+{L_PAREN}                       {  onProcessed(yytext); return L_PAREN; }
+{R_PAREN}                       {  onProcessed(yytext); return R_PAREN; }
+{L_SQUARE}                      {  onProcessed(yytext); return L_SQUARE; }
+{R_SQUARE}                      {  onProcessed(yytext); return R_SQUARE; }
+{L_BRACE}                       {  onProcessed(yytext); return L_BRACE; }
+{R_BRACE}                       {  onProcessed(yytext); return R_BRACE; }
 
-{IF}                            {  onProcessed(); return IF; }
-{ELSE}                          {  onProcessed(); return ELSE; }
-{WHILE}                         {  onProcessed(); return WHILE; }
+{IF}                            {  onProcessed(yytext); return IF; }
+{ELSE}                          {  onProcessed(yytext); return ELSE; }
+{WHILE}                         {  onProcessed(yytext); return WHILE; }
 
-{AND}                           {  onProcessed(); return AND; }
-{LESS}                          {  onProcessed(); return LESS; }
-{PLUS}                          {  onProcessed(); return PLUS; }
-{MINUS}                         {  onProcessed(); return MINUS; }
-{MULT}                          {  onProcessed(); return MULT; }
-{MOD}                           {  onProcessed(); return MOD; }
-{OR}                            {  onProcessed(); return OR; }
-{BANG}                          {  onProcessed(); return BANG; }
+{AND}                           {  onProcessed(yytext); return AND; }
+{LESS}                          {  onProcessed(yytext); return LESS; }
+{PLUS}                          {  onProcessed(yytext); return PLUS; }
+{MINUS}                         {  onProcessed(yytext); return MINUS; }
+{MULT}                          {  onProcessed(yytext); return MULT; }
+{MOD}                           {  onProcessed(yytext); return MOD; }
+{OR}                            {  onProcessed(yytext); return OR; }
+{BANG}                          {  onProcessed(yytext); return BANG; }
 
-{LENGTH}                        {  onProcessed(); return LENGTH; }
-{PRINT_LINE}                    {  onProcessed(); return PRINT_LINE; }
-{MAIN}                          {  onProcessed(); return MAIN; }
+{LENGTH}                        {  onProcessed(yytext); return LENGTH; }
+{PRINT_LINE}                    {  onProcessed(yytext); return PRINT_LINE; }
+{MAIN}                          {  onProcessed(yytext); return MAIN; }
 
 {ID}                            {
                                     yylval.stringVal = yytext;
-                                    onProcessed();
+                                    onProcessed(yytext);
                                     return ID;
                                 }
 {INTEGER_NUMBER}                {
                                     yylval.intVal = atoi(yytext);
-                                    onProcessed();
+                                    onProcessed(yytext);
                                     return INTEGER_NUMBER;
                                 }
 
@@ -174,3 +177,21 @@ BOOLEAN_VALUE                   {TRUE}|{FALSE}
                                 }
 
 .	return ERROR;
+
+%%
+
+
+extern "C" {
+  int yywrap();
+}
+
+int yyFlexLexer::yywrap() {
+  return ::yywrap();
+}
+
+yyFlexLexer lexer;
+
+extern "C" int yylex()
+{
+    return lexer.yylex();
+}

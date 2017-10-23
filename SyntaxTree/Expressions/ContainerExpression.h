@@ -8,7 +8,7 @@ struct ContainerExpression : public IExpression
 {
     const IExpression* Expression;
 
-    ContainerExpression(Coordinates& coords, const IExpression* expression) :
+    ContainerExpression(Coordinates coords, const IExpression* expression) :
         coords(coords),
         Expression(expression)
     {

@@ -9,7 +9,7 @@ struct ArrayMemberExpression : public IExpression
     const IExpression* BaseExpression;
     const IExpression* ElementNumberExpression;
 
-    ArrayMemberExpression(Coordinates& coords,
+    ArrayMemberExpression(Coordinates coords,
                           const IExpression* baseExpression,
                           const IExpression* elementNumberExpression) :
         coords(coords),

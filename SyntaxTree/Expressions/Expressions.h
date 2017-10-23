@@ -5,7 +5,6 @@
 #include "ArrayMemberExpression.h"
 #include "ArrayLengthExpression.h"
 #include "CallMemberExpression.h"
-#include "ExpressionSequence.h"
 #include "ValueExpression.h"
 #include "IdExpression.h"
 #include "ThisExpression.h"

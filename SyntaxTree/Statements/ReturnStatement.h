@@ -2,13 +2,13 @@
 #define RETURNSTATEMENT_H
 #include "common.h"
 
-#include "Expression.h"
+#include "Expressions/Expression.h"
 
 struct ReturnStatement : public ITreeNode
 {
     const IExpression* Expression;
 
-    ReturnStatement(Coordinates& coords,
+    ReturnStatement(Coordinates coords,
                     const IExpression* expression) :
         coords(coords),
         Expression(expression)

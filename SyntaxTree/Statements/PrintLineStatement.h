@@ -7,7 +7,7 @@
 struct PrintLineStatement : public IStatement {
     const IExpression* ExpressionToPrint;
 
-    PrintLineStatement(Coorsinates& coords,
+    PrintLineStatement(Coordinates coords,
                        const IExpression* expressionToPrint) :
         coords(coords),
         ExpressionToPrint(expressionToPrint)
