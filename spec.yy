@@ -199,7 +199,7 @@ stm     : L_BRACE stm_seq R_BRACE           { printf( "stm: braces \n" ); onToke
         ;
 
 exp_seq : exp_seq COMMA exp                 { printf( "exp_seq: \n" ); onTokenParsed(); }
-        | exp                               { $$ = 0; printf( "exp_seq_first: \n" ); onTokenParsed(); }
+        | exp                               { $$ = new Sequence<const IExpression>(COORDS, $1); printf( "exp_seq_first: \n" ); onTokenParsed(); }
         ;
 exp     : exp AND exp                       {
                                               $$ = new BinaryExpression(COORDS, BET_And, $1, $3);

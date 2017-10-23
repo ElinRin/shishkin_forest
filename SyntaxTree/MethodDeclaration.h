@@ -16,16 +16,16 @@ struct MethodDeclaration : public ITreeNode
     const ReturnStatement* StatementToReturn;
 
     //Nullable
-    const Sequence<VarDeclaration>* Arguments;
-    const Sequence<IStatement>* Statements;
+    const Sequence<const VarDeclaration>* Arguments;
+    const Sequence<const IStatement>* Statements;
 
     MethodDeclaration(Coordinates coords,
                       const Qualifier* qualifier,
                       const Type* returnType,
                       const Id* methodName,
                       const ReturnStatement* returnStatement,
-                      const Sequence<VarDeclaration>* argumentSequence,
-                      const Sequence<IStatement>* statements) :
+                      const Sequence<const VarDeclaration>* argumentSequence,
+                      const Sequence<const IStatement>* statements) :
         coords(coords),
         QualifierType(qualifier),
         ReturnType(returnType),

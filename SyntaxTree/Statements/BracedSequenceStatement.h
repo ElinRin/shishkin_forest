@@ -6,9 +6,10 @@
 
 struct BraceSequenceStatement : public IStatement
 {
-    const Sequence<IStatement>* BracedSequence;
+    const Sequence<const IStatement>* BracedSequence;
 
-    BraceSequenceStatement(Coordinates coords, const Sequence<IStatement>* sequence) :
+    BraceSequenceStatement(Coordinates coords,
+                           const Sequence<const IStatement>* sequence) :
         coords(coords),
         BracedSequence(sequence)
     {}

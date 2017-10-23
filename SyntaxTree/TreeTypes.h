@@ -5,4 +5,7 @@
 
 #include "Visitor.h"
 
+template <typename T>
+VISIT_NODE(Sequence<T>)
+
 #endif // TREETYPES_H

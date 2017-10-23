@@ -3,10 +3,6 @@
 
 #include "Visitor.h"
 
-#define VISIT_NODE(NODE_TYPE) void NODE_TYPE::AcceptVisitor(IVisitor *visitor) const {\
-    visitor->Visit(this); \
-}
-
 VISIT_NODE(Program)
 VISIT_NODE(MainClass)
 VISIT_NODE(ClassDeclaration)
@@ -34,9 +30,6 @@ VISIT_NODE(NewObjectExpression)
 VISIT_NODE(NotExpression)
 VISIT_NODE(ContainerExpression)
 VISIT_NODE(Id)
-
-template <typename T>
-VISIT_NODE(Sequence<T>)
 
 
 #endif // ACCEPTVISITOR_CPP
