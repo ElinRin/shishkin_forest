@@ -16,7 +16,7 @@ struct Type : public ITreeNode
     const T_Type TypeEnum;
     const Id* TypeName;
 
-    Type(Coordinates* coords,
+    Type(Coordinates coords,
          const T_Type typeEnum,
          const Id* name = nullptr) :
         coords(coords),

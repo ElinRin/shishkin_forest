@@ -9,15 +9,15 @@
 template< typename T>
 struct Sequence : public ITreeNode
 {
-    std::list<const T*> Sequence;
-    Sequence(Coordinates& coords) :
+    std::list<const T*> SequenceList;
+    Sequence(Coordinates coords) :
         coords(coords)
     {}
 
-    Sequence(Coordinates& coords,
+    Sequence(Coordinates coords,
                      const T* appendix) :
         coords(coords),
-        Sequence(1, appendix)
+        SequenceList(1, appendix)
     {
     }
 
@@ -25,13 +25,13 @@ struct Sequence : public ITreeNode
                      Sequence<T>&& sequence,
                      const T* appendix):
         coords(coords),
-        Sequence(std::move(sequence.Sequence))
+        SequenceList(std::move(sequence.SequenceList))
     {
-        Sequence.emplace_back(appendix);
+        SequenceList.emplace_back(appendix);
     }
 
     ~Sequence() {
-        for(auto element : Sequence) {
+        for(auto element : SequenceList) {
             delete element;
         }
     }

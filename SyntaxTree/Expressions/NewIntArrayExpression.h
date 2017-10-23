@@ -8,7 +8,7 @@ struct NewIntArrayExpression : public IExpression
 {
     const IExpression* NumberOfElements;
 
-    NewIntArrayExpression(Coordinates& coords, const IExpression* numberOfElements):
+    NewIntArrayExpression(Coordinates coords, const IExpression* numberOfElements):
         coords(coords),
         NumberOfElements(numberOfElements){}
     ~NewIntArrayExpression() { delete NumberOfElements; }

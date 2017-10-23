@@ -6,13 +6,13 @@
 #include "Visitor.h"
 
 enum BinaryExpressionType {
-    BET_AND,
-    BET_LESS,
-    BET_PLUS,
-    BET_MINUS,
-    BET_MULT,
-    BET_MOD,
-    BET_OR
+    BET_And,
+    BET_Less,
+    BET_Plus,
+    BET_Minus,
+    BET_Mult,
+    BET_Mod,
+    BET_Or
 };
 
 struct BinaryExpression : public IExpression
@@ -21,7 +21,7 @@ struct BinaryExpression : public IExpression
     const IExpression* Left;
     const IExpression* Right;
 
-    BinaryExpression(Coordinates& coords,
+    BinaryExpression(Coordinates coords,
                      const BinaryExpressionType type,
                      const IExpression* left,
                      const IExpression* right) :

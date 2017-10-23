@@ -9,7 +9,7 @@ struct NewObjectExpression : public IExpression
 {
     const Id* ObjectId;
 
-    NewObjectExpression(Coordinates& coords, const Id* objectId) :
+    NewObjectExpression(Coordinates coords, const Id* objectId) :
         coords(coords),
         ObjectId(objectId) {}
     ~NewObjectExpression() { delete ObjectId; }

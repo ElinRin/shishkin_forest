@@ -4,7 +4,7 @@
 
 #include "Statement.h"
 
-struct IfElsestatement : public IStatement {
+struct IfElseStatement : public IStatement {
     const IExpression* Condition;
     const IStatement* IfStatement;
     const IStatement* ElseStatement;

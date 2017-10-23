@@ -10,7 +10,7 @@ struct AssignArrayElementStatement : public IStatement
     const IExpression* ElementNumberExpression;
     const IExpression* ExpressionToAssign;
 
-    AssignArrayElementStatement(Coordinates& coords,
+    AssignArrayElementStatement(Coordinates coords,
                        const Id* identifier,
                        const IExpression* elementNumberExpression,
                        const IExpression* expressionToAssign) :

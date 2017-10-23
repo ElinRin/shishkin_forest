@@ -8,7 +8,7 @@
 struct IdExpression : public IExpression {
     const Id* ExpressionId;
 
-    IdExpression(Coordinates& coords, const Id* id) :
+    IdExpression(Coordinates coords, const Id* id) :
         coords(coords),
         ExpressionId(id) { }
     ~IdExpression() { delete ExpressionId; }
