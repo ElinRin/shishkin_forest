@@ -13,7 +13,8 @@ struct ValueExpression : public IExpression {
     const VALUE_TYPE ValueType;
     const int Value;
 
-    ValueExpression(VALUE_TYPE type, int value) :
+    ValueExpression(Coordinates coords, VALUE_TYPE type, int value) :
+        coords(coords),
         ValueType(type),
         Value(value) { }
 

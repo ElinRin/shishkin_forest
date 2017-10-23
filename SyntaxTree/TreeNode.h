@@ -9,9 +9,22 @@
 
 interface IVisitor;
 
-#define ACCEPT_VISITOR virtual void AcceptVisitor(IVisitor *visitor) const override;
+#define ACCEPT_VISITOR virtual void AcceptVisitor(IVisitor *visitor) const override; \
+    virtual const Coordinates& Coords() const { return coords; } \
+    private: Coordinates coords; public:
+
+struct Coordinates
+{
+    int Row;
+    int Column;
+    Coordinates(int row, int column) :
+        Row(row),
+        Column(column)
+    {}
+};
 
 interface ITreeNode {
+    virtual const Coordinates& Coords() const = 0;
     virtual ~ITreeNode();
     virtual void AcceptVisitor(IVisitor* visitor) const = 0;
 };

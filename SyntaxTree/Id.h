@@ -10,7 +10,8 @@ struct Id : public ITreeNode {
 
     const std::string Name;
 
-    Id(const std::string& name) :
+    Id(Coordinates coords, const std::string& name) :
+        coords(coords),
         Name(name) {}
 
     ACCEPT_VISITOR

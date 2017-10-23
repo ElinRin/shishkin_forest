@@ -7,7 +7,9 @@
 struct ArrayLengthExpression : public IExpression {
     const IExpression* ArrayExpression;
 
-    ArrayLengthExpression(const IExpression* arrayExpression) :
+    ArrayLengthExpression(Coordinates& coords,
+                          const IExpression* arrayExpression) :
+        coords(coords),
         ArrayExpression(arrayExpression) {}
 
     ~ArrayLengthExpression() { delete ArrayExpression; }

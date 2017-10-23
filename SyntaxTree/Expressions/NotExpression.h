@@ -8,7 +8,8 @@ struct NotExpression : public IExpression
 {
     const IExpression* Expression;
 
-    NotExpression(const IExpression* expression) :
+    NotExpression(Coordinates& coords, const IExpression* expression) :
+        coords(coords),
         Expression(expression)  {}
     ~NotExpression() { delete Expression; }
 
