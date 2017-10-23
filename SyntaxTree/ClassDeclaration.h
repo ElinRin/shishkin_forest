@@ -12,13 +12,13 @@ struct ClassDeclaration : public ITreeNode
 
     //Nullable
     const Id* SuperName;
-    const Sequence<VarDeclaration>* VarDeclarations;
-    const Sequence<MethodDeclaration>* MethodDeclarations;
+    const Sequence<const VarDeclaration>* VarDeclarations;
+    const Sequence<const MethodDeclaration>* MethodDeclarations;
 
     ClassDeclaration(Coordinates coords, const Id* className,
                      const Id* superName,
-                     const Sequence<VarDeclaration>* varDeclarations,
-                     const Sequence<MethodDeclaration>* methodDeclarations) :
+                     const Sequence<const VarDeclaration>* varDeclarations,
+                     const Sequence<const MethodDeclaration>* methodDeclarations) :
         coords(coords),
         ClassName(className),
         SuperName(superName),

@@ -6,15 +6,19 @@
 
 #define VISITOR(TREE_INTERFACE) virtual void Visit(const TREE_INTERFACE* node) = 0;
 
+#define VISIT_NODE(NODE_TYPE) void NODE_TYPE::AcceptVisitor(IVisitor* visitor) const {\
+    visitor->Visit(this); \
+}
+
 interface IVisitor{
     VISITOR(Program)
     VISITOR(MainClass)
     VISITOR(ClassDeclaration)
     VISITOR(VarDeclaration)
     VISITOR(MethodDeclaration)
-    VISITOR(Sequence<ClassDeclaration>)
-    VISITOR(Sequence<VarDeclaration>)
-    VISITOR(Sequence<MethodDeclaration>)
+    VISITOR(Sequence<const ClassDeclaration>)
+    VISITOR(Sequence<const VarDeclaration>)
+    VISITOR(Sequence<const MethodDeclaration>)
     VISITOR(Type)
 
     VISITOR(ReturnStatement)
@@ -24,13 +28,13 @@ interface IVisitor{
     VISITOR(WhileStatement)
     VISITOR(BraceSequenceStatement)
     VISITOR(IfElseStatement)
-    VISITOR(Sequence<IStatement>)
+    VISITOR(Sequence<const IStatement>)
 
     VISITOR(BinaryExpression)
     VISITOR(ArrayMemberExpression)
     VISITOR(ArrayLengthExpression)
     VISITOR(CallMemberExpression)
-    VISITOR(Sequence<IExpression>)
+    VISITOR(Sequence<const IExpression>)
     VISITOR(ValueExpression)
     VISITOR(IdExpression)
     VISITOR(ThisExpression)

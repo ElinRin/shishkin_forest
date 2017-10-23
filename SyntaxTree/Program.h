@@ -8,10 +8,10 @@
 struct Program : public ITreeNode
 {
     const MainClass* Main;
-    const Sequence<ClassDeclaration>* Classes;
+    const Sequence<const ClassDeclaration>* Classes;
 
     Program(Coordinates coords, const MainClass* main,
-            const Sequence<ClassDeclaration>* classes) :
+            const Sequence<const ClassDeclaration>* classes) :
         coords(coords),
         Main(main),
         Classes(classes)
