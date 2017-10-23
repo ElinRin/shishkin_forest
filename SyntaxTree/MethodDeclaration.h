@@ -45,6 +45,9 @@ struct MethodDeclaration : public ITreeNode
         if(Arguments != nullptr) {
             delete Arguments;
         }
+        if(VarDeclarations != nullptr) {
+            delete VarDeclarations;
+        }
         if(Statements != nullptr) {
             delete Statements;
         }

@@ -14,6 +14,10 @@ struct ReturnStatement : public ITreeNode
         Expression(expression)
     {}
 
+    ~ReturnStatement() {
+        delete Expression;
+    }
+
     ACCEPT_VISITOR
 };
 

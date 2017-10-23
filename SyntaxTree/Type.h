@@ -24,6 +24,12 @@ struct Type : public ITreeNode
         TypeName(name)
     {}
 
+    ~Type() {
+        if(TypeName != nullptr) {
+            delete TypeName;
+        }
+    }
+
     ACCEPT_VISITOR
 };
 
