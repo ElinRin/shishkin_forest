@@ -198,7 +198,7 @@ stm     : L_BRACE stm_seq R_BRACE           { printf( "stm: braces \n" ); onToke
         | id L_SQUARE exp R_SQUARE ASSIGN exp SEMI  { printf( "stm: assign_element \n" ); onTokenParsed(); }
         ;
 
-exp_seq : exp_seq COMMA exp                 { printf( "exp_seq: \n" ); onTokenParsed(); }
+exp_seq : exp_seq COMMA exp                 { $$ = new Sequence<const IExpression>(COORDS, $1, $3); printf( "exp_seq: \n" ); onTokenParsed(); }
         | exp                               { $$ = new Sequence<const IExpression>(COORDS, $1); printf( "exp_seq_first: \n" ); onTokenParsed(); }
         ;
 exp     : exp AND exp                       {

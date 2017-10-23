@@ -21,11 +21,11 @@ struct Sequence : public ITreeNode
     {
     }
 
-    Sequence(Coordinates &coords,
-                     Sequence<T>&& sequence,
+    Sequence(Coordinates coords,
+                     Sequence<T>* sequence,
                      const T* appendix):
         coords(coords),
-        SequenceList(std::move(sequence.SequenceList))
+        SequenceList(std::move(std::unique_ptr<Sequence<T>>(sequence)->SequenceList)) // FML
     {
         SequenceList.emplace_back(appendix);
     }
