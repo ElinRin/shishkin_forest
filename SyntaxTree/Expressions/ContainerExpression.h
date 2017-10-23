@@ -8,8 +8,12 @@ struct ContainerExpression : public IExpression
 {
     const IExpression* Expression;
 
-    ContainerExpression(const IExpression* expression) :
-    Expression(expression) {}
+    ContainerExpression(Coordinates& coords, const IExpression* expression) :
+        coords(coords),
+        Expression(expression)
+    {
+
+    }
 
     ACCEPT_VISITOR
 };

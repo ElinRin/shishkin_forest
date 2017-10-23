@@ -10,8 +10,9 @@ struct CallMemberExpression : public IExpression{
     // Nullable
     const ExpressionSequence* ArgumentSequence;
 
-    CallMemberExpression(const IExpression* baseExpression,
+    CallMemberExpression(Coordinates& coords, const IExpression* baseExpression,
                          const ExpressionSequence* sequence) :
+        coords(coords),
         BaseExpression(baseExpression),
         ArgumentSequence(sequence) { }
 

@@ -21,12 +21,14 @@ struct BinaryExpression : public IExpression
     const IExpression* Left;
     const IExpression* Right;
 
-    BinaryExpression(const BinaryExpressionType type,
+    BinaryExpression(Coordinates& coords,
+                     const BinaryExpressionType type,
                      const IExpression* left,
                      const IExpression* right) :
-                        Type(type),
-                        Left(left),
-                        Right(right) {}
+        coords(coords),
+        Type(type),
+        Left(left),
+        Right(right) {}
 
     ~BinaryExpression() {
         delete Left;

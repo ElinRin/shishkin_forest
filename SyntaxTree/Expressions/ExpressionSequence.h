@@ -9,12 +9,15 @@
 struct ExpressionSequence : public ITreeNode {
     std::list<IExpression*> Sequence;
 
-    ExpressionSequence(IExpression* expression) {
+    ExpressionSequence(Coordinates& coords, IExpression* expression) :
+        coords(coords),
+        Sequence(1, expression)
+    {
         assert(expression);
-        Sequence.assign(1, expression);
     }
-    ExpressionSequence(const ExpressionSequence&& sequence,
+    ExpressionSequence(Coordinates& coords, const ExpressionSequence&& sequence,
                        IExpression* expression) :
+        coords(coords),
         Sequence(std::move(sequence.Sequence))
     {
         assert(expression);
