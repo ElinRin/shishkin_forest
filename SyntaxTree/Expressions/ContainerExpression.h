@@ -6,7 +6,7 @@
 
 struct ContainerExpression : public IExpression
 {
-    const IExpression* Expression;
+    std::unique_ptr<const IExpression> Expression;
 
     ContainerExpression(Coordinates coords, const IExpression* expression) :
         coords(coords),
@@ -14,8 +14,6 @@ struct ContainerExpression : public IExpression
     {
 
     }
-
-    ~ContainerExpression() { delete Expression; }
 
     ACCEPT_VISITOR
 };

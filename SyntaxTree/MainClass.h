@@ -7,8 +7,8 @@
 
 struct MainClass : public ITreeNode
 {
-    const Id* ClassName;
-    const IStatement* MainStatement;
+    std::unique_ptr<const Id> ClassName;
+    std::unique_ptr<const IStatement> MainStatement;
 
     MainClass(Coordinates coords, const Id* className,
                 const IStatement* mainStatement) :
@@ -16,11 +16,6 @@ struct MainClass : public ITreeNode
         ClassName(className),
         MainStatement(mainStatement)
     {}
-
-    ~MainClass() {
-        delete ClassName;
-        delete MainStatement;
-    }
 
     ACCEPT_VISITOR
 };

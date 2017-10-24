@@ -6,8 +6,8 @@
 
 struct WhileStatement : public IStatement
 {
-    const IExpression* Condition;
-    const IStatement* Body;
+    std::unique_ptr<const IExpression> Condition;
+    std::unique_ptr<const IStatement> Body;
 
     WhileStatement(const Coordinates& coords,
                    const IExpression* condition,
@@ -16,11 +16,6 @@ struct WhileStatement : public IStatement
         Condition(condition),
         Body(statement)
     {}
-
-    ~WhileStatement() {
-        delete Condition;
-        delete Body;
-    }
 
     ACCEPT_VISITOR
 };

@@ -7,8 +7,8 @@
 
 struct Program : public ITreeNode
 {
-    const MainClass* Main;
-    const Sequence<const ClassDeclaration>* Classes;
+    std::unique_ptr<const MainClass> Main;
+    std::unique_ptr<const Sequence<const ClassDeclaration>> Classes;
 
     Program(Coordinates coords, const MainClass* main,
             const Sequence<const ClassDeclaration>* classes) :
@@ -16,11 +16,6 @@ struct Program : public ITreeNode
         Main(main),
         Classes(classes)
     {}
-
-    ~Program() {
-        delete Main;
-        delete Classes;
-    }
 
     ACCEPT_VISITOR
 };

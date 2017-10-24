@@ -6,12 +6,11 @@
 
 struct NotExpression : public IExpression
 {
-    const IExpression* Expression;
+    std::unique_ptr<const IExpression> Expression;
 
     NotExpression(Coordinates coords, const IExpression* expression) :
         coords(coords),
         Expression(expression)  {}
-    ~NotExpression() { delete Expression; }
 
     ACCEPT_VISITOR
 };

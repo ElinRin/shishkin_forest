@@ -52,15 +52,15 @@ void PrintVisitor::Visit(const ClassDeclaration *node)
     parentName = name;
     node->ClassName->AcceptVisitor(this);
 
-    if(node->SuperName) {
+    if(node->SuperName.get()) {
         parentName = name;
         node->SuperName->AcceptVisitor(this);
     }
-    if(node->VarDeclarations) {
+    if(node->VarDeclarations.get()) {
         parentName = name;
         node->VarDeclarations->AcceptVisitor(this);
     }
-    if(node->MethodDeclarations) {
+    if(node->MethodDeclarations.get()) {
         parentName = name;
         node->MethodDeclarations->AcceptVisitor(this);
     }
@@ -90,15 +90,15 @@ void PrintVisitor::Visit(const MethodDeclaration *node)
     node->ReturnType->AcceptVisitor(this);
     parentName = name;
     node->MethodName->AcceptVisitor(this);
-    if(node->Arguments) {
+    if(node->Arguments.get()) {
         parentName = name;
         node->Arguments->AcceptVisitor(this);
     }
-    if(node->VarDeclarations) {
+    if(node->VarDeclarations.get()) {
         parentName = name;
         node->VarDeclarations->AcceptVisitor(this);
     }
-    if(node->Statements) {
+    if(node->Statements.get()) {
         parentName = name;
         node->Statements->AcceptVisitor(this);
     }
@@ -286,7 +286,7 @@ void PrintVisitor::Visit(const CallMemberExpression *node)
     node->BaseExpression->AcceptVisitor(this);
     parentName = name;
     node->CalledMember->AcceptVisitor(this);
-    if(node->ArgumentSequence) {
+    if(node->ArgumentSequence.get()) {
         parentName = name;
         node->ArgumentSequence->AcceptVisitor(this);
     }

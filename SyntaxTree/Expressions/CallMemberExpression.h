@@ -5,10 +5,10 @@
 #include "Expression.h"
 
 struct CallMemberExpression : public IExpression{
-    const IExpression* BaseExpression;
-    const Id* CalledMember;
+    std::unique_ptr<const IExpression> BaseExpression;
+    std::unique_ptr<const Id> CalledMember;
     // Nullable
-    const Sequence<const IExpression>* ArgumentSequence;
+    std::unique_ptr<const Sequence<const IExpression>> ArgumentSequence;
 
     CallMemberExpression(Coordinates coords, const IExpression* baseExpression,
                          const Id* calledMember,
@@ -17,12 +17,6 @@ struct CallMemberExpression : public IExpression{
         BaseExpression(baseExpression),
         CalledMember(calledMember),
         ArgumentSequence(sequence) { }
-
-    ~CallMemberExpression() {
-        delete BaseExpression;
-        delete CalledMember;
-        delete ArgumentSequence;
-    }
 
     ACCEPT_VISITOR
 };

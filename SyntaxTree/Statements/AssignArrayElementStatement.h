@@ -6,9 +6,9 @@
 
 struct AssignArrayElementStatement : public IStatement
 {
-    const Id* Identifier;
-    const IExpression* ElementNumberExpression;
-    const IExpression* ExpressionToAssign;
+    std::unique_ptr<const Id> Identifier;
+    std::unique_ptr<const IExpression> ElementNumberExpression;
+    std::unique_ptr<const IExpression> ExpressionToAssign;
 
     AssignArrayElementStatement(Coordinates coords,
                        const Id* identifier,
@@ -19,12 +19,6 @@ struct AssignArrayElementStatement : public IStatement
       ElementNumberExpression(elementNumberExpression),
       ExpressionToAssign(expressionToAssign)
     {}
-
-    ~AssignArrayElementStatement() {
-        delete Identifier;
-        delete ElementNumberExpression;
-        delete ExpressionToAssign;
-    }
 
     ACCEPT_VISITOR
 };

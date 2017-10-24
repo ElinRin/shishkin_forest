@@ -8,12 +8,12 @@
 
 struct ClassDeclaration : public ITreeNode
 {
-    const Id* ClassName;
+    std::unique_ptr<const Id> ClassName;
 
     //Nullable
-    const Id* SuperName;
-    const Sequence<const VarDeclaration>* VarDeclarations;
-    const Sequence<const MethodDeclaration>* MethodDeclarations;
+    std::unique_ptr<const Id> SuperName;
+    std::unique_ptr<const Sequence<const VarDeclaration>> VarDeclarations;
+    std::unique_ptr<const Sequence<const MethodDeclaration>> MethodDeclarations;
 
     ClassDeclaration(Coordinates coords, const Id* className,
                      const Id* superName,
@@ -25,19 +25,6 @@ struct ClassDeclaration : public ITreeNode
         VarDeclarations(varDeclarations),
         MethodDeclarations(methodDeclarations)
     {}
-
-    ~ClassDeclaration() {
-        delete ClassName;
-        if(SuperName != nullptr) {
-            delete SuperName;
-        }
-        if(VarDeclarations!= nullptr) {
-            delete VarDeclarations;
-        }
-        if(MethodDeclarations != nullptr) {
-            delete MethodDeclarations;
-        }
-    }
 
     ACCEPT_VISITOR
 };

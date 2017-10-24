@@ -19,8 +19,6 @@ struct ValueExpression : public IExpression {
         ValueType(type),
         Value(value) { }
 
-    ~ValueExpression() {}
-
     ACCEPT_VISITOR
 };
 #endif // VALUEEXPRESSION_H
