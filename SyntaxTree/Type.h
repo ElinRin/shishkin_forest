@@ -14,6 +14,7 @@ enum T_Type {
 struct Type : public ITreeNode
 {
     const T_Type TypeEnum;
+    // Nullable
     const Id* TypeName;
 
     Type(Coordinates coords,

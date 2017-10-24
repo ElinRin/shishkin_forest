@@ -8,6 +8,7 @@ VISIT_NODE(MainClass)
 VISIT_NODE(ClassDeclaration)
 VISIT_NODE(VarDeclaration)
 VISIT_NODE(MethodDeclaration)
+VISIT_NODE(Qualifier)
 VISIT_NODE(Type)
 
 VISIT_NODE(ReturnStatement)
