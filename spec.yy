@@ -24,7 +24,7 @@
     }
   }
 
-  Program* program = nullptr;
+  std::unique_ptr<Program> program;
 %}
 
 %union {
@@ -128,7 +128,7 @@
 
 %%
 
-program : class_main class_seq END          { $$ = new Program(COORDS, $1, $2); onTokenParsed(); program = $$; }
+program : class_main class_seq END          { $$ = new Program(COORDS, $1, $2); onTokenParsed(); program = std::move(std::unique_ptr<Program>($$)); }
         | class_main END                    { $$ = new Program(COORDS, $1, nullptr); onTokenParsed(); }
         ;
 class_main : CLASS id L_BRACE
@@ -280,6 +280,5 @@ int yyerror(char* s) {
 int main(void) {
   yyparse();
   PrintVisitor printer("tree.dot");
-  printer.CreateGraph(program);
-  delete program;
+  printer.CreateGraph(program.get());
 }

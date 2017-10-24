@@ -111,7 +111,7 @@ void PrintVisitor::Visit(const Sequence<const ClassDeclaration> *node)
     std::string name = addNode(" Classes[] "
                                " | " + format(node->Coords()));
     addArrow(name);
-    for(auto child : node->SequenceList) {
+    for(auto const& child : node->SequenceList) {
         parentName = name;
         child->AcceptVisitor(this);
     }
@@ -122,7 +122,7 @@ void PrintVisitor::Visit(const Sequence<const VarDeclaration> *node)
     std::string name = addNode(" Vars[] "
                                " | " + format(node->Coords()));
     addArrow(name);
-    for(auto child : node->SequenceList) {
+    for(auto const& child : node->SequenceList) {
         parentName = name;
         child->AcceptVisitor(this);
     }
@@ -133,7 +133,7 @@ void PrintVisitor::Visit(const Sequence<const MethodDeclaration> *node)
     std::string name = addNode(" Methods[] "
                                " | " + format(node->Coords()));
     addArrow(name);
-    for(auto child : node->SequenceList) {
+    for(auto const& child : node->SequenceList) {
         parentName = name;
         child->AcceptVisitor(this);
     }
@@ -216,7 +216,7 @@ void PrintVisitor::Visit(const BraceSequenceStatement *node)
     std::string name = addNode(" Statements[] "
                                " | " + format(node->Coords()));
     addArrow(name);
-    for(auto child : node->BracedSequence->SequenceList) {
+    for(auto const& child : node->BracedSequence->SequenceList) {
         parentName = name;
         child->AcceptVisitor(this);
     }
@@ -240,7 +240,7 @@ void PrintVisitor::Visit(const Sequence<const IStatement> *node)
     std::string name = addNode(" Statements[] "
                                " | " + format(node->Coords()));
     addArrow(name);
-    for(auto child : node->SequenceList) {
+    for(auto const& child : node->SequenceList) {
         parentName = name;
         child->AcceptVisitor(this);
     }
@@ -297,7 +297,7 @@ void PrintVisitor::Visit(const Sequence<const IExpression> *node)
     std::string name = addNode(" Expressions[] "
                                " | " + format(node->Coords()));
     addArrow(name);
-    for(auto child : node->SequenceList) {
+    for(auto const& child : node->SequenceList) {
         parentName = name;
         child->AcceptVisitor(this);
     }
