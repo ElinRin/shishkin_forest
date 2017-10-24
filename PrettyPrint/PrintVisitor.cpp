@@ -359,6 +359,7 @@ void PrintVisitor::Visit(const ContainerExpression *node)
     std::string name = addNode(" (Expression)"
                                " | " + format(node->Coords()));
     addArrow(name);
+    parentName = name;
     node->Expression->AcceptVisitor(this);
 }
 
@@ -429,7 +430,7 @@ std::string PrintVisitor::format(const T_BinaryExpressionType &type)
     case BET_Mod:
         return "%";
     case BET_Less:
-        return "less'";
+        return "\\<";
     default:
         assert(false);
     }
@@ -449,5 +450,5 @@ std::string PrintVisitor::format(const T_ValueType &type)
 
 void PrintVisitor::addArrow(std::string &name)
 {
-    arrows.push_back({"\"" + parentName + "\":<f0>", "\"" + name + "\":<f0>"});
+    arrows.push_back({"\"" + parentName + "\"", "\"" + name + "\""});
 }
