@@ -1,4 +1,4 @@
-CFLAGS = -ISyntaxTree --std=c++17
+CFLAGS = -ISyntaxTree --std=c++1z
 
 all: parser
 
