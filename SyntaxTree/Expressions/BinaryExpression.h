@@ -5,7 +5,7 @@
 #include "Expression.h"
 #include "Visitor.h"
 
-enum BinaryExpressionType {
+enum T_BinaryExpressionType {
     BET_And,
     BET_Less,
     BET_Plus,
@@ -17,12 +17,12 @@ enum BinaryExpressionType {
 
 struct BinaryExpression : public IExpression
 {
-    const BinaryExpressionType Type;
+    const T_BinaryExpressionType Type;
     const IExpression* Left;
     const IExpression* Right;
 
     BinaryExpression(Coordinates coords,
-                     const BinaryExpressionType type,
+                     const T_BinaryExpressionType type,
                      const IExpression* left,
                      const IExpression* right) :
         coords(coords),

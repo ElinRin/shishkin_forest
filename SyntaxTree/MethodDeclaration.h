@@ -17,21 +17,24 @@ struct MethodDeclaration : public ITreeNode
 
     //Nullable
     const Sequence<const VarDeclaration>* Arguments;
+    const Sequence<const VarDeclaration>* VarDeclarations;
     const Sequence<const IStatement>* Statements;
 
     MethodDeclaration(Coordinates coords,
                       const Qualifier* qualifier,
                       const Type* returnType,
                       const Id* methodName,
-                      const ReturnStatement* returnStatement,
                       const Sequence<const VarDeclaration>* argumentSequence,
-                      const Sequence<const IStatement>* statements) :
+                      const Sequence<const VarDeclaration>* varDeclarations,
+                      const Sequence<const IStatement>* statements,
+                      const ReturnStatement* returnStatement) :
         coords(coords),
         QualifierType(qualifier),
         ReturnType(returnType),
         MethodName(methodName),
         StatementToReturn(returnStatement),
         Arguments(argumentSequence),
+        VarDeclarations(varDeclarations),
         Statements(statements)
     {
         assert(argumentSequence);

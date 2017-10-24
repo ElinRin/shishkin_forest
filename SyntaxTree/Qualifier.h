@@ -5,8 +5,8 @@
 #include "TreeNode.h"
 
 enum T_Qualifier {
-    S_Public,
-    S_Private
+    Q_Public,
+    Q_Private
 };
 
 struct Qualifier : public ITreeNode

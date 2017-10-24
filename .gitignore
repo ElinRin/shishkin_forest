@@ -17,3 +17,5 @@ parser
 *.user
 *.files
 *.creator
+*.dot
+*.svg

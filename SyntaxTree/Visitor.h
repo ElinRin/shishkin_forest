@@ -19,6 +19,7 @@ interface IVisitor{
     VISITOR(Sequence<const ClassDeclaration>)
     VISITOR(Sequence<const VarDeclaration>)
     VISITOR(Sequence<const MethodDeclaration>)
+    VISITOR(Qualifier)
     VISITOR(Type)
 
     VISITOR(ReturnStatement)

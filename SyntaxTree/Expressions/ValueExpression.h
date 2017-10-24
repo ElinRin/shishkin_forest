@@ -4,16 +4,16 @@
 
 #include "Expression.h"
 
-enum T_Value_type {
+enum T_ValueType {
     VT_Int,
     VT_Boolean
 };
 
 struct ValueExpression : public IExpression {
-    const T_Value_type ValueType;
+    const T_ValueType ValueType;
     const int Value;
 
-    ValueExpression(Coordinates coords, T_Value_type type,
+    ValueExpression(Coordinates coords, T_ValueType type,
                     int value) :
         coords(coords),
         ValueType(type),

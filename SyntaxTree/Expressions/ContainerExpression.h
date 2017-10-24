@@ -15,6 +15,8 @@ struct ContainerExpression : public IExpression
 
     }
 
+    ~ContainerExpression() { delete Expression; }
+
     ACCEPT_VISITOR
 };
 
