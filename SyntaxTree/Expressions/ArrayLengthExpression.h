@@ -4,6 +4,8 @@
 
 #include "Expression.h"
 
+namespace AST {
+
 struct ArrayLengthExpression : public IExpression {
     std::unique_ptr<const IExpression> ArrayExpression;
 
@@ -14,5 +16,7 @@ struct ArrayLengthExpression : public IExpression {
 
     ACCEPT_VISITOR
 };
+
+}
 
 #endif // ARRAYLENGTHEXPRESSION_H

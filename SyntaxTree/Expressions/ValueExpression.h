@@ -4,6 +4,8 @@
 
 #include "Expression.h"
 
+namespace AST {
+
 enum T_ValueType {
     VT_Int,
     VT_Boolean
@@ -21,4 +23,7 @@ struct ValueExpression : public IExpression {
 
     ACCEPT_VISITOR
 };
+
+}
+
 #endif // VALUEEXPRESSION_H

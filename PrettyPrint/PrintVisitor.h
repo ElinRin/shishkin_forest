@@ -7,6 +7,8 @@
 
 #include "TreeTypes.h"
 
+namespace AST {
+
 class PrintVisitor : public IVisitor {
 public:
     PrintVisitor(std::string filename) :
@@ -71,5 +73,7 @@ private:
     std::string format(const T_ValueType& type);
     void addArrow(std::string& name);
 };
+
+}
 
 #endif

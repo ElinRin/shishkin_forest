@@ -6,6 +6,8 @@
 #include "VarDeclaration.h"
 #include "MethodDeclaration.h"
 
+namespace AST {
+
 struct ClassDeclaration : public ITreeNode
 {
     std::unique_ptr<const Id> ClassName;
@@ -28,5 +30,7 @@ struct ClassDeclaration : public ITreeNode
 
     ACCEPT_VISITOR
 };
+
+}
 
 #endif

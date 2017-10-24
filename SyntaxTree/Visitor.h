@@ -10,6 +10,8 @@
     visitor->Visit(this); \
 }
 
+namespace AST {
+
 interface IVisitor{
     VISITOR(Program)
     VISITOR(MainClass)
@@ -46,5 +48,6 @@ interface IVisitor{
     VISITOR(Id)
 };
 
+}
 
 #endif // _VISITOR_H

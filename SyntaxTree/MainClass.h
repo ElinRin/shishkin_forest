@@ -5,6 +5,8 @@
 #include "Id.h"
 #include "Statements/Statement.h"
 
+namespace AST {
+
 struct MainClass : public ITreeNode
 {
     std::unique_ptr<const Id> ClassName;
@@ -19,5 +21,7 @@ struct MainClass : public ITreeNode
 
     ACCEPT_VISITOR
 };
+
+}
 
 #endif

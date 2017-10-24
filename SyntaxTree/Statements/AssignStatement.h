@@ -5,6 +5,8 @@
 #include "Statement.h"
 #include "Expressions/IdExpression.h"
 
+namespace AST {
+
 struct AssignStatement : public IStatement
 {
     std::unique_ptr<const Id> Identifier;
@@ -20,5 +22,6 @@ struct AssignStatement : public IStatement
     ACCEPT_VISITOR
 };
 
+}
 
 #endif

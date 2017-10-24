@@ -4,6 +4,8 @@
 
 #include "TreeNode.h"
 
+namespace AST {
+
 enum T_Qualifier {
     Q_Public,
     Q_Private
@@ -20,5 +22,7 @@ struct Qualifier : public ITreeNode
 
     ACCEPT_VISITOR
 };
+
+}
 
 #endif

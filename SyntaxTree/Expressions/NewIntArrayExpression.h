@@ -4,6 +4,8 @@
 
 #include "Expression.h"
 
+namespace AST {
+
 struct NewIntArrayExpression : public IExpression
 {
     std::unique_ptr<const IExpression> NumberOfElements;
@@ -14,4 +16,7 @@ struct NewIntArrayExpression : public IExpression
 
     ACCEPT_VISITOR
 };
+
+}
+
 #endif // NEWINTARRAYEXPRESSION_H

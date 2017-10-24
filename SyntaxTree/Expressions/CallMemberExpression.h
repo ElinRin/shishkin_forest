@@ -4,6 +4,8 @@
 
 #include "Expression.h"
 
+namespace AST {
+
 struct CallMemberExpression : public IExpression{
     std::unique_ptr<const IExpression> BaseExpression;
     std::unique_ptr<const Id> CalledMember;
@@ -20,4 +22,6 @@ struct CallMemberExpression : public IExpression{
 
     ACCEPT_VISITOR
 };
+
+}
 #endif // CALLMEMBEREXPRESSION_H

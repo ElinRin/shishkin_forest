@@ -4,6 +4,8 @@
 
 #include "Expressions/Expression.h"
 
+namespace AST {
+
 struct ReturnStatement : public ITreeNode
 {
     std::unique_ptr<const IExpression> Expression;
@@ -16,5 +18,7 @@ struct ReturnStatement : public ITreeNode
 
     ACCEPT_VISITOR
 };
+
+}
 
 #endif

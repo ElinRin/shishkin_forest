@@ -4,8 +4,11 @@
 
 #include "TreeNode.h"
 
+namespace AST {
+
 interface IExpression : public ITreeNode {
 };
 
+}
 
 #endif // _EXPRESSION_H

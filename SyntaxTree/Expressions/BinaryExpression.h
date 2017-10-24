@@ -5,6 +5,8 @@
 #include "Expression.h"
 #include "Visitor.h"
 
+namespace AST {
+
 enum T_BinaryExpressionType {
     BET_And,
     BET_Less,
@@ -32,4 +34,7 @@ struct BinaryExpression : public IExpression
 
     ACCEPT_VISITOR
 };
+
+}
+
 #endif // BINARYEXPRESSION_H

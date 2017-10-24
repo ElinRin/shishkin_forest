@@ -7,10 +7,13 @@
 
 #include "TreeNode.h"
 
+namespace AST {
+
 template< typename T>
 struct Sequence : public ITreeNode
 {
     std::list<std::unique_ptr<const T>> SequenceList;
+
     Sequence(Coordinates coords) :
         coords(coords)
     {}
@@ -35,5 +38,7 @@ struct Sequence : public ITreeNode
 
     ACCEPT_VISITOR
 };
+
+}
 
 #endif

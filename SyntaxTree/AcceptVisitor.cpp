@@ -3,6 +3,8 @@
 
 #include "Visitor.h"
 
+namespace AST {
+
 VISIT_NODE(Program)
 VISIT_NODE(MainClass)
 VISIT_NODE(ClassDeclaration)
@@ -32,5 +34,6 @@ VISIT_NODE(NotExpression)
 VISIT_NODE(ContainerExpression)
 VISIT_NODE(Id)
 
+}
 
 #endif // ACCEPTVISITOR_CPP

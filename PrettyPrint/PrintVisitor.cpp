@@ -2,6 +2,7 @@
 
 #include <assert.h>
 
+namespace AST {
 
 void PrintVisitor::CreateGraph(Program* program)
 {
@@ -451,4 +452,6 @@ std::string PrintVisitor::format(const T_ValueType &type)
 void PrintVisitor::addArrow(std::string &name)
 {
     arrows.push_back({"\"" + parentName + "\"", "\"" + name + "\""});
+}
+
 }

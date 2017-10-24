@@ -4,6 +4,8 @@
 
 #include "Expression.h"
 
+namespace AST {
+
 struct ContainerExpression : public IExpression
 {
     std::unique_ptr<const IExpression> Expression;
@@ -17,5 +19,7 @@ struct ContainerExpression : public IExpression
 
     ACCEPT_VISITOR
 };
+
+}
 
 #endif // CONTAINEREXPRESSION_H

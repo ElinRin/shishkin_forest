@@ -4,6 +4,8 @@
 
 #include "Statement.h"
 
+namespace AST {
+
 struct IfElseStatement : public IStatement {
     std::unique_ptr<const IExpression> Condition;
     std::unique_ptr<const IStatement> IfStatement;
@@ -22,5 +24,6 @@ struct IfElseStatement : public IStatement {
     ACCEPT_VISITOR
 };
 
+}
 
 #endif

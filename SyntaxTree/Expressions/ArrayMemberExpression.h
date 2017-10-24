@@ -4,6 +4,8 @@
 
 #include "Expression.h"
 
+namespace AST {
+
 struct ArrayMemberExpression : public IExpression
 {
     std::unique_ptr<const IExpression> BaseExpression;
@@ -18,5 +20,7 @@ struct ArrayMemberExpression : public IExpression
 
     ACCEPT_VISITOR
 };
+
+}
 
 #endif // ARRAYMEMBEREXPRESSION_H

@@ -4,6 +4,8 @@
 
 #include "Statement.h"
 
+namespace AST {
+
 struct BraceSequenceStatement : public IStatement
 {
     std::unique_ptr<const Sequence<const IStatement>> BracedSequence;
@@ -17,5 +19,6 @@ struct BraceSequenceStatement : public IStatement
     ACCEPT_VISITOR
 };
 
+}
 
 #endif

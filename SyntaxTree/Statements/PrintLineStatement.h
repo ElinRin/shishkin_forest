@@ -4,6 +4,8 @@
 
 #include "Statement.h"
 
+namespace AST {
+
 struct PrintLineStatement : public IStatement {
     std::unique_ptr<const IExpression> ExpressionToPrint;
 
@@ -16,5 +18,7 @@ struct PrintLineStatement : public IStatement {
 
     ACCEPT_VISITOR
 };
+
+}
 
 #endif

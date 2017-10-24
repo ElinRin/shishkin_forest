@@ -4,6 +4,8 @@
 
 #include "Statement.h"
 
+namespace AST {
+
 struct WhileStatement : public IStatement
 {
     std::unique_ptr<const IExpression> Condition;
@@ -19,5 +21,7 @@ struct WhileStatement : public IStatement
 
     ACCEPT_VISITOR
 };
+
+}
 
 #endif

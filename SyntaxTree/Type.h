@@ -4,6 +4,8 @@
 
 #include "TreeNode.h"
 
+namespace AST {
+
 enum T_Type {
     T_Int,
     T_Boolean,
@@ -33,5 +35,7 @@ struct Type : public ITreeNode
 
     ACCEPT_VISITOR
 };
+
+}
 
 #endif

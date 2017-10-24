@@ -8,6 +8,8 @@
 #include "VarDeclaration.h"
 #include "Statements/ReturnStatement.h"
 
+namespace AST {
+
 struct MethodDeclaration : public ITreeNode
 {
     std::unique_ptr<const Qualifier> QualifierType;
@@ -42,5 +44,7 @@ struct MethodDeclaration : public ITreeNode
 
     ACCEPT_VISITOR
 };
+
+}
 
 #endif

@@ -5,6 +5,8 @@
 #include "MainClass.h"
 #include "ClassDeclaration.h"
 
+namespace AST {
+
 struct Program : public ITreeNode
 {
     std::unique_ptr<const MainClass> Main;
@@ -19,5 +21,7 @@ struct Program : public ITreeNode
 
     ACCEPT_VISITOR
 };
+
+}
 
 #endif

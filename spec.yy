@@ -10,7 +10,7 @@
   #define NF_RED  "\x1B[31m"
   #define NF_RESET "\x1B[0m"
 
-  #define COORDS Coordinates(yylloc.first_line, yylloc.first_column)
+  #define COORDS AST::Coordinates(yylloc.first_line, yylloc.first_column)
 
   void showTokenPosition();
 
@@ -24,26 +24,26 @@
     }
   }
 
-  std::unique_ptr<Program> program;
+  std::unique_ptr<AST::Program> program;
 %}
 
 %union {
-  Id* id;
-  IExpression* exp;
-  Sequence<const IExpression>* exp_seq;
-  IStatement* stm;
-  Sequence<const IStatement>* stm_seq;
-  ReturnStatement* stm_ret;
-  Type* type;
-  Qualifier* qualifier;
-  MethodDeclaration* method;
-  Sequence<const MethodDeclaration>* method_seq;
-  VarDeclaration* var;
-  Sequence<const VarDeclaration>* var_seq;
-  ClassDeclaration* class_decl;
-  Sequence<const ClassDeclaration>* class_seq;
-  MainClass* class_main;
-  Program* program;
+  AST::Id* id;
+  AST::IExpression* exp;
+  AST::Sequence<const AST::IExpression>* exp_seq;
+  AST::IStatement* stm;
+  AST::Sequence<const AST::IStatement>* stm_seq;
+  AST::ReturnStatement* stm_ret;
+  AST::Type* type;
+  AST::Qualifier* qualifier;
+  AST::MethodDeclaration* method;
+  AST::Sequence<const AST::MethodDeclaration>* method_seq;
+  AST::VarDeclaration* var;
+  AST::Sequence<const AST::VarDeclaration>* var_seq;
+  AST::ClassDeclaration* class_decl;
+  AST::Sequence<const AST::ClassDeclaration>* class_seq;
+  AST::MainClass* class_main;
+  AST::Program* program;
 
   int intVal;
   char* stringVal;
@@ -128,142 +128,142 @@
 
 %%
 
-program : class_main class_seq END          { $$ = new Program(COORDS, $1, $2); onTokenParsed(); program = std::move(std::unique_ptr<Program>($$)); }
-        | class_main END                    { $$ = new Program(COORDS, $1, nullptr); onTokenParsed(); }
+program : class_main class_seq END          { $$ = new AST::Program(COORDS, $1, $2); onTokenParsed(); program = std::move(std::unique_ptr<AST::Program>($$)); }
+        | class_main END                    { $$ = new AST::Program(COORDS, $1, nullptr); onTokenParsed(); }
         ;
 class_main : CLASS id L_BRACE
               PUBLIC MAIN L_PAREN R_PAREN L_BRACE
               stm R_BRACE
-            R_BRACE                         { $$ = new MainClass(COORDS, $2, $9); onTokenParsed(); }
+            R_BRACE                         { $$ = new AST::MainClass(COORDS, $2, $9); onTokenParsed(); }
         ;
-class_seq : class_seq class                 { $$ = new Sequence<const ClassDeclaration>(COORDS, $1, $2); onTokenParsed(); }
-        | class_seq class_ext               { $$ = new Sequence<const ClassDeclaration>(COORDS, $1, $2); onTokenParsed(); }
-        | class                             { $$ = new Sequence<const ClassDeclaration>(COORDS, $1); onTokenParsed(); }
-        | class_ext                         { $$ = new Sequence<const ClassDeclaration>(COORDS, $1); onTokenParsed(); }
+class_seq : class_seq class                 { $$ = new AST::Sequence<const AST::ClassDeclaration>(COORDS, $1, $2); onTokenParsed(); }
+        | class_seq class_ext               { $$ = new AST::Sequence<const AST::ClassDeclaration>(COORDS, $1, $2); onTokenParsed(); }
+        | class                             { $$ = new AST::Sequence<const AST::ClassDeclaration>(COORDS, $1); onTokenParsed(); }
+        | class_ext                         { $$ = new AST::Sequence<const AST::ClassDeclaration>(COORDS, $1); onTokenParsed(); }
         ;
 class_ext : CLASS id EXTENDS id L_BRACE
-          var_seq method_seq R_BRACE        { $$ = new ClassDeclaration(COORDS, $2, $4, $6, $7); onTokenParsed(); }
+          var_seq method_seq R_BRACE        { $$ = new AST::ClassDeclaration(COORDS, $2, $4, $6, $7); onTokenParsed(); }
         | CLASS id EXTENDS id L_BRACE
-          var_seq R_BRACE                   { $$ = new ClassDeclaration(COORDS, $2, $4, $6, nullptr); onTokenParsed(); }
+          var_seq R_BRACE                   { $$ = new AST::ClassDeclaration(COORDS, $2, $4, $6, nullptr); onTokenParsed(); }
         | CLASS id EXTENDS id L_BRACE
-          method_seq R_BRACE                { $$ = new ClassDeclaration(COORDS, $2, $4, nullptr, $6); onTokenParsed(); }
-        | CLASS id EXTENDS id L_BRACE R_BRACE { $$ = new ClassDeclaration(COORDS, $2, $4, nullptr, nullptr); onTokenParsed(); }
+          method_seq R_BRACE                { $$ = new AST::ClassDeclaration(COORDS, $2, $4, nullptr, $6); onTokenParsed(); }
+        | CLASS id EXTENDS id L_BRACE R_BRACE { $$ = new AST::ClassDeclaration(COORDS, $2, $4, nullptr, nullptr); onTokenParsed(); }
         ;
 class : CLASS id L_BRACE
-          var_seq method_seq R_BRACE        { $$ = new ClassDeclaration(COORDS, $2, nullptr,  $4, $5); onTokenParsed(); }
+          var_seq method_seq R_BRACE        { $$ = new AST::ClassDeclaration(COORDS, $2, nullptr,  $4, $5); onTokenParsed(); }
         | CLASS id L_BRACE
-          var_seq R_BRACE                   { $$ = new ClassDeclaration(COORDS, $2, nullptr, $4, nullptr); onTokenParsed(); }
+          var_seq R_BRACE                   { $$ = new AST::ClassDeclaration(COORDS, $2, nullptr, $4, nullptr); onTokenParsed(); }
         | CLASS id L_BRACE
-          method_seq R_BRACE                { $$ = new ClassDeclaration(COORDS, $2, nullptr, nullptr, $4); onTokenParsed(); }
-        | CLASS id L_BRACE R_BRACE          { $$ = new ClassDeclaration(COORDS, $2, nullptr, nullptr, nullptr); onTokenParsed(); }
+          method_seq R_BRACE                { $$ = new AST::ClassDeclaration(COORDS, $2, nullptr, nullptr, $4); onTokenParsed(); }
+        | CLASS id L_BRACE R_BRACE          { $$ = new AST::ClassDeclaration(COORDS, $2, nullptr, nullptr, nullptr); onTokenParsed(); }
         ;
-var_seq : var_seq var                       { $$ = new Sequence<const VarDeclaration>(COORDS, $1, $2); onTokenParsed(); }
-        | var                               { $$ = new Sequence<const VarDeclaration>(COORDS, $1); onTokenParsed(); }
+var_seq : var_seq var                       { $$ = new AST::Sequence<const AST::VarDeclaration>(COORDS, $1, $2); onTokenParsed(); }
+        | var                               { $$ = new AST::Sequence<const AST::VarDeclaration>(COORDS, $1); onTokenParsed(); }
         ;
-var     : type id SEMI                      { $$ = new VarDeclaration(COORDS, $1, $2); onTokenParsed(); }
+var     : type id SEMI                      { $$ = new AST::VarDeclaration(COORDS, $1, $2); onTokenParsed(); }
         ;
-method_seq : method_seq method              { $$ = new Sequence<const MethodDeclaration>(COORDS, $1, $2); onTokenParsed(); }
-        | method                            { $$ = new Sequence<const MethodDeclaration>(COORDS, $1); onTokenParsed(); }
+method_seq : method_seq method              { $$ = new AST::Sequence<const AST::MethodDeclaration>(COORDS, $1, $2); onTokenParsed(); }
+        | method                            { $$ = new AST::Sequence<const AST::MethodDeclaration>(COORDS, $1); onTokenParsed(); }
         ;
 method  : qualifier type id L_PAREN arg_seq R_PAREN L_BRACE
-            var_seq stm_seq stm_ret R_BRACE { $$ = new MethodDeclaration(COORDS, $1, $2, $3, $5, $8, $9, $10); onTokenParsed(); }
+            var_seq stm_seq stm_ret R_BRACE { $$ = new AST::MethodDeclaration(COORDS, $1, $2, $3, $5, $8, $9, $10); onTokenParsed(); }
         | qualifier type id L_PAREN arg_seq R_PAREN L_BRACE
-            stm_seq stm_ret R_BRACE         { $$ = new MethodDeclaration(COORDS, $1, $2, $3, $5, nullptr, $8, $9); onTokenParsed(); }
+            stm_seq stm_ret R_BRACE         { $$ = new AST::MethodDeclaration(COORDS, $1, $2, $3, $5, nullptr, $8, $9); onTokenParsed(); }
         | qualifier type id L_PAREN arg_seq R_PAREN L_BRACE
-            var_seq stm_ret R_BRACE         { $$ = new MethodDeclaration(COORDS, $1, $2, $3, $5, $8, nullptr, $9); onTokenParsed(); }
+            var_seq stm_ret R_BRACE         { $$ = new AST::MethodDeclaration(COORDS, $1, $2, $3, $5, $8, nullptr, $9); onTokenParsed(); }
         | qualifier type id L_PAREN arg_seq R_PAREN L_BRACE
             stm_ret R_BRACE                 {
-                                              $$ = new MethodDeclaration(COORDS, $1, $2, $3, $5, nullptr, nullptr, $8);
+                                              $$ = new AST::MethodDeclaration(COORDS, $1, $2, $3, $5, nullptr, nullptr, $8);
                                               onTokenParsed();
                                             }
         ;
-qualifier : PUBLIC                          { $$ = new Qualifier(COORDS, Q_Public); onTokenParsed(); }
-        | PRIVATE                           { $$ = new Qualifier(COORDS, Q_Private); onTokenParsed(); }
+qualifier : PUBLIC                          { $$ = new AST::Qualifier(COORDS, AST::Q_Public); onTokenParsed(); }
+        | PRIVATE                           { $$ = new AST::Qualifier(COORDS, AST::Q_Private); onTokenParsed(); }
         ;
-arg_seq : %empty                            { $$ = new Sequence<const VarDeclaration>(COORDS); onTokenParsed(); }
+arg_seq : %empty                            { $$ = new AST::Sequence<const AST::VarDeclaration>(COORDS); onTokenParsed(); }
         | arg_seq COMMA type id             {
-                                              $$ = new Sequence<const VarDeclaration>(COORDS, $1, new VarDeclaration(COORDS, $3, $4));
+                                              $$ = new AST::Sequence<const AST::VarDeclaration>(COORDS, $1, new AST::VarDeclaration(COORDS, $3, $4));
                                               onTokenParsed();
                                             }
         | type id                           {
-                                              $$ = new Sequence<const VarDeclaration>(COORDS, new VarDeclaration(COORDS, $1, $2));
+                                              $$ = new AST::Sequence<const AST::VarDeclaration>(COORDS, new AST::VarDeclaration(COORDS, $1, $2));
                                               onTokenParsed();
                                             }
         ;
-type    : INT L_SQUARE R_SQUARE             { $$ = new Type(COORDS, T_IntArray); onTokenParsed(); }
-        | BOOLEAN                           { $$ = new Type(COORDS, T_Boolean); onTokenParsed(); }
-        | INT                               { $$ = new Type(COORDS, T_Int); onTokenParsed(); }
-        | id                                { $$ = new Type(COORDS, T_UserType, $1); onTokenParsed(); }
+type    : INT L_SQUARE R_SQUARE             { $$ = new AST::Type(COORDS, AST::T_IntArray); onTokenParsed(); }
+        | BOOLEAN                           { $$ = new AST::Type(COORDS, AST::T_Boolean); onTokenParsed(); }
+        | INT                               { $$ = new AST::Type(COORDS, AST::T_Int); onTokenParsed(); }
+        | id                                { $$ = new AST::Type(COORDS, AST::T_UserType, $1); onTokenParsed(); }
         ;
-stm_ret : RETURN exp SEMI                   { $$ = new ReturnStatement(COORDS, $2); onTokenParsed(); }
+stm_ret : RETURN exp SEMI                   { $$ = new AST::ReturnStatement(COORDS, $2); onTokenParsed(); }
         ;
-stm_seq : stm_seq stm                       { $$ = new Sequence<const IStatement>(COORDS, $1, $2); onTokenParsed(); }
-        | stm                               { $$ = new Sequence<const IStatement>(COORDS, $1); onTokenParsed(); }
+stm_seq : stm_seq stm                       { $$ = new AST::Sequence<const AST::IStatement>(COORDS, $1, $2); onTokenParsed(); }
+        | stm                               { $$ = new AST::Sequence<const AST::IStatement>(COORDS, $1); onTokenParsed(); }
 
-stm     : L_BRACE stm_seq R_BRACE           { $$ = new BraceSequenceStatement(COORDS, $2); onTokenParsed(); }
-        | IF L_PAREN exp R_PAREN stm ELSE stm   { $$ = new IfElseStatement(COORDS, $3, $5, $7); onTokenParsed(); }
-        | WHILE L_PAREN exp R_PAREN stm     { $$ = new WhileStatement(COORDS, $3, $5); onTokenParsed(); }
-        | PRINT_LINE L_PAREN exp R_PAREN SEMI { $$ = new PrintLineStatement(COORDS, $3); onTokenParsed(); }
-        | id ASSIGN exp SEMI                { $$ = new AssignStatement(COORDS, $1, $3); onTokenParsed(); }
+stm     : L_BRACE stm_seq R_BRACE           { $$ = new AST::BraceSequenceStatement(COORDS, $2); onTokenParsed(); }
+        | IF L_PAREN exp R_PAREN stm ELSE stm   { $$ = new AST::IfElseStatement(COORDS, $3, $5, $7); onTokenParsed(); }
+        | WHILE L_PAREN exp R_PAREN stm     { $$ = new AST::WhileStatement(COORDS, $3, $5); onTokenParsed(); }
+        | PRINT_LINE L_PAREN exp R_PAREN SEMI { $$ = new AST::PrintLineStatement(COORDS, $3); onTokenParsed(); }
+        | id ASSIGN exp SEMI                { $$ = new AST::AssignStatement(COORDS, $1, $3); onTokenParsed(); }
         | id L_SQUARE exp R_SQUARE ASSIGN exp SEMI  {
-                                                      $$ = new AssignArrayElementStatement(COORDS, $1, $3, $6);
+                                                      $$ = new AST::AssignArrayElementStatement(COORDS, $1, $3, $6);
                                                       onTokenParsed();
                                                     }
         ;
 
-exp_seq : exp_seq COMMA exp                 { $$ = new Sequence<const IExpression>(COORDS, $1, $3); onTokenParsed(); }
-        | exp                               { $$ = new Sequence<const IExpression>(COORDS, $1); onTokenParsed(); }
+exp_seq : exp_seq COMMA exp                 { $$ = new AST::Sequence<const AST::IExpression>(COORDS, $1, $3); onTokenParsed(); }
+        | exp                               { $$ = new AST::Sequence<const AST::IExpression>(COORDS, $1); onTokenParsed(); }
         ;
 exp     : exp AND exp                       {
-                                              $$ = new BinaryExpression(COORDS, BET_And, $1, $3);
+                                              $$ = new AST::BinaryExpression(COORDS, AST::BET_And, $1, $3);
                                               onTokenParsed();
                                             }
         | exp LESS exp                      {
-                                              $$ = new BinaryExpression(COORDS, BET_Less, $1, $3);
+                                              $$ = new AST::BinaryExpression(COORDS, AST::BET_Less, $1, $3);
                                               onTokenParsed();
                                             }
         | exp PLUS exp                      {
-                                              $$ = new BinaryExpression(COORDS, BET_Plus, $1, $3);
+                                              $$ = new AST::BinaryExpression(COORDS, AST::BET_Plus, $1, $3);
                                               onTokenParsed();
                                             }
         | exp MINUS exp                     {
-                                              $$ = new BinaryExpression(COORDS, BET_Minus, $1, $3);
+                                              $$ = new AST::BinaryExpression(COORDS, AST::BET_Minus, $1, $3);
                                               onTokenParsed();
                                             }
         | exp MULT exp                      {
-                                              $$ = new BinaryExpression(COORDS, BET_Mult, $1, $3);
+                                              $$ = new AST::BinaryExpression(COORDS, AST::BET_Mult, $1, $3);
                                               onTokenParsed();
                                             }
         | exp MOD exp                       {
-                                              $$ = new BinaryExpression(COORDS, BET_Mod, $1, $3);
+                                              $$ = new AST::BinaryExpression(COORDS, AST::BET_Mod, $1, $3);
                                               onTokenParsed();
                                             }
         | exp OR exp                        {
-                                              $$ = new BinaryExpression(COORDS, BET_Or, $1, $3);
+                                              $$ = new AST::BinaryExpression(COORDS, AST::BET_Or, $1, $3);
                                               onTokenParsed();
                                             }
         | exp L_SQUARE exp R_SQUARE         {
-                                              $$ = new ArrayMemberExpression(COORDS, $1, $3);
+                                              $$ = new AST::ArrayMemberExpression(COORDS, $1, $3);
                                               onTokenParsed();
                                             }
-        | exp DOT LENGTH                    { $$ = new ArrayLengthExpression(COORDS, $1); onTokenParsed(); }
-        | exp DOT id L_PAREN R_PAREN        { $$ = new CallMemberExpression(COORDS, $1, $3, nullptr);
+        | exp DOT LENGTH                    { $$ = new AST::ArrayLengthExpression(COORDS, $1); onTokenParsed(); }
+        | exp DOT id L_PAREN R_PAREN        { $$ = new AST::CallMemberExpression(COORDS, $1, $3, nullptr);
                                               onTokenParsed();
                                             }
         | exp DOT id L_PAREN exp_seq R_PAREN  {
-                                                  $$ = new CallMemberExpression(COORDS, $1, $3, $5);
+                                                  $$ = new AST::CallMemberExpression(COORDS, $1, $3, $5);
                                                   onTokenParsed();
                                               }
-        | INTEGER_NUMBER                    { $$ = new ValueExpression(COORDS, VT_Int, yylval.intVal); onTokenParsed(); }
-        | BOOLEAN_VALUE                     { $$ = new ValueExpression(COORDS, VT_Boolean, yylval.intVal == 1 ? 1 : 0); onTokenParsed(); }
-        | id                                { $$ = new IdExpression(COORDS, $1); onTokenParsed(); }
-        | THIS                              { $$ = new ThisExpression(COORDS); onTokenParsed(); }
-        | NEW INT L_SQUARE exp R_SQUARE     { $$ = new NewIntArrayExpression(COORDS, $4); onTokenParsed(); }
-        | NEW id L_PAREN R_PAREN            { $$ = new NewObjectExpression(COORDS, $2); onTokenParsed(); }
-        | BANG exp                          { $$ = new NotExpression(COORDS, $2); onTokenParsed(); }
-        | L_PAREN exp R_PAREN               { $$ = new ContainerExpression(COORDS, $2); onTokenParsed(); }
+        | INTEGER_NUMBER                    { $$ = new AST::ValueExpression(COORDS, AST::VT_Int, yylval.intVal); onTokenParsed(); }
+        | BOOLEAN_VALUE                     { $$ = new AST::ValueExpression(COORDS, AST::VT_Boolean, yylval.intVal == 1 ? 1 : 0); onTokenParsed(); }
+        | id                                { $$ = new AST::IdExpression(COORDS, $1); onTokenParsed(); }
+        | THIS                              { $$ = new AST::ThisExpression(COORDS); onTokenParsed(); }
+        | NEW INT L_SQUARE exp R_SQUARE     { $$ = new AST::NewIntArrayExpression(COORDS, $4); onTokenParsed(); }
+        | NEW id L_PAREN R_PAREN            { $$ = new AST::NewObjectExpression(COORDS, $2); onTokenParsed(); }
+        | BANG exp                          { $$ = new AST::NotExpression(COORDS, $2); onTokenParsed(); }
+        | L_PAREN exp R_PAREN               { $$ = new AST::ContainerExpression(COORDS, $2); onTokenParsed(); }
         ;
-id      : ID                                { $$ = new Id(COORDS, std::string(yylval.stringVal)); onTokenParsed(); }
+id      : ID                                { $$ = new AST::Id(COORDS, std::string(yylval.stringVal)); onTokenParsed(); }
         ;
 %%
 
@@ -279,6 +279,6 @@ int yyerror(char* s) {
 
 int main(void) {
   yyparse();
-  PrintVisitor printer("tree.dot");
+  AST::PrintVisitor printer("tree.dot");
   printer.CreateGraph(program.get());
 }

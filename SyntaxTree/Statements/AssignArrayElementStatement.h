@@ -4,6 +4,8 @@
 
 #include "Statement.h"
 
+namespace AST {
+
 struct AssignArrayElementStatement : public IStatement
 {
     std::unique_ptr<const Id> Identifier;
@@ -22,5 +24,7 @@ struct AssignArrayElementStatement : public IStatement
 
     ACCEPT_VISITOR
 };
+
+}
 
 #endif

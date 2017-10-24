@@ -4,7 +4,11 @@
 
 #include "TreeNode.h"
 
+namespace AST {
+
 interface IStatement : public ITreeNode {
 };
+
+}
 
 #endif

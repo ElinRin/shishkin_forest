@@ -5,6 +5,8 @@
 #include "Expression.h"
 #include "Id.h"
 
+namespace AST {
+
 struct IdExpression : public IExpression {
     std::unique_ptr<const Id> ExpressionId;
 
@@ -14,4 +16,7 @@ struct IdExpression : public IExpression {
 
     ACCEPT_VISITOR
 };
+
+}
+
 #endif // IDEXPRESSION_H

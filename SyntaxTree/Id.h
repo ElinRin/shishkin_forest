@@ -6,6 +6,8 @@
 
 #include "TreeNode.h"
 
+namespace AST {
+
 struct Id : public ITreeNode {
 
     const std::string Name;
@@ -16,5 +18,7 @@ struct Id : public ITreeNode {
 
     ACCEPT_VISITOR
 };
+
+}
 
 #endif // ID_H

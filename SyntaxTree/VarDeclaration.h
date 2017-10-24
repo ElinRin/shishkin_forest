@@ -4,6 +4,8 @@
 
 #include "Type.h"
 
+namespace AST {
+
 struct VarDeclaration : public ITreeNode
 {
     std::unique_ptr<const Type> VarType;
@@ -19,5 +21,7 @@ struct VarDeclaration : public ITreeNode
 
     ACCEPT_VISITOR
 };
+
+}
 
 #endif

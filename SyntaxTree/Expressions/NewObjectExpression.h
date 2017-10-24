@@ -5,6 +5,8 @@
 #include "Expression.h"
 #include "Id.h"
 
+namespace AST {
+
 struct NewObjectExpression : public IExpression
 {
     std::unique_ptr<const Id> ObjectId;
@@ -15,5 +17,7 @@ struct NewObjectExpression : public IExpression
 
     ACCEPT_VISITOR
 };
+
+}
 
 #endif // NEWOBJECTEXPRESSION_H
