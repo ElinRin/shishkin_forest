@@ -6,12 +6,11 @@
 #include "Id.h"
 
 struct IdExpression : public IExpression {
-    const Id* ExpressionId;
+    std::unique_ptr<const Id> ExpressionId;
 
     IdExpression(Coordinates coords, const Id* id) :
         coords(coords),
         ExpressionId(id) { }
-    ~IdExpression() { delete ExpressionId; }
 
     ACCEPT_VISITOR
 };

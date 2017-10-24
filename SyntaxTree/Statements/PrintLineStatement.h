@@ -5,17 +5,13 @@
 #include "Statement.h"
 
 struct PrintLineStatement : public IStatement {
-    const IExpression* ExpressionToPrint;
+    std::unique_ptr<const IExpression> ExpressionToPrint;
 
     PrintLineStatement(Coordinates coords,
                        const IExpression* expressionToPrint) :
         coords(coords),
         ExpressionToPrint(expressionToPrint)
     {
-    }
-
-    ~PrintLineStatement() {
-        delete ExpressionToPrint;
     }
 
     ACCEPT_VISITOR

@@ -10,15 +10,15 @@
 
 struct MethodDeclaration : public ITreeNode
 {
-    const Qualifier* QualifierType;
-    const Type* ReturnType;
-    const Id* MethodName;
-    const ReturnStatement* StatementToReturn;
+    std::unique_ptr<const Qualifier> QualifierType;
+    std::unique_ptr<const Type> ReturnType;
+    std::unique_ptr<const Id> MethodName;
+    std::unique_ptr<const ReturnStatement> StatementToReturn;
 
     //Nullable
-    const Sequence<const VarDeclaration>* Arguments;
-    const Sequence<const VarDeclaration>* VarDeclarations;
-    const Sequence<const IStatement>* Statements;
+    std::unique_ptr<const Sequence<const VarDeclaration>> Arguments;
+    std::unique_ptr<const Sequence<const VarDeclaration>> VarDeclarations;
+    std::unique_ptr<const Sequence<const IStatement>> Statements;
 
     MethodDeclaration(Coordinates coords,
                       const Qualifier* qualifier,
@@ -38,22 +38,6 @@ struct MethodDeclaration : public ITreeNode
         Statements(statements)
     {
         assert(argumentSequence);
-    }
-
-    ~MethodDeclaration() {
-        delete QualifierType;
-        delete ReturnType;
-        delete MethodName;
-        delete StatementToReturn;
-        if(Arguments != nullptr) {
-            delete Arguments;
-        }
-        if(VarDeclarations != nullptr) {
-            delete VarDeclarations;
-        }
-        if(Statements != nullptr) {
-            delete Statements;
-        }
     }
 
     ACCEPT_VISITOR

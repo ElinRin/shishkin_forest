@@ -18,8 +18,8 @@ enum T_BinaryExpressionType {
 struct BinaryExpression : public IExpression
 {
     const T_BinaryExpressionType Type;
-    const IExpression* Left;
-    const IExpression* Right;
+    std::unique_ptr<const IExpression> Left;
+    std::unique_ptr<const IExpression> Right;
 
     BinaryExpression(Coordinates coords,
                      const T_BinaryExpressionType type,
@@ -29,11 +29,6 @@ struct BinaryExpression : public IExpression
         Type(type),
         Left(left),
         Right(right) {}
-
-    ~BinaryExpression() {
-        delete Left;
-        delete Right;
-    }
 
     ACCEPT_VISITOR
 };

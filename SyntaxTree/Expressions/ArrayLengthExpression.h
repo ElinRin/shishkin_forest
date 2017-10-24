@@ -5,14 +5,12 @@
 #include "Expression.h"
 
 struct ArrayLengthExpression : public IExpression {
-    const IExpression* ArrayExpression;
+    std::unique_ptr<const IExpression> ArrayExpression;
 
     ArrayLengthExpression(Coordinates coords,
                           const IExpression* arrayExpression) :
         coords(coords),
         ArrayExpression(arrayExpression) {}
-
-    ~ArrayLengthExpression() { delete ArrayExpression; }
 
     ACCEPT_VISITOR
 };

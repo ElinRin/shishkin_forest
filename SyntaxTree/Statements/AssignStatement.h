@@ -7,8 +7,8 @@
 
 struct AssignStatement : public IStatement
 {
-    const Id* Identifier;
-    const IExpression* ExpressionToAssign;
+    std::unique_ptr<const Id> Identifier;
+    std::unique_ptr<const IExpression> ExpressionToAssign;
 
     AssignStatement(Coordinates coords,  const Id* identifier,
                     const IExpression* expressionToAssign) :
@@ -16,11 +16,6 @@ struct AssignStatement : public IStatement
         Identifier(identifier),
         ExpressionToAssign(expressionToAssign)
     {}
-
-    ~AssignStatement() {
-        delete Identifier;
-        delete ExpressionToAssign;
-    }
 
     ACCEPT_VISITOR
 };

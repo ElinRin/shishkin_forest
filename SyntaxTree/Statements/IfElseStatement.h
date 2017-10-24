@@ -5,9 +5,9 @@
 #include "Statement.h"
 
 struct IfElseStatement : public IStatement {
-    const IExpression* Condition;
-    const IStatement* IfStatement;
-    const IStatement* ElseStatement;
+    std::unique_ptr<const IExpression> Condition;
+    std::unique_ptr<const IStatement> IfStatement;
+    std::unique_ptr<const IStatement> ElseStatement;
 
     IfElseStatement(Coordinates coords, const IExpression* condition,
                     const IStatement* ifStatement,
@@ -17,12 +17,6 @@ struct IfElseStatement : public IStatement {
         IfStatement(ifStatement),
         ElseStatement(elseStatement)
     {
-    }
-
-    ~IfElseStatement() {
-        delete Condition;
-        delete IfStatement;
-        delete ElseStatement;
     }
 
     ACCEPT_VISITOR

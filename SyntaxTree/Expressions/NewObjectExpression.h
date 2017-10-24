@@ -7,12 +7,11 @@
 
 struct NewObjectExpression : public IExpression
 {
-    const Id* ObjectId;
+    std::unique_ptr<const Id> ObjectId;
 
     NewObjectExpression(Coordinates coords, const Id* objectId) :
         coords(coords),
         ObjectId(objectId) {}
-    ~NewObjectExpression() { delete ObjectId; }
 
     ACCEPT_VISITOR
 };

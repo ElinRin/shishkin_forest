@@ -6,8 +6,8 @@
 
 struct VarDeclaration : public ITreeNode
 {
-    const Type* VarType;
-    const Id* Identifier;
+    std::unique_ptr<const Type> VarType;
+    std::unique_ptr<const Id> Identifier;
 
     VarDeclaration(Coordinates coords,
                    const Type* varType,
@@ -16,11 +16,6 @@ struct VarDeclaration : public ITreeNode
         VarType(varType),
         Identifier(identifier)
     {}
-
-    ~VarDeclaration() {
-        delete VarType;
-        delete Identifier;
-    }
 
     ACCEPT_VISITOR
 };
