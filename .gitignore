@@ -19,3 +19,4 @@ parser
 *.creator
 *.dot
 *.svg
+settings.json
