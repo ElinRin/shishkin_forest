@@ -15,7 +15,6 @@ namespace SymbolTable {
 
   void Table::beginBlock(const Position position)
   {
-    blockTable.push_back();
     currentTable++;
   }
   void Table::endBlock(const Position position)

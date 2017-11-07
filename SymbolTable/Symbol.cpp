@@ -9,11 +9,11 @@ namespace SymbolTable {
 
   bool Symbol::operator ==( const Symbol& a )
 	{
-		return &a == &this;
+		return &a == this;
 	}
 	bool Symbol::operator !=( const Symbol& a )
 	{
-		return &a != &this;
+		return &a != this;
 	}
 
 }
