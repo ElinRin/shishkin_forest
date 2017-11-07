@@ -1,8 +1,7 @@
-#pragma once
-
 #include "MethodInfo.h"
 #include "VariableInfo.h"
 #include "Position.h"
+#include "DeclarationException.h"
 #include <vector>
 #include <unordered_map>
 #include <string>
@@ -16,7 +15,7 @@ namespace SymbolTable {
 		{	
 		}
 
-	int MethodInfo::GetReturnType() const
+    std::string MethodInfo::GetReturnType() const
 	{
 		return returnType;
 	}
@@ -26,9 +25,13 @@ namespace SymbolTable {
 		varsName.push_back(name);
 	}
 
-	const VariableInfo & MethodInfo::GetVariableInfo( const std::string name ) const
+    const VariableInfo* MethodInfo::GetVariableInfo( const std::string name ) const
 	{
-		return block.find(name)->second;
+        const VariableInfo* variable = dynamic_cast<VariableInfo*>(block->find(name)->second);
+        if(variable == nullptr) {
+            throw new DeclarationException("Variable " + name + " in class " + this->name + "undeclared");
+        }
+        return variable;
 	}
 
 	void MethodInfo::AddArgInfo( const std::string name )
@@ -36,9 +39,13 @@ namespace SymbolTable {
 		argsName.push_back(name);
 	}
 
-	const VariableInfo & MethodInfo::GetArgInfo( const std::string name  ) const
+    const VariableInfo* MethodInfo::GetArgInfo( const std::string name  ) const
 	{
-		return block.find(name)->second;
+        const VariableInfo* variable = dynamic_cast<VariableInfo*>(block->find(name)->second);
+        if(variable == nullptr) {
+            throw new DeclarationException("Variable " + name + " in class " + this->name + "undeclared");
+        }
+        return variable;
 	}
 
 	void MethodInfo::addBlock( std::unordered_map<std::string, Symbol*> * _block )

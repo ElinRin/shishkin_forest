@@ -12,11 +12,11 @@ namespace SymbolTable {
 	class MethodInfo : public Symbol{
 	public:
 		MethodInfo( std::string _name, Position _position, std::string _returnType);
-		int GetReturnType() const;
+        std::string GetReturnType() const;
 		void AddVariableInfo( const std::string name );
-		const VariableInfo & GetVariableInfo( const std::string name ) const;
+        const VariableInfo* GetVariableInfo( const std::string name ) const;
 		void AddArgInfo( const std::string name );
-		const VariableInfo & GetArgInfo( const std::string name  ) const;
+        const VariableInfo* GetArgInfo( const std::string name  ) const;
 		void addBlock( std::unordered_map<std::string, Symbol*> * _block );
 		std::vector<std::string> GetArgsName();
 		std::vector<std::string>  GetVarsName();
