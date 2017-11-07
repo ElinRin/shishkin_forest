@@ -7,13 +7,13 @@ namespace SymbolTable {
 		return name;
 	}
 
-  bool Symbol::operator ==( const Symbol& a, const Symbol& b )
+  bool Symbol::operator ==( const Symbol& a )
 	{
-		return &a.String() == &b.String();
+		return &a == &this;
 	}
-	bool Symbol::operator !=( const Symbol& a, const Symbol& b )
+	bool Symbol::operator !=( const Symbol& a )
 	{
-		return &a.String() != &b.String();
+		return &a != &this;
 	}
 
 }
