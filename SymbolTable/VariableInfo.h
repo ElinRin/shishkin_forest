@@ -12,5 +12,6 @@ namespace SymbolTable {
 	private:
 		std::string type;
 		Position position;
+    std::string name;
 	};
 }

@@ -29,5 +29,6 @@ namespace SymbolTable {
 		std::vector<std::string> argsName;
 		std::unordered_map<std::string, Symbol*> * block;
 		Position position;
+    std::string name;
 	};
 }
