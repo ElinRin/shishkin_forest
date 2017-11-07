@@ -9,7 +9,7 @@
 
 namespace SymbolTable {
 
-	MethodInfo( std::string _name, Position _position, std::string _returnType) : 
+    MethodInfo::MethodInfo( std::string _name, Position _position, std::string _returnType) :
 		name(_name),
 		position(_position),
 		returnType(_returnType)

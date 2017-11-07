@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include <DeclarationException.h>
 #include "MethodInfo.h"
 #include "VariableInfo.h"
 #include "ClassInfo.h"
@@ -9,9 +10,9 @@
 
 namespace SymbolTable {
   ClassInfo::ClassInfo( std::string _name, Position _position ) :
-    name(_name),
     position(_position)
     {
+      this->name = _name;
     }
 
   void MethodInfo::addBlock( std::unordered_map<std::string, Symbol*> * _block )
@@ -29,14 +30,22 @@ namespace SymbolTable {
 		varsName.push_back(name);
   }
   
-  const VariableInfo& ClassInfo::GetVariableInfo( const std::string name ) const
+  const VariableInfo* ClassInfo::GetVariableInfo( const std::string name ) const
   {
-		return block.find(name)->second;
+        const VariableInfo* variable = dynamic_cast<VariableInfo*>(block->find(name)->second);
+        if(variable == nullptr) {
+            throw new DeclarationException("Variable " + name + " in class " + this->name + "undeclared");
+        }
+        return variable;
   }
   
-  const MethodInfo& ClassInfo::GetMethodInfo( const std::string name ) const
+  const MethodInfo* ClassInfo::GetMethodInfo( const std::string name ) const
   {
-		return block.find(name)->second;
+      const MethodInfo* method = dynamic_cast<MethodInfo*>(block->find(name)->second);
+      if(method == nullptr) {
+          throw new DeclarationException("Method " + name + " in class " + this->name + "undeclared");
+      }
+      return method;
   }
   
   std::vector<std::string> ClassInfo::GetMethodName()
