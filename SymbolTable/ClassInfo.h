@@ -12,8 +12,8 @@ namespace SymbolTable {
 	class ClassInfo : public Symbol {
 	public:
 		ClassInfo( std::string _name, Position _position );
-		void AddMethodInfo( const std::string name, const MethodInfo & info );
-		void AddVariableInfo( const std::string name, const VariableInfo * info );
+		void AddMethodInfo( const std::string name );
+		void AddVariableInfo( const std::string name );
 		const VariableInfo& GetVariableInfo( const std::string name ) const;
 		const MethodInfo& GetMethodInfo( const std::string name ) const;
 		const std::vector<MethodInfo>& GetMethods() const;
