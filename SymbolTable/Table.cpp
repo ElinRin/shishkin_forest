@@ -61,4 +61,14 @@ namespace SymbolTable {
     }
     
   }
+
+  void addBlockToMethod( std::unordered_map<std::string, Symbol*> * block )
+  {
+
+  }
+  
+  void addBlockToClass( std::unordered_map<std::string, Symbol*> * block )
+  {
+
+  }
 }	

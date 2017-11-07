@@ -4,7 +4,15 @@
 #include "Position.h"
 
 namespace SymbolTable {
-  std::string Position::ToString() const {
+  
+  Position:Position(int _x. int _y) : 
+    x(_x),
+    y(_y)
+  {
+  }
+
+  std::string Position::ToString() const
+  {
       return "(" + std::to_string(x) + "," + std::to_string(y) + ")";
   }
 }

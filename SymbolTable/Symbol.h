@@ -15,6 +15,7 @@ namespace SymbolTable {
 		friend bool operator !=( const Symbol& a, const Symbol& b );
 
     virtual ~Symbol();
-  private
+  private:
+    std::string name;
   };
 }
