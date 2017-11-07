@@ -4,7 +4,8 @@
 #include "VariableInfo.h"
 #include "Position.h"
 #include <vector>
-#include <map>
+#include <unordered_map>
+#include <string>
 
 namespace SymbolTable {
 
@@ -44,20 +45,25 @@ namespace SymbolTable {
 	{
 		block = _block;
 	}
+	
 	std::vector<std::string> MethodInfo::GetArgsName()
 	{
 		return argsName;
 	}
+
 	std::vector<std::string>  MethodInfo::GetVarsName()
 	{
 		return varsName;
 	}
+
 	int MethodInfo::GetArgsCount()
 	{
 		return argsName.size();
 	}
+
 	int MethodInfo::GetVarsCount()
 	{
 		return varsName.size();
 	}
+	
 }

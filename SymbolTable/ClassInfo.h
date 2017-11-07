@@ -1,9 +1,11 @@
 #pragma once
 
 #include <vector>
-#include <map>
+#include <unordered_map>
+#include <string>
 #include "MethodInfo.h"
 #include "VariableInfo.h"
+#include "Symbol.h"
 
 namespace SymbolTable {
 
@@ -22,9 +24,9 @@ namespace SymbolTable {
 		int GetVarsCount();
 
 	private:
-		std::map<std::string, MethodInfo> methods;
-		std::map<std::string, VariableInfo> variables;
-		std::unordered_map<std::string, Symbol*> * block;
+		std::vector< std::string > methodsName;
+		std::vector< std::string > varsName;
+		std::unordered_map< std::string, Symbol* > * block;
 		Position position;
 	};
 }

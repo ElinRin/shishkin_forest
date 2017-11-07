@@ -3,7 +3,8 @@
 #include "VariableInfo.h"
 #include "Position.h"
 #include <vector>
-#include <map>
+#include <unordered_map>
+#include <string>
 
 namespace SymbolTable {
 
