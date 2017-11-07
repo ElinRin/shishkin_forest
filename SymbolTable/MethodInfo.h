@@ -2,6 +2,7 @@
 
 #include "VariableInfo.h"
 #include "Position.h"
+#include "Symbol.h"
 #include <vector>
 #include <unordered_map>
 #include <string>
