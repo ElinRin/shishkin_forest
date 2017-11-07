@@ -40,23 +40,23 @@ namespace SymbolTable {
 		return block.find(name)->second;
 	}
 
-	void addBlock( std::unordered_map<std::string, Symbol*> * _block )
+	void MethodInfo::addBlock( std::unordered_map<std::string, Symbol*> * _block )
 	{
 		block = _block;
 	}
-	std::vector<std::string> GetArgsName()
+	std::vector<std::string> MethodInfo::GetArgsName()
 	{
 		return argsName;
 	}
-	std::vector<std::string>  GetVarsName()
+	std::vector<std::string>  MethodInfo::GetVarsName()
 	{
 		return varsName;
 	}
-	int GetArgsCount()
+	int MethodInfo::GetArgsCount()
 	{
 		return argsName.size();
 	}
-	int GetVarsCount()
+	int MethodInfo::GetVarsCount()
 	{
 		return varsName.size();
 	}

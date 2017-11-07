@@ -9,7 +9,7 @@ namespace SymbolTable {
 
 	class ClassInfo : public Symbol {
 	public:
-		ClassInfo( std::string _name, Position position );
+		ClassInfo( std::string _name, Position _position );
 		void AddMethodInfo( const std::string name, const MethodInfo & info );
 		void AddVariableInfo( const std::string name, const VariableInfo * info );
 		const VariableInfo& GetVariableInfo( const std::string name ) const;
