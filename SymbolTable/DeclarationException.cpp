@@ -7,8 +7,10 @@ namespace SymbolTable {
 		return msgresult.c_str();
 	}
 
-	DeclarationException::DeclarationException( const std::string & message )
+    DeclarationException::DeclarationException( const std::string& message,
+                                                const Position& position)
 	{
+        msgresult += position.ToString();
 		msgresult += message;
 	}
 }

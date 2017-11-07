@@ -1,75 +1,115 @@
-#pragma once
-
 #include "Table.h"
 
+#include "StringSymbol.h"
 #include "Position.h"
 #include "Symbol.h"
 #include "DeclarationException.h"
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <assert.h>
 
 namespace SymbolTable {
-  Table::Table()
-  {
-    currentTable = 0;
-  }
 
-  void Table::beginBlock(const Position position)
-  {
-    currentTable++;
-  }
-  void Table::endBlock(const Position position)
-  {
-    blockTable.pop_back();
-    currentTable--;
-  }
+void Table::addClassToScope(const ClassInfo* classToScope)
+{
+    blocks.push_back(std::make_unique<ScopeBlock>(&classToScope->GetVariableBlock(),
+                                &classToScope->GetMethodsBlock()));
+}
 
-  void Table::addSymbol(const std::string src, const Symbol* symbol, const Position position)
-  {
-    auto element = blockTable[currentTable].find(src);
-    if (element != blockTable[currentTable].end())
-    {
-      throw new DeclarationException(position.ToString() + " Variable already declared.\n");
+void Table::addMethodToScope(const MethodInfo* methodToScope)
+{
+    blocks.push_back(std::make_unique<ScopeBlock>(&methodToScope->GetVariableBlocks()));
+}
+
+void Table::verifyClass(const ClassInfo* classToScope, const Position& position)
+{
+    std::set<const StringSymbol*> classesInGraph;
+    for(auto classToCheck = classToScope; classToCheck->GetSuperClassName() != nullptr;
+        classToCheck = this->GetClass(classToCheck->GetSuperClassName()->GetString(), position)) {
+        if(classesInGraph.find(classToCheck->GetName()) != classesInGraph.end()) {
+            throw new DeclarationException("Cyclic dependency of class " +
+                                           classToCheck->GetName()->GetString(),
+                                           position);
+        }
+        classesInGraph.insert(classToScope->GetName());
     }
-    else
-    {
-      blockTable[currentTable].insert( { src, symbol } );
+    for(auto classToCheck = classesInGraph.begin(); classToCheck != classesInGraph.end();
+        ++classToCheck) {
+        verifiedClasses.insert(*classToCheck);
     }
-  }
+}
 
-  const Symbol * Table::getInfo(const std::string src, const Position position) const
-  {
-    int pointer = currentTable;
-    bool isFind = false;
-    while (pointer >= 0 && !isFind)
-    {
-      auto element = blockTable[pointer].find(src);
-      if (element != blockTable[pointer].end())
-      {
-        isFind = true;
-        return element->second;
-      }
-      else
-      {
-        pointer--;
-      }
+void Table::FreeLastScope()
+{
+    assert(blocks.size() > 0);
+    blocks.pop_back();
+}
+
+void Table::AddClass(const ClassInfo* symbol, const Position& position)
+{
+    auto alreadyFound = classesBlock.find(symbol->GetName());
+    if(alreadyFound != classesBlock.end()) {
+        throw new DeclarationException("Class " + symbol->GetName()->GetString() + " already defined at " +
+                                       alreadyFound->second->GetName()->GetString(), position);
     }
+    classesBlock.insert(std::make_pair(symbol->GetName(), std::unique_ptr<const ClassInfo>(symbol)));
+}
 
-    if ( !isFind )
-    {
-      throw new DeclarationException(position.ToString() + " Variable not declared.\n");
+void Table::AddClassToScope(const std::string& classToScopeName, const Position& position)
+{
+    auto classToAdd = GetClass(classToScopeName, position);
+    if(verifiedClasses.find(classToAdd->GetName()) == verifiedClasses.end()) {
+        verifyClass(classToAdd, position);
     }
-    
-  }
+    std::vector<const ClassInfo*> classesStack;
+    classesStack.push_back(classToAdd);
+    while (classToAdd->GetSuperClassName() != nullptr) {
+        classToAdd = GetClass(classToAdd->GetSuperClassName()->GetString(), position);
+        classesStack.push_back(classToAdd);
+    }
+    for(auto scopeToAdd = classesStack.rbegin(); scopeToAdd != classesStack.rend(); ++scopeToAdd ) {
+        addClassToScope(*scopeToAdd);
+    }
+}
 
-  void addBlockToMethod( std::unordered_map<std::string, Symbol*> * block )
-  {
+void Table::AddMethodToScope(const std::string& methodToScopeName, const Position& position)
+{
+    addMethodToScope(GetMethod(methodToScopeName, position));
+}
 
-  }
-  
-  void addBlockToClass( std::unordered_map<std::string, Symbol*> * block )
-  {
+const MethodInfo* Table::GetMethod(const std::string& name, const Position& position) const
+{
+    const StringSymbol* methodName = StringSymbol::GetIntern(name);
+    for(auto block = blocks.rbegin(); block != blocks.rend(); ++block) {
+        auto method = block->get()->methodBlock->find(methodName);
+        if(method != block->get()->methodBlock->end()) {
+            return method->second.get();
+        }
+    }
+    throw new DeclarationException("Not declared method " + name + " requested", position);
+}
 
-  }
+const VariableInfo* Table::GetVariable(const std::string& name, const Position& position) const
+{
+    const StringSymbol* variableName = StringSymbol::GetIntern(name);
+    for(auto block = blocks.rbegin(); block != blocks.rend(); ++block) {
+        auto variable = block->get()->variableBlock->find(variableName);
+        if(variable != block->get()->variableBlock->end()) {
+            return variable->second.get();
+        }
+    }
+    throw new DeclarationException("Not declared variable " + name + " requested", position);
+}
+
+const ClassInfo* Table::GetClass(const std::string& name, const Position& position) const
+{
+    const StringSymbol* className = StringSymbol::GetIntern(name);
+    auto classInfo = classesBlock.find(className);
+    if(classInfo != classesBlock.end()) {
+        return classInfo->second.get();
+    }
+    throw new DeclarationException("Not declared class " + name + " requested", position);
+}
+
 }	

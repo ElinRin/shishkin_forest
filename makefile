@@ -4,7 +4,10 @@ SYMBOL_TABLE_SRC = $(wildcard $(SYMBOL_TABLE_SRC_DIR)/*.cpp)
 
 SYMBOL_TABLE_OBJ = $(SYMBOL_TABLE_SRC:$(SYMBOL_TABLE_SRC_DIR)/%.cpp=./%.o)
 
-all: parser $(SYMBOL_TABLE_OBJ)
+all: parser test
+	
+test: $(SYMBOL_TABLE_OBJ)
+	g++ -g -o test  $(SYMBOL_TABLE_OBJ) $(CFLAGS)
 
 parser: parser.o lex.o treeNode.o nodes.o prettyPrint.o
 	g++ -g -o parser treeNode.o nodes.o lex.o parser.o prettyPrint.o -lfl $(CFLAGS)
@@ -28,4 +31,4 @@ prettyPrint.o: PrettyPrint/PrintVisitor.cpp
 		g++ -g -c PrettyPrint/PrintVisitor.cpp -o prettyPrint.o $(CFLAGS)
 
 clean:
-	rm treeNode.o nodes.o lex.o parser.o parser
+	rm $(SYMBOL_TABLE_OBJ) treeNode.o nodes.o lex.o parser.o parser test

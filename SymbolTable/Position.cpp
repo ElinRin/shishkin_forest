@@ -3,14 +3,15 @@
 
 namespace SymbolTable {
   
-  Position::Position(int _x, int _y) : 
-    x(_x),
-    y(_y)
-  {
-  }
+Position::Position(int _x, int _y) :
+  x(_x),
+  y(_y)
+{
+}
 
-  std::string Position::ToString() const
-  {
-      return "(" + std::to_string(x) + "," + std::to_string(y) + ")";
-  }
+std::string Position::ToString() const
+{
+    return "(" + std::to_string(x) + "," + std::to_string(y) + ")";
+}
+
 }

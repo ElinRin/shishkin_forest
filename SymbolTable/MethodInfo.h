@@ -9,26 +9,26 @@
 
 namespace SymbolTable {
 
-	class MethodInfo : public Symbol{
-	public:
-		MethodInfo( std::string _name, Position _position, std::string _returnType);
-        std::string GetReturnType() const;
-		void AddVariableInfo( const std::string name );
-        const VariableInfo* GetVariableInfo( const std::string name ) const;
-		void AddArgInfo( const std::string name );
-        const VariableInfo* GetArgInfo( const std::string name  ) const;
-		void addBlock( std::unordered_map<std::string, Symbol*> * _block );
-		std::vector<std::string> GetArgsName();
-		std::vector<std::string>  GetVarsName();
-		int GetArgsCount();
-		int GetVarsCount();
+class MethodInfo : public Symbol{
+public:
+    MethodInfo( std::string _name, Position _position, TypeInfo _returnType);
+    TypeInfo GetReturnType() const;
+    void AddVariableInfo(const VariableInfo *name );
+    const VariableInfo* GetVariableInfo(const StringSymbol *name , const Position &position) const;
+    void AddArgInfo(const VariableInfo *name );
+    std::vector<const StringSymbol*> GetArgsName() const;
+    std::vector<const StringSymbol*>  GetVarsName() const;
+    int GetArgsCount();
+    int GetVarsCount();
+    const VariableBlock& GetVariableBlocks() const { return block; }
 
-	private:
-		std::string returnType;
-		std::vector<std::string> varsName;
-		std::vector<std::string> argsName;
-		std::unordered_map<std::string, Symbol*> * block;
-		Position position;
-    std::string name;
-	};
+private:
+    TypeInfo returnType;
+    std::vector<const StringSymbol*> varsName;
+    std::vector<const StringSymbol*> argsName;
+    VariableBlock block;
+};
+
+typedef std::unordered_map< const StringSymbol*, std::unique_ptr<const MethodInfo>>  MethodBlock;
+
 }

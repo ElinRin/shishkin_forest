@@ -1,21 +1,31 @@
 #pragma once
 
 #include <string>
+#include <StringSymbol.h>
+#include <Position.h>
 
 namespace SymbolTable { 
 
-  class Symbol {
-  public:
-    const std::string& String() const;
-    Symbol() {};
-    Symbol( const Symbol& ) = delete;
-    void operator=( const Symbol& ) = delete;
+class Symbol {
+public:
+  Symbol(std::string name, Position& position);
+  Symbol(StringSymbol* name, Position& position);
 
-    bool operator ==( const Symbol& a );
-		bool operator !=( const Symbol& a );
+  Symbol( const Symbol& ) = delete;
+  void operator=( const Symbol& ) = delete;
 
-    virtual ~Symbol();
-  private:
-    std::string name;
-  };
+  bool operator ==( const Symbol& a );
+  bool operator !=( const Symbol& a );
+
+  virtual ~Symbol() {};
+
+  const StringSymbol* GetName() const { return name; }
+  const Position& GetPosition() const { return position; }
+
+protected:
+  const StringSymbol* name;
+  const Position position;
+
+};
+
 }

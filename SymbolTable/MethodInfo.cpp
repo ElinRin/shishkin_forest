@@ -8,57 +8,45 @@
 
 namespace SymbolTable {
 
-    MethodInfo::MethodInfo( std::string _name, Position _position, std::string _returnType) :
-		name(_name),
-		position(_position),
+    MethodInfo::MethodInfo(std::string _name, Position _position, TypeInfo _returnType) :
+        Symbol(_name, _position),
 		returnType(_returnType)
 		{	
 		}
 
-    std::string MethodInfo::GetReturnType() const
+    TypeInfo MethodInfo::GetReturnType() const
 	{
 		return returnType;
 	}
 
-	void MethodInfo::AddVariableInfo( const std::string name )
+    void MethodInfo::AddVariableInfo( const VariableInfo* name )
 	{
-		varsName.push_back(name);
+        varsName.push_back(name->GetName());
+        block.insert(std::make_pair(name->GetName(), std::unique_ptr<const VariableInfo>(name)));
 	}
 
-    const VariableInfo* MethodInfo::GetVariableInfo( const std::string name ) const
+    const VariableInfo* MethodInfo::GetVariableInfo( const StringSymbol* name, const Position& position ) const
 	{
-        const VariableInfo* variable = dynamic_cast<VariableInfo*>(block->find(name)->second);
+        const VariableInfo* variable = block.find(name)->second.get();
         if(variable == nullptr) {
-            throw new DeclarationException("Variable " + name + " in class " + this->name + "undeclared");
+            throw new DeclarationException("Variable " + name->GetString() +
+                                           " in class " + this->name->GetString() + "undeclared", position);
         }
         return variable;
 	}
 
-	void MethodInfo::AddArgInfo( const std::string name )
+    void MethodInfo::AddArgInfo( const VariableInfo* name )
 	{
-		argsName.push_back(name);
-	}
-
-    const VariableInfo* MethodInfo::GetArgInfo( const std::string name  ) const
-	{
-        const VariableInfo* variable = dynamic_cast<VariableInfo*>(block->find(name)->second);
-        if(variable == nullptr) {
-            throw new DeclarationException("Variable " + name + " in class " + this->name + "undeclared");
-        }
-        return variable;
-	}
-
-	void MethodInfo::addBlock( std::unordered_map<std::string, Symbol*> * _block )
-	{
-		block = _block;
+        argsName.push_back(name->GetName());
+        block.insert(std::make_pair(name->GetName(), std::unique_ptr<const VariableInfo>(name)));
 	}
 	
-	std::vector<std::string> MethodInfo::GetArgsName()
+    std::vector<const StringSymbol*> MethodInfo::GetArgsName() const
 	{
 		return argsName;
 	}
 
-	std::vector<std::string>  MethodInfo::GetVarsName()
+    std::vector<const StringSymbol*>  MethodInfo::GetVarsName() const
 	{
 		return varsName;
 	}
@@ -72,5 +60,4 @@ namespace SymbolTable {
 	{
 		return varsName.size();
 	}
-	
 }
