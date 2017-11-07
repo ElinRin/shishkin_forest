@@ -2,7 +2,7 @@
 
 namespace SymbolTable {
 
-	char const * DeclarationException::what() const
+	char const * DeclarationException::what() const noexcept
 	{
 		return msgresult.c_str();
 	}
