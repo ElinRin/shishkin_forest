@@ -11,8 +11,8 @@ namespace SymbolTable {
     Symbol( const Symbol& ) = delete;
     void operator=( const Symbol& ) = delete;
 
-    friend bool operator ==( const Symbol& a, const Symbol& b );
-		friend bool operator !=( const Symbol& a, const Symbol& b );
+    bool operator ==( const Symbol& a );
+		bool operator !=( const Symbol& a );
 
     virtual ~Symbol();
   protected:

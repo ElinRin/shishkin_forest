@@ -9,6 +9,6 @@ namespace SymbolTable {
 
 	DeclarationException::DeclarationException( const std::string & message )
 	{
-		msgresult+= message;
+		msgresult += message;
 	}
 }
