@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Table.h"
+
 #include "Position.h"
 #include "Symbol.h"
 #include "DeclarationException.h"
@@ -26,7 +28,7 @@ namespace SymbolTable {
   void Table::addSymbol(const std::string src, const Symbol * symbol, const Position position)
   {
     auto element = blockTable[currentTable].find(src);
-    if (elemet != blockTable[currentTable].end())
+    if (element != blockTable[currentTable].end())
     {
       throw new DeclarationException(position.ToString() + " Variable already declared.\n");
     }
@@ -36,14 +38,14 @@ namespace SymbolTable {
     }
   }
 
-  const Symbol * Table::getInfo(const std::string src, const Position position)
+  const Symbol * Table::getInfo(const std::string src, const Position position) const
   {
     int pointer = currentTable;
     bool isFind = false;
     while (pointer >= 0 && !isFind)
     {
       auto element = blockTable[pointer].find(src);
-      if (elemet != blockTable[pointer].end())
+      if (element != blockTable[pointer].end())
       {
         isFind = true;
         return element->second;
