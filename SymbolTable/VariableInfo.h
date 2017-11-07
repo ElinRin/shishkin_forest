@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Symbol.h"
+#include "Position.h"
+
 namespace SymbolTable {
 
 	class VariableInfo : public Symbol {

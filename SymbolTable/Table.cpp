@@ -25,7 +25,7 @@ namespace SymbolTable {
     currentTable--;
   }
 
-  void Table::addSymbol(const std::string src, const Symbol * symbol, const Position position)
+  void Table::addSymbol(const std::string src, const Symbol* symbol, const Position position)
   {
     auto element = blockTable[currentTable].find(src);
     if (element != blockTable[currentTable].end())

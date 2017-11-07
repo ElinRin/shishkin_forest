@@ -8,7 +8,7 @@ namespace SymbolTable {
 	}
 	
 	VariableInfo::VariableInfo( std::string _name, Position  _position, std::string _type ) :
-		name( _name),
+        name( _name),
 		type( _type ),
 		position( _position )
 	{

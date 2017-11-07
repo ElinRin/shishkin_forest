@@ -17,7 +17,7 @@ namespace SymbolTable {
 		void addSymbol(const std::string src, const Symbol * symbol, const Position position); // может кинуть ошибку повторного объявления символа
 		const Symbol * getInfo(const std::string src, const Position position) const; // может кинуть ошибку необявленной переменной
 	private:
-		std::vector< std::unordered_map<std::string, Symbol*> > blockTable;
+        std::vector< std::unordered_map<std::string, const Symbol*> > blockTable;
 		int currentTable;
 	};
 }	

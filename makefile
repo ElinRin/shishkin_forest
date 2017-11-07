@@ -22,7 +22,7 @@ treeNode.o: SyntaxTree/TreeNode.cpp
 	g++ -g -c SyntaxTree/TreeNode.cpp -o treeNode.o $(CFLAGS)
 		
 ./%.o: $(SYMBOL_TABLE_SRC_DIR)/%.cpp
-	g++ -g -c $< -o $@
+	g++ -g -c $< -o $@ $(CFLAGS)
 
 prettyPrint.o: PrettyPrint/PrintVisitor.cpp
 		g++ -g -c PrettyPrint/PrintVisitor.cpp -o prettyPrint.o $(CFLAGS)
