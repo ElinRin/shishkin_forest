@@ -30,7 +30,7 @@ namespace SymbolTable {
 	{
         const VariableInfo* variable = block.find(name)->second.get();
         if(variable == nullptr) {
-            throw new DeclarationException("Variable " + name->GetString() +
+            throw DeclarationException("Variable " + name->GetString() +
                                            " in class " + this->name->GetString() + "undeclared", position);
         }
         return variable;

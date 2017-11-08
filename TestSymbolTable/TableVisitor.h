@@ -49,6 +49,7 @@ private:
     TypeInfo fromType(const AST::Type* type);
     void printClassInfo(const ClassInfo* classInfo);
     void printVariable(const VariableInfo* varInfo);
+    void printType(const TypeInfo& varInfo);
 };
 
 }

@@ -28,9 +28,9 @@ void Table::verifyClass(const ClassInfo* classToScope, const Position& position)
     for(auto classToCheck = classToScope; classToCheck->GetSuperClassName() != nullptr;
         classToCheck = this->GetClass(classToCheck->GetSuperClassName()->GetString(), position)) {
         if(classesInGraph.find(classToCheck->GetName()) != classesInGraph.end()) {
-            throw new DeclarationException("Cyclic dependency of class " +
+            throw DeclarationException("Cyclic dependency of class " +
                                            classToCheck->GetName()->GetString(),
-                                           position);
+                                           classToCheck->GetPosition());
         }
         classesInGraph.insert(classToScope->GetName());
     }
@@ -50,8 +50,9 @@ void Table::AddClass(const ClassInfo* symbol, const Position& position)
 {
     auto alreadyFound = classesBlock.find(symbol->GetName());
     if(alreadyFound != classesBlock.end()) {
-        throw new DeclarationException("Class " + symbol->GetName()->GetString() + " already defined at " +
-                                       alreadyFound->second->GetName()->GetString(), position);
+        throw DeclarationException("Class " + symbol->GetName()->GetString() + " already defined at " +
+                                   alreadyFound->second->GetName()->GetString() + "," + alreadyFound->second->GetPosition().ToString(),
+                                   symbol->GetPosition());
     }
     classesNames.push_back(symbol->GetName());
     classesBlock.insert(std::make_pair(symbol->GetName(), std::unique_ptr<const ClassInfo>(symbol)));
@@ -88,7 +89,7 @@ const MethodInfo* Table::GetMethod(const std::string& name, const Position& posi
             return method->second.get();
         }
     }
-    throw new DeclarationException("Not declared method " + name + " requested", position);
+    throw DeclarationException("Not declared method " + name + " requested", position);
 }
 
 const VariableInfo* Table::GetVariable(const std::string& name, const Position& position) const
@@ -100,7 +101,7 @@ const VariableInfo* Table::GetVariable(const std::string& name, const Position& 
             return variable->second.get();
         }
     }
-    throw new DeclarationException("Not declared variable " + name + " requested", position);
+    throw DeclarationException("Not declared variable " + name + " requested", position);
 }
 
 const ClassInfo* Table::GetClass(const std::string& name, const Position& position) const
@@ -110,7 +111,7 @@ const ClassInfo* Table::GetClass(const std::string& name, const Position& positi
     if(classInfo != classesBlock.end()) {
         return classInfo->second.get();
     }
-    throw new DeclarationException("Not declared class " + name + " requested", position);
+    throw DeclarationException("Not declared class " + name + " requested", position);
 }
 
 }	

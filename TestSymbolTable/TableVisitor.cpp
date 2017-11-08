@@ -1,6 +1,7 @@
 #include "TableVisitor.h"
 
 #include <iostream>
+#include "DeclarationException.h"
 
 namespace SymbolTable {
 
@@ -10,12 +11,17 @@ void TableVisitor::ParseProgram(AST::Program* program)
     for(auto className = table.GetClassesNames().begin();
         className != table.GetClassesNames().end(); ++className)
     {
-        std::string name = (*className)->GetString();
-        std::cout << "class " << name << ":" << std::endl;
-        auto classInfo = table.GetClass(name, Position(0,0));
-        table.AddClassToScope(name, Position(0,0));
-        printClassInfo(classInfo);
-        table.FreeLastScope();
+        try {
+            std::string name = (*className)->GetString();
+            std::cout << "class " << name << ":" << std::endl;
+            auto classInfo = table.GetClass(name, Position(0,0));
+            table.AddClassToScope(name, Position(0,0));
+            printClassInfo(classInfo);
+            table.FreeLastScope();
+            std::cout << std::endl;
+        } catch(DeclarationException e) {
+            std::cout << "Declaration error:" << e.what() << std::endl;
+        }
     }
 }
 
@@ -107,16 +113,15 @@ TypeInfo TableVisitor::fromType(const AST::Type* type)
 void TableVisitor::printClassInfo(const ClassInfo* classInfo)
 {
     if(classInfo->GetSuperClassName() != nullptr) {
-        std::cout << "\tSuper: " << classInfo->GetSuperClassName()->GetString() << std::endl;
+        std::cout << "  Super: " << classInfo->GetSuperClassName()->GetString() << std::endl;
         auto superClass = table.GetClass(classInfo->GetSuperClassName()->GetString(), Position(0, 0));
         printClassInfo(superClass);
     }
-    std::cout << std::endl;
 
     for(auto varName = classInfo->GetVarsNames().begin();
         varName != classInfo->GetVarsNames().end(); ++varName)
     {
-        std::cout << "\t\t";
+        std::cout << "    ";
         auto variable = table.GetVariable((*varName)->GetString(), Position(0, 0));
         printVariable(variable);
     }
@@ -125,20 +130,21 @@ void TableVisitor::printClassInfo(const ClassInfo* classInfo)
         methodName != classInfo->GetMethodNames().end(); ++methodName) {
         auto method = table.GetMethod((*methodName)->GetString(), Position(0, 0));
         table.AddMethodToScope(method->GetName()->GetString(), Position(0, 0));
-        std::cout << "\t\t" << (method->GetQualifier() == Q_Public ? "public " : "private ");
+        std::cout << "    " << (method->GetQualifier() == Q_Public ? "public " : "private ");
+        printType(method->GetReturnType());
         std::cout << method->GetName()->GetString() << std::endl;
-        std::cout << "\t\t\tArgs:" << std::endl;
+        std::cout << "      Args:" << std::endl;
         auto& args= method->GetArgsName();
         for(auto arg = args.begin(); arg != args.end(); ++arg) {
             auto var = table.GetVariable((*arg)->GetString(), Position(0, 0));
-            std::cout << "\t\t\t\t";
+            std::cout << "        ";
             printVariable(var);
         }
-        std::cout << "\t\t\tLocal vars:" << std::endl;
+        std::cout << "      Local vars:" << std::endl;
         auto& vars = method->GetVarsName();
         for(auto var = vars.begin(); var != vars.end(); ++var) {
             auto varInfo = table.GetVariable((*var)->GetString(), Position(0, 0));
-            std::cout << "\t\t\t\t";
+            std::cout << "        ";
             printVariable(varInfo);
         }
         table.FreeLastScope();
@@ -147,23 +153,28 @@ void TableVisitor::printClassInfo(const ClassInfo* classInfo)
 
 void TableVisitor::printVariable(const VariableInfo* varInfo)
 {
-    switch (varInfo->GetType().GetType()) {
+    printType(varInfo->GetType());
+    std::cout << " " << varInfo->GetName()->GetString() << std::endl;
+}
+
+void TableVisitor::printType(const TypeInfo &type)
+{
+    switch (type.GetType()) {
     case VT_Int:
-        std::cout << "int";
+        std::cout << "int ";
         break;
     case VT_IntArray:
-        std::cout << "int[]";
+        std::cout << "int[] ";
         break;
     case VT_Boolean:
-        std::cout << "boolean";
+        std::cout << "boolean ";
         break;
     case VT_UserClass:
-        std::cout << "class " << varInfo->GetType().GetUserClass()->GetString();
+        std::cout << "class " << type.GetUserClass()->GetString();
         break;
     default:
         break;
     }
-    std::cout << " " << varInfo->GetName()->GetString() << std::endl;
 }
 
 }

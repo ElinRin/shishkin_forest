@@ -1,6 +1,5 @@
 #include <vector>
 #include <unordered_map>
-#include <DeclarationException.h>
 #include "MethodInfo.h"
 #include "VariableInfo.h"
 #include "ClassInfo.h"
