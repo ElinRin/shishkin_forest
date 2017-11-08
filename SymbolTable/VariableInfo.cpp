@@ -18,7 +18,7 @@ TypeInfo::TypeInfo(T_VariableType type, const StringSymbol* userClass) : type(ty
     }
 }
 
-const StringSymbol *TypeInfo::GetUserClass()
+const StringSymbol *TypeInfo::GetUserClass() const
 {
     assert(type == VT_UserClass);
     return userClass;

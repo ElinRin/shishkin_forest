@@ -53,6 +53,7 @@ void Table::AddClass(const ClassInfo* symbol, const Position& position)
         throw new DeclarationException("Class " + symbol->GetName()->GetString() + " already defined at " +
                                        alreadyFound->second->GetName()->GetString(), position);
     }
+    classesNames.push_back(symbol->GetName());
     classesBlock.insert(std::make_pair(symbol->GetName(), std::unique_ptr<const ClassInfo>(symbol)));
 }
 

@@ -20,7 +20,7 @@ public:
     TypeInfo(T_VariableType type, const std::string& userClass);
 
     T_VariableType GetType() const { return type; }
-    const StringSymbol* GetUserClass();
+    const StringSymbol* GetUserClass() const;
 
 private:
     T_VariableType type;

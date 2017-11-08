@@ -31,11 +31,13 @@ public:
     const ClassInfo* GetClass(const std::string &name, const Position &position) const; // может кинуть ошибку необявленной переменной
     const MethodInfo* GetMethod(const std::string &name, const Position &position) const;
     const VariableInfo* GetVariable(const std::string &name, const Position &position) const;
+    const std::vector< const StringSymbol* >& GetClassesNames() const  { return classesNames; }
 
 private:
     ClassBlock classesBlock;
     std::set<const StringSymbol*> verifiedClasses;
     std::vector< std::unique_ptr<ScopeBlock> > blocks;
+    std::vector< const StringSymbol* > classesNames;
 
     void addClassToScope(const ClassInfo* classToScope);
     void addMethodToScope(const MethodInfo* methodToScope);

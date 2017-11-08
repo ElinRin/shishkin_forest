@@ -12,6 +12,9 @@ parser.cpp
 *.o
 lexer
 parser
+graph
+testTableAssert
+testTableListClasses
 *.config
 *.includes
 *.user
