@@ -8,9 +8,10 @@
 
 namespace SymbolTable {
 
-    MethodInfo::MethodInfo(std::string _name, Position _position, TypeInfo _returnType) :
+    MethodInfo::MethodInfo(std::string _name, Position _position, TypeInfo _returnType, T_Qualifier _qualifier) :
         Symbol(_name, _position),
-		returnType(_returnType)
+        returnType(_returnType),
+        qualifier(_qualifier)
 		{	
 		}
 
@@ -41,12 +42,12 @@ namespace SymbolTable {
         block.insert(std::make_pair(name->GetName(), std::unique_ptr<const VariableInfo>(name)));
 	}
 	
-    std::vector<const StringSymbol*> MethodInfo::GetArgsName() const
+    const std::vector<const StringSymbol*>& MethodInfo::GetArgsName() const
 	{
 		return argsName;
 	}
 
-    std::vector<const StringSymbol*>  MethodInfo::GetVarsName() const
+    const std::vector<const StringSymbol*>& MethodInfo::GetVarsName() const
 	{
 		return varsName;
 	}

@@ -18,6 +18,11 @@ public:
     void AddVariableInfo(const VariableInfo *variable );
     void AddSuperClassName(const std::string& symbol) { superClass = StringSymbol::GetIntern(symbol); }
     void AddSuperClassName(const StringSymbol* symbol) { superClass = symbol; }
+    // Переменны и методы, относящиеся только к данному классу.
+    const std::vector<const StringSymbol*>& GetMethodNames() const { return methodsName; }
+    const std::vector<const StringSymbol*>& GetVarsNames() const { return varsName; }
+    int GetMethodCount() const { return methodsName.size(); }
+    int GetVarsCount() const { return varsName.size(); }
     const StringSymbol* GetSuperClassName() const { return superClass; }
 
     const VariableBlock& GetVariableBlock() const;

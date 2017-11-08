@@ -276,9 +276,3 @@ int yyerror(char* s) {
   printf( NF_RED "Fucking bullshit %s at %d,%d:%d\n" NF_RESET, s, yylloc.first_line, yylloc.first_column,
       yylloc.last_column);
 }
-
-int main(void) {
-  yyparse();
-  AST::PrintVisitor printer("tree.dot");
-  printer.CreateGraph(program.get());
-}
