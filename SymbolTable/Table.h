@@ -24,7 +24,6 @@ struct ScopeBlock
 class Table {
 public:
     void FreeLastScope();
-		// указатель?
     void AddClass(const ClassInfo *symbol, const Position &position); // может кинуть ошибку повторного объявления символа
     void AddClassToScope(const std::string& classToScopeName, const Position &position);
     void AddMethodToScope(const std::string&  methodToScopeName, const Position &position);

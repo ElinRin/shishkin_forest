@@ -2,7 +2,7 @@
 #define DECLARATION_EXCEPTION_H
 
 #include <string>
-#include <Position.h>
+#include "Position.h"
 
 namespace SymbolTable {
 
