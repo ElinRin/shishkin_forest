@@ -12,13 +12,15 @@ namespace SymbolTable {
 struct ScopeBlock
 {
     ScopeBlock(const VariableBlock* _variableBlock = nullptr,
-               const MethodBlock* _methodBlock = nullptr) :
+               const MethodBlock* _methodBlock = nullptr,
+               const ClassInfo* _currentClassInfo = nullptr) :
         methodBlock(_methodBlock),
-        variableBlock(_variableBlock) {
+        variableBlock(_variableBlock),
+        currentClassInfo(_currentClassInfo) {
     }
-
     const MethodBlock* methodBlock;
     const VariableBlock* variableBlock;
+    const ClassInfo* currentClassInfo;
 };
 
 class Table {
@@ -31,6 +33,8 @@ public:
     const MethodInfo* GetMethod(const std::string &name, const Position &position) const;
     const VariableInfo* GetVariable(const std::string &name, const Position &position) const;
     const std::vector< const StringSymbol* >& GetClassesNames() const  { return classesNames; }
+    const ClassInfo* GetScopedClass() const { return blocks.size() > 0 ? blocks.rbegin()->get()->currentClassInfo : nullptr; }
+    bool DoesTypeHaveSuper(const ClassInfo *classInfo, const StringSymbol *super, const Position position) const;
 
 private:
     ClassBlock classesBlock;

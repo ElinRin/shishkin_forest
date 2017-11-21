@@ -17,10 +17,12 @@ enum T_VariableType {
 class TypeInfo {
 public:
     TypeInfo(T_VariableType type, const StringSymbol* userClass = nullptr);
-    TypeInfo(T_VariableType type, const std::string& userClass);
+    TypeInfo(T_VariableType type, const std::string userClass);
 
     T_VariableType GetType() const { return type; }
+    const std::string GetTypeString() const;
     const StringSymbol* GetUserClass() const;
+    bool operator==(const TypeInfo& other) const;
 
 private:
     T_VariableType type;
@@ -30,7 +32,7 @@ private:
 class VariableInfo : public Symbol {
 public:
     const TypeInfo& GetType() const;
-    VariableInfo( std::string _name, Position  _position, TypeInfo _type );
+    VariableInfo(std::string _name, const Position _position, TypeInfo _type );
 private:
     TypeInfo type;
 };

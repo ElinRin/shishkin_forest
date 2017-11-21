@@ -4,25 +4,43 @@
 #include "VariableInfo.h"
 #include "ClassInfo.h"
 #include "Symbol.h"
+#include "DeclarationException.h"
 
 namespace SymbolTable {
 
-ClassInfo::ClassInfo( std::string _name, Position _position ) :
+ClassInfo::ClassInfo(const std::string _name, const Position _position ) :
     Symbol(_name,  _position),
-    superClass(nullptr)
+    superClass(nullptr),
+    info(VT_UserClass, _name)
 {}
 
 void ClassInfo::AddMethodInfo(const MethodInfo* method )
 {
-      methodsName.push_back(method->GetName());
-      methodsBlock.insert(std::make_pair(method->GetName(),
+    auto declared = methodsBlock.find(method->GetName());
+    if(declared != methodsBlock.end()) {
+        throw DeclarationException("Method redeclaration, " +
+                                       method->GetReturnType().GetTypeString() + " " +
+                                       method->GetName()->GetString() +
+                                       " already defined at " + declared->second->GetPosition().ToString(),
+                                       method->GetPosition());
+    }
+    methodsName.push_back(method->GetName());
+    methodsBlock.insert(std::make_pair(method->GetName(),
                                          std::unique_ptr<const MethodInfo>(method)));
 }
 
 void ClassInfo::AddVariableInfo(const VariableInfo* variable )
 {
-      varsName.push_back(variable->GetName());
-      variableBlock.insert(std::make_pair(variable->GetName(),
+    auto declared = variableBlock.find(variable->GetName());
+    if(declared != variableBlock.end()) {
+        throw DeclarationException("Variable redeclaration, " +
+                                       declared->second->GetType().GetTypeString() + " " +
+                                       variable->GetName()->GetString() +
+                                       " already defined at " + declared->second->GetPosition().ToString(),
+                                       variable->GetPosition());
+    }
+    varsName.push_back(variable->GetName());
+    variableBlock.insert(std::make_pair(variable->GetName(),
                                           std::unique_ptr<const VariableInfo>(variable)));
 }
 

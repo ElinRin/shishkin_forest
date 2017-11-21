@@ -33,6 +33,21 @@ struct Type : public ITreeNode
         }
     }
 
+    std::string ToString() const {
+        switch (TypeEnum) {
+        case T_Int:
+            return "int";
+        case T_Boolean:
+            return "boolean";
+        case T_IntArray:
+            return "int[]";
+        case T_UserType:
+            return this->TypeName->Name;
+        default:
+            assert(false);
+        }
+    }
+
     ACCEPT_VISITOR
 };
 

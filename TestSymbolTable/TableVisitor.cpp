@@ -20,7 +20,7 @@ void TableVisitor::ParseProgram(AST::Program* program)
             table.FreeLastScope();
             std::cout << std::endl;
         } catch(DeclarationException e) {
-            std::cout << "Declaration error:" << e.what() << std::endl;
+            std::cout << NF_RED << "Declaration error:" << e.what() << NF_RESET << std::endl;
         }
     }
 }
@@ -55,6 +55,7 @@ void TableVisitor::Visit(const AST::ClassDeclaration* node)
         auto& methodSequence = methodDeclarations->SequenceList;
         for(auto method = methodSequence.begin(); method != methodSequence.end(); ++method) {
             auto methodInfo = new MethodInfo(method->get()->MethodName->Name,
+                                             node->ClassName->Name,
                                              fromCoords(method->get()->Coords()),
                                              fromType(method->get()->ReturnType.get()),
                                              method->get()->QualifierType->QualifierEnum == AST::Q_Public ? Q_Public : Q_Private);
@@ -134,16 +135,16 @@ void TableVisitor::printClassInfo(const ClassInfo* classInfo)
         printType(method->GetReturnType());
         std::cout << method->GetName()->GetString() << std::endl;
         std::cout << "      Args:" << std::endl;
-        auto& args= method->GetArgsName();
+        auto& args= method->GetArgsNames();
         for(auto arg = args.begin(); arg != args.end(); ++arg) {
-            auto var = table.GetVariable((*arg)->GetString(), Position(0, 0));
+            auto var = table.GetVariable((*arg)->GetName()->GetString(), Position(0, 0));
             std::cout << "        ";
             printVariable(var);
         }
         std::cout << "      Local vars:" << std::endl;
         auto& vars = method->GetVarsName();
         for(auto var = vars.begin(); var != vars.end(); ++var) {
-            auto varInfo = table.GetVariable((*var)->GetString(), Position(0, 0));
+            auto varInfo = table.GetVariable((*var)->GetName()->GetString(), Position(0, 0));
             std::cout << "        ";
             printVariable(varInfo);
         }

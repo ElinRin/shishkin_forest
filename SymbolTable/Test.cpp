@@ -36,7 +36,7 @@ void TestClasses() {
                                                    SymbolTable::TypeInfo(SymbolTable::VT_Boolean));
     auto aVariable = new SymbolTable::VariableInfo("a", SymbolTable::Position(3, 0),
                                                    SymbolTable::TypeInfo(SymbolTable::VT_IntArray));
-    auto fooMethod = new SymbolTable::MethodInfo("foo", SymbolTable::Position(4, 0),
+    auto fooMethod = new SymbolTable::MethodInfo("foo", "A", SymbolTable::Position(4, 0),
                                                  SymbolTable::TypeInfo(SymbolTable::VT_UserClass, "B"),
                                                  SymbolTable::Q_Public);
     auto fArg = new SymbolTable::VariableInfo("f", SymbolTable::Position(5, 0),
@@ -57,7 +57,7 @@ void TestClasses() {
                                                    SymbolTable::TypeInfo(SymbolTable::VT_Int));
     auto bLocal = new SymbolTable::VariableInfo("b", SymbolTable::Position(9, 0),
                                                    SymbolTable::TypeInfo(SymbolTable::VT_IntArray));
-    auto foo1Method = new SymbolTable::MethodInfo("foo1", SymbolTable::Position(10, 0),
+    auto foo1Method = new SymbolTable::MethodInfo("foo1", "B", SymbolTable::Position(10, 0),
                                                    SymbolTable::TypeInfo(SymbolTable::VT_Boolean),
                                                    SymbolTable::Q_Private);
     foo1Method->AddVariableInfo(bLocal);
@@ -68,7 +68,7 @@ void TestClasses() {
     assert(table.GetClass("B", SymbolTable::Position(11, 0))->GetMethodsBlock().size() == 1);
     table.AddClassToScope("B", SymbolTable::Position(12, 0));
     auto method = table.GetMethod("foo", SymbolTable::Position(12, 0));
-    assert(method->GetVariableBlocks().find(method->GetArgsName().at(0))->second->GetType().GetType() ==
+    assert(method->GetArgsNames().at(0)->GetType().GetType() ==
            SymbolTable::VT_Boolean);
     assert(table.GetVariable("b", SymbolTable::Position(12, 0))->GetType().GetType() == SymbolTable::VT_Boolean);
     table.AddMethodToScope("foo1", SymbolTable::Position(13, 0));

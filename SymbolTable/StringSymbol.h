@@ -6,7 +6,7 @@
 
 class StringSymbol {
 public:
-    static StringSymbol* GetIntern(const std::string& name);
+    static StringSymbol* GetIntern(const std::string &name);
     const std::string& GetString() const { return body; }
 
 private:

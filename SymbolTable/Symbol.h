@@ -8,8 +8,8 @@ namespace SymbolTable {
 
 class Symbol {
 public:
-  Symbol(std::string name, Position& position);
-  Symbol(StringSymbol* name, Position& position);
+  Symbol(std::string name, const Position& position);
+  Symbol(StringSymbol* name, const Position& position);
 
   Symbol( const Symbol& ) = delete;
   void operator=( const Symbol& ) = delete;
