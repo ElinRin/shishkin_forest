@@ -1,7 +1,6 @@
 #include "SymbolTable/TableFiller.h"
 
 #include <iostream>
-#include <unistd.h>
 
 #include "tokens.h"
 #include "DeclarationException.h"
@@ -11,7 +10,6 @@
 extern std::unique_ptr<AST::Program> program;
 
 int main(void) {
-  //sleep(10);
   yyparse();
   SymbolTable::TableFiller filler;
   if(program.get()) {

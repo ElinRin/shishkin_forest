@@ -77,14 +77,22 @@ void TypeChecker::Visit(const AST::ClassDeclaration *node)
 
 void TypeChecker::Visit(const AST::VarDeclaration* node)
 {
-    assert(false);
+    if(node->VarType->TypeEnum == AST::T_UserType) {
+        table->GetClass(node->VarType->TypeName->Name, fromCoords(node->Coords()));
+    }
 }
 
 void TypeChecker::Visit(const AST::MethodDeclaration* node)
 {
     table->AddMethodToScope(node->MethodName->Name, fromCoords(node->Coords()));
+    if(node->Arguments) {
+        node->Arguments->AcceptVisitor(this);
+    }
     if(node->Statements) {
         node->Statements->AcceptVisitor(this);
+    }
+    if(node->ReturnType->TypeEnum == AST::T_UserType) {
+        table->GetClass(node->ReturnType->TypeName->Name, fromCoords(node->Coords()));
     }
     node->StatementToReturn->AcceptVisitor(this);
     auto returnedType = popTypeStack();
@@ -335,13 +343,20 @@ void TypeChecker::TypeChecker::Visit(const AST::CallMemberExpression* node)
                                                         fromCoords(node->Coords()));
     }
     const SymbolTable::MethodInfo* methodInfo = methodIterator->second.get();
+    auto scoped = table->GetScopedClass();
+    if(methodInfo->GetQualifier() == SymbolTable::Q_Private && (scoped == nullptr || scoped->GetName() != classInfo->GetName())) {
+        throw SymbolTable::DeclarationException("Requested method " + classInfo->GetName()->GetString() +
+                                                        "::" + node->CalledMember->Name +
+                                                        " has private qualifier",
+                                                        fromCoords(node->Coords()));
+    }
     if(node->ArgumentSequence) {
         node->ArgumentSequence->AcceptVisitor(this);
         if(node->ArgumentSequence->SequenceList.size() != methodInfo->GetArgsCount()) {
             throw SymbolTable::DeclarationException("Requested method " + classInfo->GetName()->GetString() +
                                                             "::" + node->CalledMember->Name +
                                                             " has " + std::to_string(methodInfo->GetArgsCount()) +
-                                                            "arguments, but " + std::to_string(node->ArgumentSequence->SequenceList.size()) +
+                                                            " arguments, but " + std::to_string(node->ArgumentSequence->SequenceList.size()) +
                                                             " passed",
                                                             fromCoords(node->Coords()));
         }
