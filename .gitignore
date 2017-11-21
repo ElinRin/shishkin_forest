@@ -24,3 +24,4 @@ testTableListClasses
 *.svg
 settings.json
 test
+checkTypes
