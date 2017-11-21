@@ -8,21 +8,30 @@
 
 namespace SymbolTable {
 
-    MethodInfo::MethodInfo(std::string _name, Position _position, TypeInfo _returnType, T_Qualifier _qualifier) :
+    MethodInfo::MethodInfo(const std::string &_name, const std::string &className, const Position _position, TypeInfo _returnType, T_Qualifier _qualifier) :
+        className(StringSymbol::GetIntern(className)),
         Symbol(_name, _position),
         returnType(_returnType),
         qualifier(_qualifier)
 		{	
 		}
 
-    TypeInfo MethodInfo::GetReturnType() const
+    const TypeInfo& MethodInfo::GetReturnType() const
 	{
 		return returnType;
 	}
 
     void MethodInfo::AddVariableInfo( const VariableInfo* name )
 	{
-        varsName.push_back(name->GetName());
+        auto declared = block.find(name->GetName());
+        if(declared != block.end()) {
+            throw DeclarationException("Variable redeclaration, " +
+                                           declared->second->GetType().GetTypeString() + " " +
+                                           name->GetName()->GetString() +
+                                           " already defined at " + declared->second->GetPosition().ToString(),
+                                           name->GetPosition());
+        }
+        varsNames.push_back(name);
         block.insert(std::make_pair(name->GetName(), std::unique_ptr<const VariableInfo>(name)));
 	}
 
@@ -38,27 +47,35 @@ namespace SymbolTable {
 
     void MethodInfo::AddArgInfo( const VariableInfo* name )
 	{
-        argsName.push_back(name->GetName());
+        auto declared = block.find(name->GetName());
+        if(declared != block.end()) {
+            throw DeclarationException("Variable redeclaration, " +
+                                           declared->second->GetType().GetTypeString() + " " +
+                                           name->GetName()->GetString() +
+                                           " already defined at " + declared->second->GetPosition().ToString(),
+                                           name->GetPosition());
+        }
+        argsNames.push_back(name);
         block.insert(std::make_pair(name->GetName(), std::unique_ptr<const VariableInfo>(name)));
 	}
 	
-    const std::vector<const StringSymbol*>& MethodInfo::GetArgsName() const
+    const std::vector<const VariableInfo*> &MethodInfo::GetArgsNames() const
 	{
-		return argsName;
+        return argsNames;
 	}
 
-    const std::vector<const StringSymbol*>& MethodInfo::GetVarsName() const
+    const std::vector<const VariableInfo*>& MethodInfo::GetVarsName() const
 	{
-		return varsName;
+        return varsNames;
 	}
 
-	int MethodInfo::GetArgsCount()
+    int MethodInfo::GetArgsCount() const
 	{
-		return argsName.size();
+        return argsNames.size();
 	}
 
-	int MethodInfo::GetVarsCount()
+    int MethodInfo::GetVarsCount() const
 	{
-		return varsName.size();
+        return varsNames.size();
 	}
 }

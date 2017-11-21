@@ -14,12 +14,13 @@ namespace SymbolTable {
 void Table::addClassToScope(const ClassInfo* classToScope)
 {
     blocks.push_back(std::make_unique<ScopeBlock>(&classToScope->GetVariableBlock(),
-                                &classToScope->GetMethodsBlock()));
+                                &classToScope->GetMethodsBlock(), classToScope));
 }
 
 void Table::addMethodToScope(const MethodInfo* methodToScope)
 {
-    blocks.push_back(std::make_unique<ScopeBlock>(&methodToScope->GetVariableBlocks()));
+    blocks.push_back(std::make_unique<ScopeBlock>(&methodToScope->GetVariableBlocks(), nullptr,
+                                                  blocks.rbegin()->get()->currentClassInfo));
 }
 
 void Table::verifyClass(const ClassInfo* classToScope, const Position& position)
@@ -102,6 +103,19 @@ const VariableInfo* Table::GetVariable(const std::string& name, const Position& 
         }
     }
     throw DeclarationException("Not declared variable " + name + " requested", position);
+}
+
+bool Table::DoesTypeHaveSuper(const ClassInfo* classInfo, const StringSymbol *super, const Position position) const
+{
+    for(auto info = classInfo;
+        info->GetSuperClassName() != nullptr;
+        info = GetClass(info->GetSuperClassName()->GetString(), position))
+    {
+        if(classInfo->GetSuperClassName() == super) {
+            return true;
+        }
+    }
+    return false;
 }
 
 const ClassInfo* Table::GetClass(const std::string& name, const Position& position) const

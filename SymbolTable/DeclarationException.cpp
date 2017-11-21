@@ -11,6 +11,7 @@ namespace SymbolTable {
                                                 const Position& position)
 	{
         msgresult += position.ToString();
+        msgresult += " ";
 		msgresult += message;
 	}
 }

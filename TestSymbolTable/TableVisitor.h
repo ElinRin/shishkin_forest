@@ -7,7 +7,6 @@
 namespace SymbolTable {
 
 class TableVisitor : public AST::IVisitor {
-
 public:
     void ParseProgram(AST::Program* program);
 

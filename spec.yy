@@ -7,9 +7,6 @@
 
   #define SHOW_COORDINATES 0
 
-  #define NF_RED  "\x1B[31m"
-  #define NF_RESET "\x1B[0m"
-
   #define COORDS AST::Coordinates(yylloc.first_line, yylloc.first_column)
 
   void showTokenPosition();
@@ -121,10 +118,9 @@
 %left   MOD
 %left   MULT
 %left   LESS
+%right  BANG
 %left   DOT
 %left   L_SQUARE
-
-%right  BANG
 
 %%
 

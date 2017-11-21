@@ -3,11 +3,11 @@
 
 namespace SymbolTable { 
 
-Symbol::Symbol(std::string name, Position &position) :
+Symbol::Symbol(std::string name, const Position &position) :
     name(StringSymbol::GetIntern(name)),
     position(position) {}
 
-Symbol::Symbol(StringSymbol *name, Position &position) :
+Symbol::Symbol(StringSymbol *name, const Position &position) :
     name(name),
     position(position){}
 

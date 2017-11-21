@@ -13,7 +13,7 @@ namespace SymbolTable {
 
 class ClassInfo : public Symbol {
 public:
-    ClassInfo( std::string _name, Position _position );
+    ClassInfo(const std::string _name, const Position _position );
     void AddMethodInfo(const MethodInfo *method );
     void AddVariableInfo(const VariableInfo *variable );
     void AddSuperClassName(const std::string& symbol) { superClass = StringSymbol::GetIntern(symbol); }
@@ -24,6 +24,7 @@ public:
     int GetMethodCount() const { return methodsName.size(); }
     int GetVarsCount() const { return varsName.size(); }
     const StringSymbol* GetSuperClassName() const { return superClass; }
+    const TypeInfo& GetTypeInfo() const { return info; }
 
     const VariableBlock& GetVariableBlock() const;
     const MethodBlock& GetMethodsBlock() const;
@@ -34,6 +35,7 @@ private:
     VariableBlock variableBlock;
     MethodBlock methodsBlock;
     const StringSymbol* superClass;
+    TypeInfo info;
 };
 
 typedef std::unordered_map<const StringSymbol*, std::unique_ptr<const ClassInfo>> ClassBlock;

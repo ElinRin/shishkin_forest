@@ -1,4 +1,4 @@
-CFLAGS = -ISymbolTable -ISyntaxTree --std=c++1z
+CFLAGS = -ISymbolTable -ISyntaxTree -I. -ITypeChecker --std=c++1z
 SYMBOL_TABLE_SRC_DIR = SymbolTable
 SYMBOL_TABLE_SRC = $(wildcard $(SYMBOL_TABLE_SRC_DIR)/*.cpp)
 
@@ -6,19 +6,30 @@ SYMBOL_TABLE_OBJ = $(SYMBOL_TABLE_SRC:$(SYMBOL_TABLE_SRC_DIR)/%.cpp=./%.o)
 
 TEST_SYMBOL_TABLE_SRC_DIR = TestSymbolTable
 TEST_SYMBOL_TABLE_SRC = $(wildcard $(TEST_SYMBOL_TABLE_SRC_DIR)/*.cpp)
-
 TEST_SYMBOL_TABLE_OBJ = $(TEST_SYMBOL_TABLE_SRC:$(TEST_SYMBOL_TABLE_SRC_DIR)/%.cpp=./%.o)
 
-all: graph testTableListClasses
+PARSER_OBJ = parser.o lex.o treeNode.o nodes.o prettyPrint.o 
 
-testTableListClasses: $(SYMBOL_TABLE_OBJ) $(TEST_SYMBOL_TABLE_OBJ) parser.o lex.o treeNode.o nodes.o prettyPrint.o tableTest.o
-	g++ -g -o testTableListClasses $(SYMBOL_TABLE_OBJ) $(TEST_SYMBOL_TABLE_OBJ) parser.o lex.o treeNode.o nodes.o prettyPrint.o tableTest.o $(CFLAGS) -lfl
+TYPE_CHECKER_SRC_DIR = TypeChecker
+TYPE_CHECKER_SRC = $(wildcard $(TYPE_CHECKER_SRC_DIR)/*.cpp)
+TYPE_CHECKER_OBJ = $(TYPE_CHECKER_SRC:$(TYPE_CHECKER_SRC_DIR)/%.cpp=./%.o)
+
+all: graph testTableListClasses checkTypes
+
+checkTypes: $(SYMBOL_TABLE_OBJ) $(PARSER_OBJ) $(TYPE_CHECKER_OBJ) checkTypes.o
+	g++ -g -o checkTypes $(SYMBOL_TABLE_OBJ) checkTypes.o $(PARSER_OBJ) $(TYPE_CHECKER_OBJ) $(CFLAGS) -lfl
+
+checkTypes.o: CheckTypes.cpp
+	g++ -g -c CheckTypes.cpp -o checkTypes.o $(CFLAGS)
+
+testTableListClasses: $(SYMBOL_TABLE_OBJ) $(TEST_SYMBOL_TABLE_OBJ) $(PARSER_OBJ) tableTest.o
+	g++ -g -o testTableListClasses $(SYMBOL_TABLE_OBJ) $(TEST_SYMBOL_TABLE_OBJ) $(PARSER_OBJ) tableTest.o $(CFLAGS) -lfl
 
 tableTest.o: tableTest.cpp
 	g++ -g -c tableTest.cpp -o tableTest.o $(CFLAGS)
 
-graph: parser.o lex.o treeNode.o nodes.o prettyPrint.o graph.o
-	g++ -g -o graph treeNode.o nodes.o lex.o parser.o prettyPrint.o graph.o -lfl $(CFLAGS)
+graph: $(PARSER_OBJ)
+	g++ -g -o graph $(PARSER_OBJ) graph.o -lfl $(CFLAGS)
 
 graph.o: graph.cpp
 	g++ -g -c graph.cpp -o graph.o $(CFLAGS)
@@ -41,8 +52,11 @@ treeNode.o: SyntaxTree/TreeNode.cpp
 ./%.o: $(TEST_SYMBOL_TABLE_SRC_DIR)/%.cpp
 	g++ -g -c $< -o $@ $(CFLAGS)
 
+./%.o: $(TYPE_CHECKER_SRC_DIR)/%.cpp
+	g++ -g -c $< -o $@ $(CFLAGS)
+
 prettyPrint.o: PrettyPrint/PrintVisitor.cpp
 		g++ -g -c PrettyPrint/PrintVisitor.cpp -o prettyPrint.o $(CFLAGS)
 
 clean:
-	rm $(SYMBOL_TABLE_OBJ) treeNode.o nodes.o lex.o parser.o grpah.o graph test
+	rm checkTypes checkTypes.o $(SYMBOL_TABLE_OBJ) $(TEST_SYMBOL_TABLE_OBJ) $(TYPE_CHECKER_OBJ) treeNode.o nodes.o lex.o parser.o grpah.o graph
