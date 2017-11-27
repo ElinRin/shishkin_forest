@@ -28,7 +28,7 @@ testTableListClasses: $(SYMBOL_TABLE_OBJ) $(TEST_SYMBOL_TABLE_OBJ) $(PARSER_OBJ)
 tableTest.o: tableTest.cpp
 	g++ -g -c tableTest.cpp -o tableTest.o $(CFLAGS)
 
-graph: $(PARSER_OBJ)
+graph: $(PARSER_OBJ) graph.o
 	g++ -g -o graph $(PARSER_OBJ) graph.o -lfl $(CFLAGS)
 
 graph.o: graph.cpp
@@ -45,7 +45,7 @@ nodes.o: SyntaxTree/AcceptVisitor.cpp
 
 treeNode.o: SyntaxTree/TreeNode.cpp
 	g++ -g -c SyntaxTree/TreeNode.cpp -o treeNode.o $(CFLAGS)
-		
+
 ./%.o: $(SYMBOL_TABLE_SRC_DIR)/%.cpp
 	g++ -g -c $< -o $@ $(CFLAGS)
 
@@ -59,4 +59,4 @@ prettyPrint.o: PrettyPrint/PrintVisitor.cpp
 		g++ -g -c PrettyPrint/PrintVisitor.cpp -o prettyPrint.o $(CFLAGS)
 
 clean:
-	rm checkTypes checkTypes.o $(SYMBOL_TABLE_OBJ) $(TEST_SYMBOL_TABLE_OBJ) $(TYPE_CHECKER_OBJ) treeNode.o nodes.o lex.o parser.o grpah.o graph
+	rm checkTypes checkTypes.o $(SYMBOL_TABLE_OBJ) $(TEST_SYMBOL_TABLE_OBJ) $(TYPE_CHECKER_OBJ) treeNode.o nodes.o lex.o parser.o graph.o graph
