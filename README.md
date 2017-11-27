@@ -16,4 +16,4 @@
 ./scripts/checkTypes.sh <File> #Run checks for syntax, declaration and type errors
 ```
 ---
-Developed by [ElinRin](https://github.com/ElinRin) and [IKholopov](https://github.com/IKholopov) as part of ABBYY course in MIPT on compilers development, 2017-2018.
+Developed by [ElinRin](https://github.com/ElinRin) and [IKholopov](https://github.com/IKholopov) as part of ABBYY course in MIPT on compiler development, 2017-2018.
