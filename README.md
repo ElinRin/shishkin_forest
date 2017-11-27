@@ -1,6 +1,8 @@
 # shishkin_forest 
 **shishkin_forest** - a compiler for MiniJava language
 
+<img src="./tree.svg"/>
+
 ### Requirements:
 - gcc
 - flex++
