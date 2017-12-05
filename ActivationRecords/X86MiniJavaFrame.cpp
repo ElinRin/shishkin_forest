@@ -3,6 +3,7 @@
 #include "Frame.h"
 #include "Symbol.h"
 #include "Access.h"
+#include "InRegAccess.h"
 #include <unordered_map> 
 #include <vector>
 #include <string>
@@ -16,6 +17,15 @@ enum T_VariableType {
     VT_IntArray,
     VT_Boolean,
     VT_UserClass
+};
+
+enum T_RecordsType {
+    RT_Formal,
+    RT_Local,
+    RT_FramePointer,
+    RT_StackPointer,
+    RT_AddressExit,
+    RT_AddressReturnValue
 };
 
 int typeSize(T_VariableType type) {
@@ -38,13 +48,37 @@ int typeSize(T_VariableType type) {
     }
 }
 
+const IAccess* X86MiniJavaFrame:AddAccess(T_RecordsType, const SymbolTable::Symbol* name) {
+    T_VariableType typeVar = name.GetType().GetType();
+    int size = typeSize(typeVar);
+    InRegAccess access(T_RecordsType, size, name);
+    stack.insert({name.GetName().GetString(), *access});
+    return *access;
+}
+
 void X86MiniJavaFrame:AddFormal( const SymbolTable::Symbol* name) {
-    stack.insert({name.GetName().GetString(), name}); 
-    formalList.push(name);
+    IAccess* access = AddAccess(RT_Formal, name);
+    formalList.push(access);
 }
 
 void X86MiniJavaFrame:AddLocal( const SymbolTable::Symbol* name) {
-    stack.insert({name.GetName().GetString(), name}); 
+    IAccess* access = AddAccess(RT_Local, name);
+}
+
+void X86MiniJavaFrame:AddFramePointer( const SymbolTable::Symbol* name) {
+    IAccess* access = AddAccess(RT_FramePointer, name);
+}
+
+void X86MiniJavaFrame:AddStackPointer( const SymbolTable::Symbol* name) {
+    IAccess* access = AddAccess(RT_StackPointer, name);
+}
+
+void X86MiniJavaFrame:AddAddressExit( const SymbolTable::Symbol* name) {
+    IAccess* access = AddAccess(RT_AddressExit, name);
+}
+
+void X86MiniJavaFrame:AddAddressReturnValue( const SymbolTable::Symbol* name) {
+    IAccess* access = AddAccess(RT_AddressReturnValue, name);
 }
 
 int X86MiniJavaFrame:FormalsCount() const {

@@ -3,12 +3,16 @@
 #include "Symbol.h"
 #include "InRegAccess.h"
 
-InRegAccess::InRegAccess(int _size, SymbolTable::Symbol* _symbol) :
-  size(_size),
-  symbol(_symbol)
+InRegAccess::InRegAccess(T_RecordsType _type, int _size, SymbolTable::Symbol* _symbol) :
+    type(_type),
+    size(_size),
+    symbol(_symbol)
 {
 }
 
+const T_RecordsType InRegAccess::GetType() {
+    return type;
+}
 
 const int InRegAccess::GetSize() {
     return size;
