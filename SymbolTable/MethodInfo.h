@@ -29,6 +29,7 @@ public:
     int GetVarsCount() const;
     const VariableBlock& GetVariableBlocks() const { return block; }
     const T_Qualifier GetQualifier() const { return qualifier; }
+    const StringSymbol* GetFullName() const { return className; }
 
 private:
     const StringSymbol* className;

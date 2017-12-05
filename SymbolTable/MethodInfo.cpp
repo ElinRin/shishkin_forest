@@ -8,8 +8,9 @@
 
 namespace SymbolTable {
 
-    MethodInfo::MethodInfo(const std::string &_name, const std::string &className, const Position _position, TypeInfo _returnType, T_Qualifier _qualifier) :
-        className(StringSymbol::GetIntern(className)),
+    MethodInfo::MethodInfo(const std::string& _name, const std::string& className, const Position _position,
+                           TypeInfo _returnType, T_Qualifier _qualifier) :
+        className(StringSymbol::GetIntern(className + "@" + _name)),
         Symbol(_name, _position),
         returnType(_returnType),
         qualifier(_qualifier)

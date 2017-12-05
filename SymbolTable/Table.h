@@ -2,10 +2,13 @@
 
 #include "Position.h"
 #include "ClassInfo.h"
+#include "Frame.h"
 #include <string>
 #include <vector>
 #include <unordered_map>
 #include <set>
+
+namespace AR = ActivationRecords;
 
 namespace SymbolTable {
 
@@ -35,12 +38,15 @@ public:
     const std::vector< const StringSymbol* >& GetClassesNames() const  { return classesNames; }
     const ClassInfo* GetScopedClass() const { return blocks.size() > 0 ? blocks.rbegin()->get()->currentClassInfo : nullptr; }
     bool DoesTypeHaveSuper(const ClassInfo *classInfo, const StringSymbol *super, const Position position) const;
+    void AddFrame(const StringSymbol* methodName, const AR::IFrame* frame);
+    AR::IFrame GetFrame(const StringSymbol* methodName) const;
 
 private:
     ClassBlock classesBlock;
     std::set<const StringSymbol*> verifiedClasses;
     std::vector< std::unique_ptr<ScopeBlock> > blocks;
     std::vector< const StringSymbol* > classesNames;
+    std::unordered_map< const StringSymbol*, std::unique_ptr<const AR::IFrame*>> frames;
 
     void addClassToScope(const ClassInfo* classToScope);
     void addMethodToScope(const MethodInfo* methodToScope);

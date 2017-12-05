@@ -118,6 +118,23 @@ bool Table::DoesTypeHaveSuper(const ClassInfo* classInfo, const StringSymbol *su
     return false;
 }
 
+void Table::AddFrame(const StringSymbol* methodName, const ActivationRecords::IFrame* frame)
+{
+    if(frames.find(methodName) != frames.end()) {
+        throw DeclarationException("Method " + methodName + " already have defined frame");
+    }
+    frames.insert(std::make_pair(methodName, std::unique_ptr<const ActivationRecords::IFrame>(frame)));
+}
+
+ActivationRecords::IFrame Table::GetFrame(const StringSymbol *methodName) const
+{
+    auto frame = frames.find(methodName);
+    if(frame == frames.end()) {
+        throw DeclarationException("Method " + methodName + " does not have a declared frame");
+    }
+    return *frame;
+}
+
 const ClassInfo* Table::GetClass(const std::string& name, const Position& position) const
 {
     const StringSymbol* className = StringSymbol::GetIntern(name);

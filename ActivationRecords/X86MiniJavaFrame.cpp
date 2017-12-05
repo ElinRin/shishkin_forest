@@ -38,35 +38,35 @@ int typeSize(T_VariableType type) {
     }
 }
 
-void X86MiniJavaFrame:AddFormal( const SymbolTable::Symbol* name) {
+void X86MiniJavaFrame::AddFormal( const SymbolTable::Symbol* name) {
     stack.insert({name.GetName().GetString(), name}); 
     formalList.push(name);
 }
 
-void X86MiniJavaFrame:AddLocal( const SymbolTable::Symbol* name) {
+void X86MiniJavaFrame::AddLocal( const SymbolTable::Symbol* name) {
     stack.insert({name.GetName().GetString(), name}); 
 }
 
-int X86MiniJavaFrame:FormalsCount() const {
+int X86MiniJavaFrame::FormalsCount() const {
     return formalList.size();
 }
 
-const IAccess* X86MiniJavaFrame:Formal( int index ) const {
+const IAccess* X86MiniJavaFrame::Formal( int index ) const {
     return formalList[index];
 }
 
-const IAccess* X86MiniJavaFrame:FindLocalOrFormal( const SymbolTable::Symbol* name ) const {
+const IAccess* X86MiniJavaFrame::FindLocalOrFormal( const SymbolTable::Symbol* name ) const {
 
 }
 
-const int X86MiniJavaFrame:FormalSize(int index) const {
+const int X86MiniJavaFrame::FormalSize(int index) const {
     SymbolTable::Symbol* name = formalList[index];
     T_VariableType type = name.GetType().GetType();
     int size = typeSize(type);
     return size;
 }
 
-const int X86MiniJavaFrame:FormalSize(const SymbolTable::Symbol* name) const {
+const int X86MiniJavaFrame::FormalSize(const SymbolTable::Symbol* name) const {
     T_VariableType type = name.GetType().GetType();
     int size = typeSize(type);
     return size;

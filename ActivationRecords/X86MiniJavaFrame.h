@@ -11,6 +11,8 @@ namespace ActivationRecords {
 
 class X86MiniJavaFrame : public IFrame {
 public:
+    const int WORD_SIZE = 4;
+
     void AddFormal( const SymbolTable::Symbol* name);
     void AddLocal( const SymbolTable::Symbol* name);
     int FormalsCount() const;
@@ -18,6 +20,8 @@ public:
     const IAccess* FindLocalOrFormal( const SymbolTable::Symbol* name ) const;
     const int FormalSize(int index) const;
     const int FormalSize(const SymbolTable::Symbol* name) const;
+    const Temp* FP() const;
+    int WordSize() const { return WORD_SIZE; }
 private:
     std::vector<IAccess* access> formalList;
     std::unordered_map<std::string, IAccess* access> stack;
