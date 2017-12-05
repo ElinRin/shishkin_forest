@@ -8,8 +8,9 @@ namespace SymbolTable {
 	public:
 		Position(int _x, int _y);
 		std::string ToString() const;
-  private:
-    int x;
-    int y;
-	};
+	private:
+		int x;
+		int y;
+		};
+		
 }
