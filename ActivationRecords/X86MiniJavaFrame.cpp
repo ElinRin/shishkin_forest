@@ -12,7 +12,7 @@
 
 namespace ActivationRecords {
 
-static const int MAX_IN_REG = 2;
+static const int MAX_IN_REG = 4;
 static const char* const EXIT_ADDRESS_NAME= "@EXIT_ADDRESS@";
 static const char* const RETURN_ADDRESS_NAME= "@RETURN_ADDRESS@";
 
@@ -37,26 +37,28 @@ int typeSize(SymbolTable::T_VariableType type) {
 
 void X86MiniJavaFrame::AddFormal( const SymbolTable::VariableInfo& name) {
     IAccess* var = createFormal(T_RecordsType::RT_Formal, typeSize(name.GetType().GetType()));
-    formalAccess.insert({name.GetName()->GetString(), var});
+    formalAccess.insert(std::make_pair(name.GetName(), std::unique_ptr<IAccess>(var)));
     formalList.push_back(var);
 }
 
 void X86MiniJavaFrame::AddLocal( const SymbolTable::VariableInfo& name) {
     IAccess* var = new InFrameAccess(RT_Formal, typeSize(name.GetType().GetType()), localTopPointer );
-    localAccess.insert({name.GetName()->GetString(), var});
+    localAccess.insert(std::make_pair(name.GetName(), std::unique_ptr<IAccess>(var)));
     localTopPointer += typeSize(name.GetType().GetType());
 }
 
 void X86MiniJavaFrame::AddAddressExit() {
     IAccess* var = createFormal(T_RecordsType::RT_AddressExit, referenceSize);
-    formalAccess.insert({EXIT_ADDRESS_NAME, var});
+    formalAccess.insert(std::make_pair(StringSymbol::GetIntern(EXIT_ADDRESS_NAME),
+                                       std::unique_ptr<IAccess>(var)));
     this->addressExitIndex = formalList.size();
     formalList.push_back(var);
 }
 
 void X86MiniJavaFrame::AddAddressReturnValue(SymbolTable::T_VariableType type) {
     IAccess* var = createFormal(T_RecordsType::RT_AddressReturnValue, referenceSize);
-    formalAccess.insert({RETURN_ADDRESS_NAME, var});
+    formalAccess.insert(std::make_pair(StringSymbol::GetIntern(RETURN_ADDRESS_NAME),
+                                       std::unique_ptr<IAccess>(var)));
     this->addressReturnValueIndex = formalList.size();
     formalList.push_back(var);
 }
@@ -70,12 +72,12 @@ const IAccess* X86MiniJavaFrame::Formal( int index ) const {
 }
 
 const IAccess* X86MiniJavaFrame::FindLocalOrFormal( const StringSymbol* name ) const {
-    auto res = localAccess.find(name->GetString());
+    auto res = localAccess.find(name);
     if( res == localAccess.end() ) {
-        res = formalAccess.find(name->GetString());
+        res = formalAccess.find(name);
         assert(res != formalAccess.end());
     }
-    return res->second;
+    return res->second.get();
 }
 
 const IAccess* X86MiniJavaFrame::ExitAddress() const
@@ -93,7 +95,7 @@ const int X86MiniJavaFrame::FormalSize(int index) const {
 }
 
 const int X86MiniJavaFrame::FormalSize(const StringSymbol* name) const {
-    auto res = formalAccess.find(name->GetString());
+    auto res = formalAccess.find(name);
     assert(res != formalAccess.end());
     return res->second->GetSize();
 }

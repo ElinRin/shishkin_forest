@@ -17,7 +17,7 @@ void FrameFiller::Fill()
         auto methods = classInfo->GetMethodNames();
         for(auto method: methods) {
             auto methodInfo = table->GetMethod(method->GetString(), position);
-            IFrame* frame = new X86MiniJavaFrame();
+            std::unique_ptr<IFrame> frame(new X86MiniJavaFrame());
             SymbolTable::VariableInfo thisVariable("this", position, classInfo->GetTypeInfo());
             frame->AddFormal(thisVariable);
             auto argNames = methodInfo->GetArgsNames();

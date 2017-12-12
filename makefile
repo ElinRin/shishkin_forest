@@ -80,4 +80,4 @@ prettyPrint.o: PrettyPrint/PrintVisitor.cpp
 		g++ -g -c PrettyPrint/PrintVisitor.cpp -o prettyPrint.o $(CFLAGS)
 
 clean:
-	rm checkTypes checkTypes.o $(SYMBOL_TABLE_OBJ) $(TEST_SYMBOL_TABLE_OBJ) $(TYPE_CHECKER_OBJ) treeNode.o nodes.o lex.o parser.o graph.o graph
+	rm checkTypes checkTypes.o $(SYMBOL_TABLE_OBJ) $(TEST_SYMBOL_TABLE_OBJ) $(TYPE_CHECKER_OBJ) $(AR_OBJ) $(TEST_AR_OBJ) treeNode.o nodes.o lex.o parser.o graph.o graph

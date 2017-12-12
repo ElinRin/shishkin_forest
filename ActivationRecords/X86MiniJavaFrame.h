@@ -33,8 +33,8 @@ public:
 
 private:
     std::vector<IAccess*> formalList;
-    std::unordered_map<std::string, IAccess*> formalAccess;
-    std::unordered_map<std::string, IAccess*> localAccess;
+    std::unordered_map<const StringSymbol*, std::unique_ptr<IAccess>> formalAccess;
+    std::unordered_map<const StringSymbol*, std::unique_ptr<IAccess>> localAccess;
     Temp framePointer;
     Temp stackPointer;
     int addressExitIndex;
