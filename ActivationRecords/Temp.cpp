@@ -2,16 +2,29 @@
 #include "Temp.h"
 
 namespace ActivationRecords {
-  
-Temp::Temp(int _x, int _y) :
-  x(_x),
-  y(_y)
+
+Temp::Temp(int offset) : offset(offset), address(0)
+{
+
+}
+
+Temp::Temp(int offset, int address) :
+  offset(offset),
+  address(address)
 {
 }
 
-std::string Temp::ToString() const
+std::string Temp::GetAddressString() const
 {
-    return "(" + std::to_string(y) + "," + std::to_string(x) + ")";
+    if(address == 0) {
+        return "offset " + std::to_string(offset);
+    }
+    return "address: " + std::to_string(GetAddress()) + ", " +
+            "offset: " + std::to_string(offset);
+}
+
+Temp Temp::operator=(const Temp& t) {
+ return Temp(t.offset, t.address);
 }
 
 }

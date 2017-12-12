@@ -1,23 +1,27 @@
 #pragma once
 
+#include <iostream>
+
 #include "Symbol.h"
 #include "InFrameAccess.h"
 
-InFrameAccess::InFrameAccess(T_RecordsType _type, int _size, SymbolTable::Symbol* _symbol) :
-    type(_type),
+namespace ActivationRecords {
+
+InFrameAccess::InFrameAccess(T_RecordsType _type, int _size, int offset) :
+    recordType(_type),
     size(_size),
-    symbol(_symbol)
+    address(Temp(offset))
 {
 }
 
-const T_RecordsType InFrameAccess::GetType() {
-    return type;
+const Temp& InFrameAccess::Offset() const
+{
+     return address;
 }
 
-const int InFrameAccess::GetSize() {
-    return size;
+void InFrameAccess::print(Temp fp) const
+{
+    std::cout << "In frame position " << address.AtAddress(fp.GetAddress()).GetAddress() << std::endl;
 }
 
-const SymbolTable::Symbol* InFrameAccess::Symbol() {
-    return symbol;
 }

@@ -2,6 +2,7 @@
 
 #include "common.h"
 #include "Symbol.h"
+#include "Temp.h"
 #include <string>
 
 namespace ActivationRecords {
@@ -18,16 +19,10 @@ enum T_RecordsType {
 
 interface IAccess {
 public:
-    IAccess(T_RecordsType _type, int _size, SymbolTable::Symbol* _symbol);
-    virtual ~IAccess() {};
-    const int GetSize();
-    const T_RecordsType GetType();
-    const SymbolTable::Symbol* Symbol();
-
-protected:
-    const T_RecordsType type;
-    const int size;
-    const SymbolTable::Symbol* symbol;
+    virtual ~IAccess() {}
+    virtual const T_RecordsType GetRecordType() = 0;
+    virtual const int GetSize() const = 0;
+    virtual void print(Temp fp) const = 0;
 };
 
 }

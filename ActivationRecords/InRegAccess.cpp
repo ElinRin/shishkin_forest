@@ -1,23 +1,20 @@
 #pragma once
 
-#include "Symbol.h"
+#include <iostream>
 #include "InRegAccess.h"
 
-InRegAccess::InRegAccess(T_RecordsType _type, int _size, SymbolTable::Symbol* _symbol) :
+namespace ActivationRecords {
+
+InRegAccess::InRegAccess(T_RecordsType _type, int _size, int regNumber) :
     type(_type),
     size(_size),
-    symbol(_symbol)
+    regNumber(regNumber)
 {
 }
 
-const T_RecordsType InRegAccess::GetType() {
-    return type;
+void InRegAccess::print(Temp fp) const
+{
+    std::cout << "Register: " << regNumber << std::endl;
 }
 
-const int InRegAccess::GetSize() {
-    return size;
-}
-
-const SymbolTable::Symbol* InRegAccess::Symbol() {
-    return symbol;
 }
