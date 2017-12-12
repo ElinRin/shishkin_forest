@@ -42,7 +42,7 @@ void X86MiniJavaFrame::AddFormal( const SymbolTable::VariableInfo& name) {
 }
 
 void X86MiniJavaFrame::AddLocal( const SymbolTable::VariableInfo& name) {
-    IAccess* var = new InFrameAccess(RT_Formal, typeSize(name.GetType().GetType()), localAccess.size() );
+    IAccess* var = new InFrameAccess(RT_Formal, typeSize(name.GetType().GetType()), localTopPointer );
     localAccess.insert({name.GetName()->GetString(), var});
     localTopPointer += typeSize(name.GetType().GetType());
 }
@@ -50,15 +50,15 @@ void X86MiniJavaFrame::AddLocal( const SymbolTable::VariableInfo& name) {
 void X86MiniJavaFrame::AddAddressExit() {
     IAccess* var = createFormal(T_RecordsType::RT_AddressExit, referenceSize);
     formalAccess.insert({EXIT_ADDRESS_NAME, var});
-    formalList.push_back(var);
     this->addressExitIndex = formalList.size();
+    formalList.push_back(var);
 }
 
 void X86MiniJavaFrame::AddAddressReturnValue(SymbolTable::T_VariableType type) {
-    IAccess* var = createFormal(T_RecordsType::RT_AddressExit, referenceSize);
+    IAccess* var = createFormal(T_RecordsType::RT_AddressReturnValue, referenceSize);
     formalAccess.insert({RETURN_ADDRESS_NAME, var});
-    formalList.push_back(var);
     this->addressReturnValueIndex = formalList.size();
+    formalList.push_back(var);
 }
 
 int X86MiniJavaFrame::FormalsCount() const {
@@ -78,6 +78,16 @@ const IAccess* X86MiniJavaFrame::FindLocalOrFormal( const StringSymbol* name ) c
     return res->second;
 }
 
+const IAccess* X86MiniJavaFrame::ExitAddress() const
+{
+    return formalList[addressExitIndex];
+}
+
+const IAccess* X86MiniJavaFrame::ReturnAddress() const
+{
+    return formalList[addressReturnValueIndex];
+}
+
 const int X86MiniJavaFrame::FormalSize(int index) const {
     return formalList[index]->GetSize();
 }
@@ -86,6 +96,11 @@ const int X86MiniJavaFrame::FormalSize(const StringSymbol* name) const {
     auto res = formalAccess.find(name->GetString());
     assert(res != formalAccess.end());
     return res->second->GetSize();
+}
+
+const SymbolTable::TypeInfo X86MiniJavaFrame::WordType() const
+{
+    return SymbolTable::TypeInfo(SymbolTable::VT_Int);
 }
 
 const Temp X86MiniJavaFrame::FP() const {
@@ -102,8 +117,9 @@ IAccess* X86MiniJavaFrame::createFormal(T_RecordsType type, int size)
     if(formalList.size() < MAX_IN_REG) {
         return new InRegAccess(type, size, formalList.size());
     } else {
+        IAccess* access = new InFrameAccess(type, size, formalTopPointer);
         formalTopPointer += size;
-        return new InFrameAccess(type, size, formalList.size() - MAX_IN_REG);
+        return access;
     }
 }
 

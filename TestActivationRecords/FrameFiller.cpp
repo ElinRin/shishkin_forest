@@ -26,8 +26,10 @@ void FrameFiller::Fill()
             }
             auto localNames = methodInfo->GetVarsName();
             for(auto name : localNames) {
-                frame->AddLocal(*name);B
+                frame->AddLocal(*name);
             }
+            frame->AddAddressExit();
+            frame->AddAddressReturnValue(methodInfo->GetReturnType().GetType());
             std::cout << methodInfo->GetFullName()->GetString() << std::endl;
             auto activation = frame->FindLocalOrFormal(StringSymbol::GetIntern("this"));
             std::cout << "this ";
@@ -35,7 +37,7 @@ void FrameFiller::Fill()
             for( auto name: argNames) {
                 auto activation = frame->FindLocalOrFormal(name->GetName());
                 std::cout << name->GetName()->GetString() << " ";
-                activation->print(frame->FP());
+                activation->print(Temp(0));
             }
             std::cout << "FP: " << frame->FP().GetAddress() << std::endl;
             for( auto name: localNames) {
@@ -43,6 +45,12 @@ void FrameFiller::Fill()
                 std::cout << name->GetName()->GetString() << " ";
                 activation->print(frame->FP());
             }
+            std::cout << "SP: " << frame->SP().GetAddress() << std::endl;
+            std::cout << "Return address: ";
+            frame->ReturnAddress()->print(Temp(0));
+            std::cout << "Exit address: ";
+            frame->ExitAddress()->print(Temp(0));
+            std::cout << "------------------------------------------------" << std::endl;
         }
         table->FreeLastScope();
     }

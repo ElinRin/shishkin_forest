@@ -18,14 +18,16 @@ public:
 
     virtual void AddFormal( const SymbolTable::VariableInfo& name) override;
     virtual void AddLocal( const SymbolTable::VariableInfo& name) override;
-    void AddAddressExit();
-    void AddAddressReturnValue(SymbolTable::T_VariableType type);
+    virtual void AddAddressExit() override;
+    virtual void AddAddressReturnValue(SymbolTable::T_VariableType type) override;
     virtual int FormalsCount() const override;
     virtual const IAccess* Formal( int index ) const override;
     virtual const IAccess* FindLocalOrFormal(const StringSymbol* name ) const override;
+    virtual const IAccess* ExitAddress() const override;
+    virtual const IAccess* ReturnAddress() const override;
     const int FormalSize(int index) const;
     const int FormalSize(const StringSymbol* name) const;
-    virtual int WordSize() const override { return WORD_SIZE; }
+    virtual const SymbolTable::TypeInfo WordType() const override;
     virtual const Temp FP() const override;
     virtual const Temp SP() const override;
 
