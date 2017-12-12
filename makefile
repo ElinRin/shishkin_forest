@@ -1,4 +1,4 @@
-CFLAGS = -ISymbolTable -ISyntaxTree -I. -ITypeChecker --std=c++1z
+CFLAGS = -ISymbolTable -ISyntaxTree -I. -ITypeChecker -IActivationRecords -ITestActivationRecords --std=c++1z
 SYMBOL_TABLE_SRC_DIR = SymbolTable
 SYMBOL_TABLE_SRC = $(wildcard $(SYMBOL_TABLE_SRC_DIR)/*.cpp)
 
@@ -14,7 +14,22 @@ TYPE_CHECKER_SRC_DIR = TypeChecker
 TYPE_CHECKER_SRC = $(wildcard $(TYPE_CHECKER_SRC_DIR)/*.cpp)
 TYPE_CHECKER_OBJ = $(TYPE_CHECKER_SRC:$(TYPE_CHECKER_SRC_DIR)/%.cpp=./%.o)
 
-all: graph testTableListClasses checkTypes
+TEST_AR_SRC_DIR = TestActivationRecords
+TEST_AR_SRC = $(wildcard $(TEST_AR_SRC_DIR)/*.cpp)
+TEST_AR_OBJ = $(TEST_AR_SRC:$(TEST_AR_SRC_DIR)/%.cpp=./%.o)
+
+AR_SRC_DIR = ActivationRecords
+AR_SRC = $(wildcard $(AR_SRC_DIR)/*.cpp)
+AR_OBJ = $(AR_SRC:$(AR_SRC_DIR)/%.cpp=./%.o)
+
+
+all: graph testTableListClasses checkTypes listActivations
+		
+listActivations: $(SYMBOL_TABLE_OBJ) $(PARSER_OBJ) $(TYPE_CHECKER_OBJ) listActivations.o $(AR_OBJ) $(TEST_AR_OBJ)
+	g++ -g -o listActivations $(SYMBOL_TABLE_OBJ) $(PARSER_OBJ) $(TYPE_CHECKER_OBJ) listActivations.o $(AR_OBJ) $(TEST_AR_OBJ) $(CFLAGS) -lfl
+
+listActivations.o: ListActivations.cpp
+	g++ -g -c ListActivations.cpp -o listActivations.o $(CFLAGS)
 
 checkTypes: $(SYMBOL_TABLE_OBJ) $(PARSER_OBJ) $(TYPE_CHECKER_OBJ) checkTypes.o
 	g++ -g -o checkTypes $(SYMBOL_TABLE_OBJ) checkTypes.o $(PARSER_OBJ) $(TYPE_CHECKER_OBJ) $(CFLAGS) -lfl
@@ -53,6 +68,12 @@ treeNode.o: SyntaxTree/TreeNode.cpp
 	g++ -g -c $< -o $@ $(CFLAGS)
 
 ./%.o: $(TYPE_CHECKER_SRC_DIR)/%.cpp
+	g++ -g -c $< -o $@ $(CFLAGS)
+	
+./%.o: $(AR_SRC_DIR)/%.cpp
+	g++ -g -c $< -o $@ $(CFLAGS)
+
+./%.o: $(TEST_AR_SRC_DIR)/%.cpp
 	g++ -g -c $< -o $@ $(CFLAGS)
 
 prettyPrint.o: PrettyPrint/PrintVisitor.cpp

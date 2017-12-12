@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Frame.h"
-#include "Symbol.h"
 #include "Access.h"
 #include <unordered_map> 
 #include <vector>
@@ -10,27 +9,38 @@
 namespace ActivationRecords {
 
 class X86MiniJavaFrame : public IFrame {
+    /*
+     * LocalAddress = access address + FP
+     * FormalAddress = access address or regIndex
+     */
 public:
-    const int WORD_SIZE = 4;
+    static const int WORD_SIZE = 4;
 
-    void AddFormal( const SymbolTable::Symbol* name);
-    void AddLocal( const SymbolTable::Symbol* name);
-    void AddFramePointer( const SymbolTable::Symbol* name);
-    void AddStackPointer( const SymbolTable::Symbol* name);
-    void AddAddressExit( const SymbolTable::Symbol* name);
-    void AddAddressReturnValue( const SymbolTable::Symbol* name);
-    int FormalsCount() const;
-    const IAccess* Formal( int index ) const;
-    const IAccess* FindLocalOrFormal( const SymbolTable::Symbol* name ) const;
+    virtual void AddFormal( const SymbolTable::VariableInfo& name) override;
+    virtual void AddLocal( const SymbolTable::VariableInfo& name) override;
+    void AddAddressExit();
+    void AddAddressReturnValue(SymbolTable::T_VariableType type);
+    virtual int FormalsCount() const override;
+    virtual const IAccess* Formal( int index ) const override;
+    virtual const IAccess* FindLocalOrFormal(const StringSymbol* name ) const override;
     const int FormalSize(int index) const;
-    const int FormalSize(const SymbolTable::Symbol* name) const;
-    const Temp* FP() const;
-    int WordSize() const { return WORD_SIZE; }
+    const int FormalSize(const StringSymbol* name) const;
+    virtual int WordSize() const override { return WORD_SIZE; }
+    virtual const Temp FP() const override;
+    virtual const Temp SP() const override;
+
 private:
-    const IAccess* AddAccess(T_RecordsType, const SymbolTable::Symbol* name);
-    std::vector<IAccess* access> formalList;
-    std::unordered_map<std::string, IAccess* access> stack;
-    std::unordered_map<std::string, IAccess* access> registers;
+    std::vector<IAccess*> formalList;
+    std::unordered_map<std::string, IAccess*> formalAccess;
+    std::unordered_map<std::string, IAccess*> localAccess;
+    Temp framePointer;
+    Temp stackPointer;
+    int addressExitIndex;
+    int addressReturnValueIndex;
+    int formalTopPointer = 0;
+    int localTopPointer = 0;
+
+    IAccess* createFormal(T_RecordsType type, int size);
 };
 
 }
