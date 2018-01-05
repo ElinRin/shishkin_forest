@@ -14,9 +14,9 @@ struct WhileStatement : public IStatement
     WhileStatement(const Coordinates& coords,
                    const IExpression* condition,
                    const IStatement* statement) :
-        coords(coords),
         Condition(condition),
-        Body(statement)
+        Body(statement),
+        coords(coords)
     {}
 
     ACCEPT_VISITOR

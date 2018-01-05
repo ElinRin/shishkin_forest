@@ -20,7 +20,7 @@ static const int intSize = 1 * X86MiniJavaFrame::WORD_SIZE;
 static const int booleanSize = 1 * X86MiniJavaFrame::WORD_SIZE;
 static const int referenceSize = 1 * X86MiniJavaFrame::WORD_SIZE;
 
-int typeSize(SymbolTable::T_VariableType type) {
+int X86MiniJavaFrame::TypeSize(SymbolTable::T_VariableType type) const {
     switch (type) {
         case SymbolTable::VT_Int:
             return intSize;
@@ -36,15 +36,15 @@ int typeSize(SymbolTable::T_VariableType type) {
 }
 
 void X86MiniJavaFrame::AddFormal( const SymbolTable::VariableInfo& name) {
-    IAccess* var = createFormal(T_RecordsType::RT_Formal, typeSize(name.GetType().GetType()));
+    IAccess* var = createFormal(T_RecordsType::RT_Formal, TypeSize(name.GetType().GetType()));
     formalAccess.insert(std::make_pair(name.GetName(), std::unique_ptr<IAccess>(var)));
     formalList.push_back(var);
 }
 
 void X86MiniJavaFrame::AddLocal( const SymbolTable::VariableInfo& name) {
-    IAccess* var = new InFrameAccess(RT_Formal, typeSize(name.GetType().GetType()), localTopPointer );
+    IAccess* var = new InFrameAccess(RT_Formal, TypeSize(name.GetType().GetType()), localTopPointer );
     localAccess.insert(std::make_pair(name.GetName(), std::unique_ptr<IAccess>(var)));
-    localTopPointer += typeSize(name.GetType().GetType());
+    localTopPointer += TypeSize(name.GetType().GetType());
 }
 
 void X86MiniJavaFrame::AddAddressExit() {
@@ -105,13 +105,13 @@ const SymbolTable::TypeInfo X86MiniJavaFrame::WordType() const
     return SymbolTable::TypeInfo(SymbolTable::VT_Int);
 }
 
-const Temp X86MiniJavaFrame::FP() const {
-    return Temp(formalTopPointer);
+const TempAddress X86MiniJavaFrame::FP() const {
+    return TempAddress(formalTopPointer);
 }
 
-const Temp X86MiniJavaFrame::SP() const
+const TempAddress X86MiniJavaFrame::SP() const
 {
-    return Temp(FP().GetAddress() + localTopPointer);
+    return TempAddress(FP().GetAddress() + localTopPointer);
 }
 
 IAccess* X86MiniJavaFrame::createFormal(T_RecordsType type, int size)

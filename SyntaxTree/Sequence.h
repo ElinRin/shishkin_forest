@@ -29,8 +29,8 @@ struct Sequence : public ITreeNode
     Sequence(Coordinates coords,
                      Sequence<T>* sequence,
                      const T* appendix):
-        coords(coords),
-        SequenceList(std::move(std::unique_ptr<Sequence<const T>>(sequence)->SequenceList)) // FML
+        SequenceList(std::move(std::unique_ptr<Sequence<const T>>(sequence)->SequenceList)),
+        coords(coords)
     {
         assert(appendix);
         SequenceList.emplace_back(appendix);

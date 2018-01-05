@@ -12,8 +12,8 @@ struct ReturnStatement : public ITreeNode
 
     ReturnStatement(Coordinates coords,
                     const IExpression* expression) :
-        coords(coords),
-        Expression(expression)
+        Expression(expression),
+        coords(coords)
     {}
 
     ACCEPT_VISITOR

@@ -14,9 +14,10 @@ struct ArrayMemberExpression : public IExpression
     ArrayMemberExpression(Coordinates coords,
                           const IExpression* baseExpression,
                           const IExpression* elementNumberExpression) :
-        coords(coords),
         BaseExpression(baseExpression),
-        ElementNumberExpression(elementNumberExpression) {}
+        ElementNumberExpression(elementNumberExpression),
+        coords(coords)
+    {}
 
     ACCEPT_VISITOR
 };

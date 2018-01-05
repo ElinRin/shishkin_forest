@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <iostream>
 #include "DeclarationException.h"
+#include "FrameFiller.h"
 
 void SymbolTable::TableFiller::FillTable(AST::Program *program)
 {
@@ -21,6 +22,7 @@ void SymbolTable::TableFiller::Visit(const AST::MainClass* node)
 
 void SymbolTable::TableFiller::Visit(const AST::ClassDeclaration* node)
 {
+    AR::FrameFiller frameFiller(table.get());
     auto newClass = new ClassInfo(node->ClassName->Name, fromCoords(node->Coords()));
     if(node->SuperName.get() != nullptr) {
         newClass->AddSuperClassName(node->SuperName->Name);
@@ -61,6 +63,8 @@ void SymbolTable::TableFiller::Visit(const AST::ClassDeclaration* node)
                                                                fromType(var->get()->VarType.get())));
                 }
             }
+
+            methodInfo->AddFrameInfo(frameFiller.CreateFrame(*newClass, *methodInfo));
             newClass->AddMethodInfo(methodInfo);
         }
     }

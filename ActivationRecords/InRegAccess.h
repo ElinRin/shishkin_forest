@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "Access.h"
-#include "Temp.h"
+#include "TempAddress.h"
 
 namespace ActivationRecords {
 
@@ -13,8 +13,9 @@ public:
 
     virtual const int GetSize() const override { return size; }
     virtual const T_RecordsType GetRecordType() override { return type; }
+    virtual void print(TempAddress fp) const override;
+    virtual const IR::IExp* GetExp(const IR::Temp* fp) const override;
     virtual const int GetRegNumber() const { return regNumber; }
-    virtual void print(Temp fp) const override;
 
 private:
     T_RecordsType type;

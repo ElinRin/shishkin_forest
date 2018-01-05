@@ -68,7 +68,7 @@ void TestClasses() {
     assert(table.GetClass("B", SymbolTable::Position(11, 0))->GetMethodsBlock().size() == 1);
     table.AddClassToScope("B", SymbolTable::Position(12, 0));
     auto method = table.GetMethod("foo", SymbolTable::Position(12, 0));
-    assert(method->GetArgsNames().at(0)->GetType().GetType() ==
+    assert(method->GetArgs().at(0)->GetType().GetType() ==
            SymbolTable::VT_Boolean);
     assert(table.GetVariable("b", SymbolTable::Position(12, 0))->GetType().GetType() == SymbolTable::VT_Boolean);
     table.AddMethodToScope("foo1", SymbolTable::Position(13, 0));

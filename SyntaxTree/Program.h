@@ -14,9 +14,9 @@ struct Program : public ITreeNode
 
     Program(Coordinates coords, const MainClass* main,
             const Sequence<const ClassDeclaration>* classes) :
-        coords(coords),
         Main(main),
-        Classes(classes)
+        Classes(classes),
+        coords(coords)
     {}
 
     ACCEPT_VISITOR

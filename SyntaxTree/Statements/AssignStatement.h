@@ -14,9 +14,9 @@ struct AssignStatement : public IStatement
 
     AssignStatement(Coordinates coords,  const Id* identifier,
                     const IExpression* expressionToAssign) :
-        coords(coords),
         Identifier(identifier),
-        ExpressionToAssign(expressionToAssign)
+        ExpressionToAssign(expressionToAssign),
+        coords(coords)
     {}
 
     ACCEPT_VISITOR

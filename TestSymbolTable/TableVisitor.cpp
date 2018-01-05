@@ -107,7 +107,7 @@ TypeInfo TableVisitor::fromType(const AST::Type* type)
         return TypeInfo(VT_UserClass, type->TypeName->Name);
         break;
     default:
-        break;
+        assert(false);
     }
 }
 
@@ -135,14 +135,14 @@ void TableVisitor::printClassInfo(const ClassInfo* classInfo)
         printType(method->GetReturnType());
         std::cout << method->GetName()->GetString() << std::endl;
         std::cout << "      Args:" << std::endl;
-        auto& args= method->GetArgsNames();
+        auto& args= method->GetArgs();
         for(auto arg = args.begin(); arg != args.end(); ++arg) {
             auto var = table.GetVariable((*arg)->GetName()->GetString(), Position(0, 0));
             std::cout << "        ";
             printVariable(var);
         }
         std::cout << "      Local vars:" << std::endl;
-        auto& vars = method->GetVarsName();
+        auto& vars = method->GetVars();
         for(auto var = vars.begin(); var != vars.end(); ++var) {
             auto varInfo = table.GetVariable((*var)->GetName()->GetString(), Position(0, 0));
             std::cout << "        ";

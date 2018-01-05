@@ -1,9 +1,13 @@
 #pragma once
 
 #include "common.h"
-#include "Symbol.h"
-#include "Temp.h"
+
 #include <string>
+
+#include "Symbol.h"
+#include "TempAddress.h"
+#include "IExp.h"
+#include "Temp.h"
 
 namespace ActivationRecords {
 
@@ -22,7 +26,8 @@ public:
     virtual ~IAccess() {}
     virtual const T_RecordsType GetRecordType() = 0;
     virtual const int GetSize() const = 0;
-    virtual void print(Temp fp) const = 0;
+    virtual const IR::IExp* GetExp(const IR::Temp* fp) const = 0;
+    virtual void print(TempAddress fp) const = 0;
 };
 
 }

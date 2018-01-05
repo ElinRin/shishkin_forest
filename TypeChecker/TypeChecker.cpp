@@ -3,6 +3,7 @@
 #include <iostream>
 #include "StringSymbol.h"
 #include "DeclarationException.h"
+#include "assert.h"
 
 namespace TypeChecker {
 
@@ -33,6 +34,7 @@ static SymbolTable::TypeInfo fromType(const AST::Type* type)
     default:
         break;
     }
+    assert(false);
 }
 
 inline bool operator ==(const AST::Type &a, const AST::Type &b) {
@@ -352,7 +354,7 @@ void TypeChecker::TypeChecker::Visit(const AST::CallMemberExpression* node)
     }
     if(node->ArgumentSequence) {
         node->ArgumentSequence->AcceptVisitor(this);
-        if(node->ArgumentSequence->SequenceList.size() != methodInfo->GetArgsCount()) {
+        if(node->ArgumentSequence->SequenceList.size() != static_cast<unsigned int>(methodInfo->GetArgsCount())) {
             throw SymbolTable::DeclarationException("Requested method " + classInfo->GetName()->GetString() +
                                                             "::" + node->CalledMember->Name +
                                                             " has " + std::to_string(methodInfo->GetArgsCount()) +
@@ -360,7 +362,7 @@ void TypeChecker::TypeChecker::Visit(const AST::CallMemberExpression* node)
                                                             " passed",
                                                             fromCoords(node->Coords()));
         }
-        for(auto argument = methodInfo->GetArgsNames().rbegin(); argument != methodInfo->GetArgsNames().rend(); ++argument) {
+        for(auto argument = methodInfo->GetArgs().rbegin(); argument != methodInfo->GetArgs().rend(); ++argument) {
             auto arg = *argument;
             auto passed = popTypeStack();
             if( !(arg->GetType() == *passed) ) {

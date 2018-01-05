@@ -11,8 +11,9 @@ struct IdExpression : public IExpression {
     std::unique_ptr<const Id> ExpressionId;
 
     IdExpression(Coordinates coords, const Id* id) :
-        coords(coords),
-        ExpressionId(id) { }
+        ExpressionId(id),
+        coords(coords)
+    { }
 
     ACCEPT_VISITOR
 };

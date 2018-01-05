@@ -14,9 +14,9 @@ struct VarDeclaration : public ITreeNode
     VarDeclaration(Coordinates coords,
                    const Type* varType,
                    const Id* identifier) :
-        coords(coords),
         VarType(varType),
-        Identifier(identifier)
+        Identifier(identifier),
+        coords(coords)
     {}
 
     ACCEPT_VISITOR

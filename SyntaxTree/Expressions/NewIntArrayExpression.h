@@ -11,8 +11,9 @@ struct NewIntArrayExpression : public IExpression
     std::unique_ptr<const IExpression> NumberOfElements;
 
     NewIntArrayExpression(Coordinates coords, const IExpression* numberOfElements):
-        coords(coords),
-        NumberOfElements(numberOfElements){}
+        NumberOfElements(numberOfElements),
+        coords(coords)
+    {}
 
     ACCEPT_VISITOR
 };

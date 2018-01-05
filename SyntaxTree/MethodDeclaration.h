@@ -30,14 +30,14 @@ struct MethodDeclaration : public ITreeNode
                       const Sequence<const VarDeclaration>* varDeclarations,
                       const Sequence<const IStatement>* statements,
                       const ReturnStatement* returnStatement) :
-        coords(coords),
         QualifierType(qualifier),
         ReturnType(returnType),
         MethodName(methodName),
         StatementToReturn(returnStatement),
         Arguments(argumentSequence),
         VarDeclarations(varDeclarations),
-        Statements(statements)
+        Statements(statements),
+        coords(coords)
     {
         assert(argumentSequence);
     }

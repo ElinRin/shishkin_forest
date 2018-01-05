@@ -10,11 +10,12 @@ public:
     InFrameAccess( T_RecordsType _type, int _size, int offset );
     virtual const int GetSize() const override { return size; }
     virtual const T_RecordsType GetRecordType() override { return recordType; }
-    const Temp& Offset() const;
-    virtual void print(Temp fp) const override;
+    virtual const IR::IExp* GetExp(const IR::Temp* fp) const override;
+    virtual void print(TempAddress fp) const override;
+    const TempAddress& Offset() const;
 private:
     const int size;
-    const Temp address;
+    const TempAddress address;
     const T_RecordsType recordType;
 };
 

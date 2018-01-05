@@ -12,8 +12,9 @@ struct NewObjectExpression : public IExpression
     std::unique_ptr<const Id> ObjectId;
 
     NewObjectExpression(Coordinates coords, const Id* objectId) :
-        coords(coords),
-        ObjectId(objectId) {}
+        ObjectId(objectId),
+        coords(coords)
+    {}
 
     ACCEPT_VISITOR
 };
