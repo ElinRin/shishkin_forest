@@ -3,7 +3,7 @@
 #include "common.h"
 #include "Access.h"
 #include "VariableInfo.h"
-#include "Temp.h"
+#include "TempAddress.h"
 
 namespace ActivationRecords {
 
@@ -20,9 +20,10 @@ public:
     virtual const IAccess* FindLocalOrFormal( const StringSymbol* name ) const = 0;
     virtual const IAccess* ExitAddress() const = 0;
     virtual const IAccess* ReturnAddress() const = 0;
-    virtual const Temp FP() const = 0;
-    virtual const Temp SP() const = 0;
+    virtual const TempAddress FP() const = 0;
+    virtual const TempAddress SP() const = 0;
     virtual const SymbolTable::TypeInfo WordType() const = 0;
+    virtual int TypeSize(SymbolTable::T_VariableType type) const = 0;
 };
 
 }

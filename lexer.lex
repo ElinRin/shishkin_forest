@@ -37,7 +37,7 @@
   }
 
   void showPosition(const char* yytext) {
-    printf( "%d,%d ", lineNumber, columnNumber - strlen(yytext) );
+    printf( "%d,%lu ", lineNumber, columnNumber - strlen(yytext) );
   }
 
   void onProcessed(const char* yytext) {

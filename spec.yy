@@ -271,4 +271,5 @@ void showTokenPosition() {
 int yyerror(char* s) {
   printf( NF_RED "Grammartic error %s at %d,%d:%d\n" NF_RESET, s, yylloc.first_line, yylloc.first_column,
       yylloc.last_column);
+  return 1;
 }

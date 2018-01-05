@@ -22,9 +22,9 @@ struct Type : public ITreeNode
     Type(Coordinates coords,
          const T_Type typeEnum,
          const Id* name = nullptr) :
-        coords(coords),
         TypeEnum(typeEnum),
-        TypeName(name)
+        TypeName(name),
+        coords(coords)
     {}
 
     ~Type() {

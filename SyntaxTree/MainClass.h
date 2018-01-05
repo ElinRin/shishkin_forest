@@ -14,9 +14,9 @@ struct MainClass : public ITreeNode
 
     MainClass(Coordinates coords, const Id* className,
                 const IStatement* mainStatement) :
-        coords(coords),
         ClassName(className),
-        MainStatement(mainStatement)
+        MainStatement(mainStatement),
+        coords(coords)
     {}
 
     ACCEPT_VISITOR

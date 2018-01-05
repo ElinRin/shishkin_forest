@@ -17,9 +17,10 @@ struct ValueExpression : public IExpression {
 
     ValueExpression(Coordinates coords, T_ValueType type,
                     int value) :
-        coords(coords),
         ValueType(type),
-        Value(value) { }
+        Value(value),
+        coords(coords)
+    { }
 
     ACCEPT_VISITOR
 };

@@ -21,11 +21,11 @@ struct ClassDeclaration : public ITreeNode
                      const Id* superName,
                      const Sequence<const VarDeclaration>* varDeclarations,
                      const Sequence<const MethodDeclaration>* methodDeclarations) :
-        coords(coords),
         ClassName(className),
         SuperName(superName),
         VarDeclarations(varDeclarations),
-        MethodDeclarations(methodDeclarations)
+        MethodDeclarations(methodDeclarations),
+        coords(coords)
     {}
 
     ACCEPT_VISITOR

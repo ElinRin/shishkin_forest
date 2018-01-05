@@ -11,8 +11,8 @@ struct PrintLineStatement : public IStatement {
 
     PrintLineStatement(Coordinates coords,
                        const IExpression* expressionToPrint) :
-        coords(coords),
-        ExpressionToPrint(expressionToPrint)
+        ExpressionToPrint(expressionToPrint),
+        coords(coords)
     {
     }
 

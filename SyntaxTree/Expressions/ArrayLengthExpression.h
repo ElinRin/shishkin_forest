@@ -11,8 +11,9 @@ struct ArrayLengthExpression : public IExpression {
 
     ArrayLengthExpression(Coordinates coords,
                           const IExpression* arrayExpression) :
-        coords(coords),
-        ArrayExpression(arrayExpression) {}
+        ArrayExpression(arrayExpression),
+        coords(coords)
+    {}
 
     ACCEPT_VISITOR
 };

@@ -16,8 +16,8 @@ struct Qualifier : public ITreeNode
     const T_Qualifier QualifierEnum;
 
     Qualifier(Coordinates coords, T_Qualifier qualifierEnum) :
-        coords(coords),
-        QualifierEnum(qualifierEnum)
+        QualifierEnum(qualifierEnum),
+        coords(coords)
     {}
 
     ACCEPT_VISITOR

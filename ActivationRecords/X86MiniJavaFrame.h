@@ -28,15 +28,16 @@ public:
     const int FormalSize(int index) const;
     const int FormalSize(const StringSymbol* name) const;
     virtual const SymbolTable::TypeInfo WordType() const override;
-    virtual const Temp FP() const override;
-    virtual const Temp SP() const override;
+    virtual const TempAddress FP() const override;
+    virtual const TempAddress SP() const override;
+    virtual int TypeSize(SymbolTable::T_VariableType type) const override;
 
 private:
     std::vector<IAccess*> formalList;
     std::unordered_map<const StringSymbol*, std::unique_ptr<IAccess>> formalAccess;
     std::unordered_map<const StringSymbol*, std::unique_ptr<IAccess>> localAccess;
-    Temp framePointer;
-    Temp stackPointer;
+    TempAddress framePointer;
+    TempAddress stackPointer;
     int addressExitIndex;
     int addressReturnValueIndex;
     int formalTopPointer = 0;

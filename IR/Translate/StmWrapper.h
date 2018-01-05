@@ -9,12 +9,12 @@ namespace IRTranslate {
 class StmWrapper : public ISubtreeWrapper
 {
 public:
-    StmWrapper(const IR::IStm* statement);
+    StmWrapper(const IR::IStm* statement) : statement(statement) {}
 
-    virtual const IR::IExp* ToExp() const override { assert(false); }
-    virtual const IR::IStm * ToStm() const override { return statement; }
-    virtual const IR::IStm * ToConditional(const AR::Label trueLabel,
-                                           const AR::Label falseLabel) const override { assert(false); }
+    virtual const IR::IExp* ToExp() override { assert(false); }
+    virtual const IR::IStm* ToStm() override { return statement.release(); }
+    virtual const IR::IStm* ToConditional(const IR::Label* trueLabel,
+                                           const IR::Label* falseLabel) override { assert(false); }
 private:
     std::unique_ptr<const IR::IStm> statement;
 };

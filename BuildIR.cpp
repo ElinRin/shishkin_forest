@@ -7,7 +7,6 @@
 #include "DeclarationException.h"
 #include "Table.h"
 #include "TypeChecker.h"
-#include "FrameFiller.h"
 
 extern std::unique_ptr<AST::Program> program;
 
@@ -21,8 +20,6 @@ int main(void) {
         std::unique_ptr<SymbolTable::Table> symbolTable(filler.DetachTable());
         TypeChecker::TypeChecker checker;
         checker.CheckAST(program.get(), symbolTable.get());
-        ActivationRecords::FrameFiller filler(symbolTable.get());
-        filler.PrintFill();
       } catch(SymbolTable::DeclarationException e) {
         std::cout << NF_RED << "Declaration error: " << e.what() << NF_RESET << std::endl;
       }

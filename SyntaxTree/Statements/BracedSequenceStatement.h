@@ -12,8 +12,8 @@ struct BraceSequenceStatement : public IStatement
 
     BraceSequenceStatement(Coordinates coords,
                            const Sequence<const IStatement>* sequence) :
-        coords(coords),
-        BracedSequence(sequence)
+        BracedSequence(sequence),
+        coords(coords)
     {}
 
     ACCEPT_VISITOR

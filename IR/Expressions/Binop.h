@@ -5,6 +5,7 @@
 namespace IR {
 
 class Binop : public IExp {
+public:
     enum TBinop {
       TB_PLUS,
       TB_MINUS,
@@ -14,14 +15,15 @@ class Binop : public IExp {
     };
 
     const TBinop Operation;
-    std::unique_ptr<const IR::IExp> LeftExpression;
-    std::unique_ptr<const IR::IExp> RightExpression;
+    std::unique_ptr<const IExp> LeftExpression;
+    std::unique_ptr<const IExp> RightExpression;
 
-    Binop(TBinop operation, const IR::IExp* leftExpression,
-          const IR::IExp* rightExpression) :
+    Binop(TBinop operation, const IExp* leftExpression,
+          const IExp* rightExpression) :
         Operation(operation),
         LeftExpression(leftExpression),
-        RightExpression(rightExpression) { }
+        RightExpression(rightExpression)
+    { }
 };
 
 }

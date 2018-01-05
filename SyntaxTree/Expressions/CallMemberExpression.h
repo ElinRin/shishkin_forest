@@ -15,10 +15,11 @@ struct CallMemberExpression : public IExpression{
     CallMemberExpression(Coordinates coords, const IExpression* baseExpression,
                          const Id* calledMember,
                          const Sequence<const IExpression>* sequence) :
-        coords(coords),
         BaseExpression(baseExpression),
         CalledMember(calledMember),
-        ArgumentSequence(sequence) { }
+        ArgumentSequence(sequence),
+        coords(coords)
+    { }
 
     ACCEPT_VISITOR
 };

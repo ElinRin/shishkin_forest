@@ -5,13 +5,15 @@
 #include <vector>
 #include <unordered_map>
 #include <string>
+#include <assert.h>
 
 namespace SymbolTable {
 
     MethodInfo::MethodInfo(const std::string& _name, const std::string& className, const Position _position,
                            TypeInfo _returnType, T_Qualifier _qualifier) :
-        className(StringSymbol::GetIntern(className + "@" + _name)),
         Symbol(_name, _position),
+        className(StringSymbol::GetIntern(className + "@" + _name)),
+        frame(nullptr),
         returnType(_returnType),
         qualifier(_qualifier)
 		{	
@@ -58,14 +60,20 @@ namespace SymbolTable {
         }
         argsNames.push_back(name);
         block.insert(std::make_pair(name->GetName(), std::unique_ptr<const VariableInfo>(name)));
-	}
+    }
+
+    void MethodInfo::AddFrameInfo(const ActivationRecords::IFrame* frame)
+    {
+        assert(this->frame.get() == nullptr);
+        this->frame.reset(frame);
+    }
 	
-    const std::vector<const VariableInfo*> &MethodInfo::GetArgsNames() const
+    const std::vector<const VariableInfo*>& MethodInfo::GetArgs() const
 	{
         return argsNames;
 	}
 
-    const std::vector<const VariableInfo*>& MethodInfo::GetVarsName() const
+    const std::vector<const VariableInfo*>& MethodInfo::GetVars() const
 	{
         return varsNames;
 	}

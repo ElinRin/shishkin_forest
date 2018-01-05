@@ -16,10 +16,10 @@ struct AssignArrayElementStatement : public IStatement
                        const Id* identifier,
                        const IExpression* elementNumberExpression,
                        const IExpression* expressionToAssign) :
-      coords(coords),
       Identifier(identifier),
       ElementNumberExpression(elementNumberExpression),
-      ExpressionToAssign(expressionToAssign)
+      ExpressionToAssign(expressionToAssign),
+      coords(coords)
     {}
 
     ACCEPT_VISITOR

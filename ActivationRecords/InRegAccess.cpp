@@ -1,7 +1,6 @@
-#pragma once
-
 #include <iostream>
 #include "InRegAccess.h"
+#include "IRNodeTypes.h"
 
 namespace ActivationRecords {
 
@@ -12,9 +11,14 @@ InRegAccess::InRegAccess(T_RecordsType _type, int _size, int regNumber) :
 {
 }
 
-void InRegAccess::print(Temp fp) const
+void InRegAccess::print(TempAddress fp) const
 {
     std::cout << "Register: " << regNumber << std::endl;
+}
+
+const IR::IExp* InRegAccess::GetExp(const IR::Temp* fp) const
+{
+    return new IR::Temp(regNumber);
 }
 
 }

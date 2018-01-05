@@ -14,10 +14,10 @@ struct IfElseStatement : public IStatement {
     IfElseStatement(Coordinates coords, const IExpression* condition,
                     const IStatement* ifStatement,
                     const IStatement* elseStatement) :
-        coords(coords),
         Condition(condition),
         IfStatement(ifStatement),
-        ElseStatement(elseStatement)
+        ElseStatement(elseStatement),
+        coords(coords)
     {
     }
 

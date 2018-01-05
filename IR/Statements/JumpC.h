@@ -4,6 +4,7 @@
 
 #include "IStm.h"
 #include "IExp.h"
+#include "Label.h"
 
 namespace IR {
 
@@ -13,20 +14,23 @@ public:
         TJ_EQ, TJ_NEQ, TJ_LT
     };
 
-    std::unique_ptr<const AR::Label> TrueLabel;
-    std::unique_ptr<const AR::Label> FalseLabel;
-    std::unique_ptr<const IR::IExp> ConditionLeftExpression;
-    std::unique_ptr<const IR::IExp> ConditionRightExpression;
+    std::unique_ptr<const Label> TrueLabel;
+    std::unique_ptr<const Label> FalseLabel;
+    std::unique_ptr<const IExp> ConditionLeftExpression;
+    std::unique_ptr<const IExp> ConditionRightExpression;
     const TJumpType JumpType;
 
 
     JumpC(const TJumpType jumpType,
-          const IR::IExp* conditionLeftExpression,
-          const IR::IExp* conditionRightExpression,
-          const AR::Label* trueLabel,
-          const AR::Label* falseLabel) :
-        JumpType(jumpType), ConditionLeftExpression(conditionLeftExpression),
-        ConditionRightExpression(conditionRightExpression), TrueLabel(trueLabel), FalseLabel(falseLabel) { }
+          const IExp* conditionLeftExpression,
+          const IExp* conditionRightExpression,
+          const Label* trueLabel,
+          const Label* falseLabel) :
+        TrueLabel(trueLabel), FalseLabel(falseLabel),
+        ConditionLeftExpression(conditionLeftExpression),
+        ConditionRightExpression(conditionRightExpression),
+        JumpType(jumpType)
+    {}
 };
 
 }

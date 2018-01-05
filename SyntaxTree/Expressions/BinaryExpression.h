@@ -27,10 +27,11 @@ struct BinaryExpression : public IExpression
                      const T_BinaryExpressionType type,
                      const IExpression* left,
                      const IExpression* right) :
-        coords(coords),
         Type(type),
         Left(left),
-        Right(right) {}
+        Right(right),
+        coords(coords)
+    {}
 
     ACCEPT_VISITOR
 };
