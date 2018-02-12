@@ -116,7 +116,9 @@ void TableVisitor::printClassInfo(const ClassInfo* classInfo)
     if(classInfo->GetSuperClassName() != nullptr) {
         std::cout << "  Super: " << classInfo->GetSuperClassName()->GetString() << std::endl;
         auto superClass = table.GetClass(classInfo->GetSuperClassName()->GetString(), Position(0, 0));
+        table.AddClassToScope(classInfo->GetSuperClassName()->GetString(), Position(0, 0));
         printClassInfo(superClass);
+        table.FreeLastScope();
     }
 
     for(auto varName = classInfo->GetVarsNames().begin();
@@ -133,7 +135,7 @@ void TableVisitor::printClassInfo(const ClassInfo* classInfo)
         table.AddMethodToScope(method->GetName()->GetString(), Position(0, 0));
         std::cout << "    " << (method->GetQualifier() == Q_Public ? "public " : "private ");
         printType(method->GetReturnType());
-        std::cout << method->GetName()->GetString() << std::endl;
+        std::cout << method->GetFullName()->GetString() << std::endl;
         std::cout << "      Args:" << std::endl;
         auto& args= method->GetArgs();
         for(auto arg = args.begin(); arg != args.end(); ++arg) {

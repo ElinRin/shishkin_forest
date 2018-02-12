@@ -42,7 +42,7 @@ struct MethodDeclaration : public ITreeNode
         assert(argumentSequence);
     }
 
-    ACCEPT_VISITOR
+    ACCEPT_AST_VISITOR
 };
 
 }

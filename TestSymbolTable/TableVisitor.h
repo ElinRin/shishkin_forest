@@ -1,5 +1,5 @@
-#ifndef TABLE_VISITOR_H
-#define TABLE_VISITOR_H
+#ifndef TABLE_AST_VISITOR_H
+#define TABLE_AST_VISITOR_H
 
 #include "TreeTypes.h"
 #include "Table.h"

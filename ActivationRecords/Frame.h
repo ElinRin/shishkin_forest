@@ -9,7 +9,7 @@ namespace ActivationRecords {
 
 interface IFrame {
 public:
-    virtual ~IFrame() { }
+    virtual ~IFrame() {}
 
     virtual void AddFormal( const SymbolTable::VariableInfo& name) = 0;
     virtual void AddLocal( const SymbolTable::VariableInfo& name) = 0;

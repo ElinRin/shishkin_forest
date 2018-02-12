@@ -15,6 +15,8 @@ public:
         LeftStm(leftStm),
         RightStm(rightStm)
     {}
+
+    ACCEPT_IR_VISITOR
 };
 
 }

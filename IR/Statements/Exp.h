@@ -12,6 +12,8 @@ public:
     std::unique_ptr<const IExp> expression;
 
     Exp(const IExp* expression) : expression(expression) {  }
+
+    ACCEPT_IR_VISITOR
 };
 
 }

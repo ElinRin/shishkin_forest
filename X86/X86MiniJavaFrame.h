@@ -1,10 +1,12 @@
 #pragma once
 
+#include "common.h"
 #include "Frame.h"
 #include "Access.h"
 #include <unordered_map> 
 #include <vector>
 #include <string>
+#include <TypeSpec.h>
 
 namespace ActivationRecords {
 
@@ -14,7 +16,8 @@ class X86MiniJavaFrame : public IFrame {
      * FormalAddress = access address or regIndex
      */
 public:
-    static const int WORD_SIZE = 4;
+
+    X86MiniJavaFrame();
 
     virtual void AddFormal( const SymbolTable::VariableInfo& name) override;
     virtual void AddLocal( const SymbolTable::VariableInfo& name) override;
@@ -42,6 +45,7 @@ private:
     int addressReturnValueIndex;
     int formalTopPointer = 0;
     int localTopPointer = 0;
+    std::unique_ptr<const ITypeSpec> typeSpec;
 
     IAccess* createFormal(T_RecordsType type, int size);
 };

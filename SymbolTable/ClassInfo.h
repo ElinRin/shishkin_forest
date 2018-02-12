@@ -6,8 +6,8 @@
 #include <string>
 #include "MethodInfo.h"
 #include "VariableInfo.h"
+#include "ClassStruct.h"
 #include "Symbol.h"
-
 
 namespace SymbolTable {
 
@@ -25,6 +25,7 @@ public:
     int GetVarsCount() const { return varsName.size(); }
     const StringSymbol* GetSuperClassName() const { return superClass; }
     const TypeInfo& GetTypeInfo() const { return info; }
+    IClassStruct* GetClassStruct() const { return classStruct.get(); }
 
     const VariableBlock& GetVariableBlock() const;
     const MethodBlock& GetMethodsBlock() const;
@@ -36,6 +37,7 @@ private:
     MethodBlock methodsBlock;
     const StringSymbol* superClass;
     TypeInfo info;
+    const std::unique_ptr<IClassStruct> classStruct;
 };
 
 typedef std::unordered_map<const StringSymbol*, std::unique_ptr<const ClassInfo>> ClassBlock;

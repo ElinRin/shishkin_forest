@@ -6,7 +6,7 @@ namespace {
  static int counter = 0;
 }
 
-Temp::Temp(std::string& name) :
+Temp::Temp(std::string name) :
     Id(counter++),
     localId(0),
     name(name),
@@ -19,6 +19,14 @@ Temp::Temp(int localId) :
     localId(localId),
     name(""),
     info(AI_Id)
+{
+}
+
+Temp::Temp(const Temp &temp):
+    Id(temp.Id),
+    localId(temp.localId),
+    name(temp.name),
+    info(temp.info)
 {
 }
 

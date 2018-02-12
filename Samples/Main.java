@@ -1,6 +1,6 @@
 class MainClass {
     public static void main(String[] a){
-	      System.out.println(0);
+	      System.out.println(new Order().set(0));
     }
 }
 
@@ -13,7 +13,7 @@ class Order {
     c[0] = e.set(1 * 2 + 3);
     c[2] = 10;
     return 0;
-  }
+  } 
   
   public int set(int _a) {
     a = _a;

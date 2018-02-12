@@ -11,7 +11,8 @@ public:
       TB_MINUS,
       TB_OR,
       TB_AND,
-      TB_MUL
+      TB_MUL,
+      TB_MOD
     };
 
     const TBinop Operation;
@@ -23,7 +24,9 @@ public:
         Operation(operation),
         LeftExpression(leftExpression),
         RightExpression(rightExpression)
-    { }
+    {}
+
+    ACCEPT_IR_VISITOR
 };
 
 }

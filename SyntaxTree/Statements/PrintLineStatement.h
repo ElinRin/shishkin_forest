@@ -16,7 +16,7 @@ struct PrintLineStatement : public IStatement {
     {
     }
 
-    ACCEPT_VISITOR
+    ACCEPT_AST_VISITOR
 };
 
 }

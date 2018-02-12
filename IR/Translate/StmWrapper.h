@@ -15,6 +15,11 @@ public:
     virtual const IR::IStm* ToStm() override { return statement.release(); }
     virtual const IR::IStm* ToConditional(const IR::Label* trueLabel,
                                            const IR::Label* falseLabel) override { assert(false); }
+
+    const IR::IStm* Stm() const { return statement.get(); }
+
+    ACCEPT_IR_VISITOR
+
 private:
     std::unique_ptr<const IR::IStm> statement;
 };

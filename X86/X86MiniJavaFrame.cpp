@@ -1,14 +1,14 @@
-#include "Frame.h"
+#include "X86MiniJavaFrame.h"
+
 #include "Symbol.h"
 #include "Access.h"
 #include "InRegAccess.h"
 #include "InFrameAccess.h"
+
 #include <unordered_map> 
 #include <vector>
 #include <string>
 #include <assert.h>
-
-#include "X86MiniJavaFrame.h"
 
 namespace ActivationRecords {
 
@@ -16,23 +16,12 @@ static const int MAX_IN_REG = 4;
 static const char* const EXIT_ADDRESS_NAME= "@EXIT_ADDRESS@";
 static const char* const RETURN_ADDRESS_NAME= "@RETURN_ADDRESS@";
 
-static const int intSize = 1 * X86MiniJavaFrame::WORD_SIZE;
-static const int booleanSize = 1 * X86MiniJavaFrame::WORD_SIZE;
-static const int referenceSize = 1 * X86MiniJavaFrame::WORD_SIZE;
-
 int X86MiniJavaFrame::TypeSize(SymbolTable::T_VariableType type) const {
-    switch (type) {
-        case SymbolTable::VT_Int:
-            return intSize;
-        case SymbolTable::VT_IntArray:
-            return referenceSize;
-        case SymbolTable::VT_Boolean:
-            return booleanSize;
-        case SymbolTable::VT_UserClass:
-            return referenceSize;
-        default:
-            assert(false);
-    }
+    return typeSpec->TypeSize(type);
+}
+
+X86MiniJavaFrame::X86MiniJavaFrame() : typeSpec(Factory::Create<ITypeSpec>())
+{
 }
 
 void X86MiniJavaFrame::AddFormal( const SymbolTable::VariableInfo& name) {
@@ -48,7 +37,7 @@ void X86MiniJavaFrame::AddLocal( const SymbolTable::VariableInfo& name) {
 }
 
 void X86MiniJavaFrame::AddAddressExit() {
-    IAccess* var = createFormal(T_RecordsType::RT_AddressExit, referenceSize);
+    IAccess* var = createFormal(T_RecordsType::RT_AddressExit, typeSpec->ReferenceSize());
     formalAccess.insert(std::make_pair(StringSymbol::GetIntern(EXIT_ADDRESS_NAME),
                                        std::unique_ptr<IAccess>(var)));
     this->addressExitIndex = formalList.size();
@@ -56,7 +45,7 @@ void X86MiniJavaFrame::AddAddressExit() {
 }
 
 void X86MiniJavaFrame::AddAddressReturnValue(SymbolTable::T_VariableType type) {
-    IAccess* var = createFormal(T_RecordsType::RT_AddressReturnValue, referenceSize);
+    IAccess* var = createFormal(T_RecordsType::RT_AddressReturnValue, typeSpec->ReferenceSize());
     formalAccess.insert(std::make_pair(StringSymbol::GetIntern(RETURN_ADDRESS_NAME),
                                        std::unique_ptr<IAccess>(var)));
     this->addressReturnValueIndex = formalList.size();
@@ -75,7 +64,9 @@ const IAccess* X86MiniJavaFrame::FindLocalOrFormal( const StringSymbol* name ) c
     auto res = localAccess.find(name);
     if( res == localAccess.end() ) {
         res = formalAccess.find(name);
-        assert(res != formalAccess.end());
+        if(res == formalAccess.end()) {
+            return nullptr;
+        }
     }
     return res->second.get();
 }

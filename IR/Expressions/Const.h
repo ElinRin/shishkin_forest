@@ -8,7 +8,10 @@ class Const : public IExp {
 public:
     const int value;
 
-    Const(int value) : value(value) { }
+    Const(int value) : value(value)
+    {}
+
+    ACCEPT_IR_VISITOR
 };
 
 }

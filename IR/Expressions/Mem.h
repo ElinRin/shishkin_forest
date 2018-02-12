@@ -11,7 +11,9 @@ public:
 
     Mem(const IExp* expression):
         Expression(expression)
-    { }
+    {}
+
+    ACCEPT_IR_VISITOR
 };
 
 }

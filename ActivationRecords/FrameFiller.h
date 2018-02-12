@@ -5,7 +5,7 @@
 namespace ActivationRecords {
 
 class FrameFiller {
-public:
+public:    
     FrameFiller(SymbolTable::Table* table) : table(table), filled(false) {}
 
     void PrintFill();

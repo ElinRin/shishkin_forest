@@ -12,6 +12,8 @@ public:
     TableFiller() : table(std::unique_ptr<Table>(new Table())) {}
 
     void FillTable(AST::Program* program);
+    void FillClassStruct();
+    void Attach(Table* table) { this->table.reset(table); }
     Table* DetachTable() { return table.release(); }
 
     virtual void Visit(const AST::Program* node) override;

@@ -12,6 +12,8 @@ public:
     LabelStm(const Label* label) :
         LabelName(label)
     {}
+
+    ACCEPT_IR_VISITOR
 };
 
 }

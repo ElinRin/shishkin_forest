@@ -111,7 +111,7 @@ bool Table::DoesTypeHaveSuper(const ClassInfo* classInfo, const StringSymbol *su
         info->GetSuperClassName() != nullptr;
         info = GetClass(info->GetSuperClassName()->GetString(), position))
     {
-        if(classInfo->GetSuperClassName() == super) {
+        if(info->GetSuperClassName() == super) {
             return true;
         }
     }
@@ -124,7 +124,7 @@ void Table::AddFrame(const StringSymbol* methodName, const ActivationRecords::IF
     if(frames.find(methodName) != frames.end()) {
         throw DeclarationException("Method " + methodName->GetString() + " already have defined frame", position);
     }
-    frames.insert(std::make_pair(methodName, std::unique_ptr<const ActivationRecords::IFrame>(frame)));
+    frames.insert(std::make_pair(methodName, frame));
 }
 
 const ActivationRecords::IFrame* Table::GetFrame(const StringSymbol *methodName) const
@@ -134,7 +134,7 @@ const ActivationRecords::IFrame* Table::GetFrame(const StringSymbol *methodName)
     if(frame == frames.end()) {
         throw DeclarationException("Method " + methodName->GetString() + " does not have a declared frame", position);
     }
-    return frame->second.get();
+    return frame->second;
 }
 
 const ClassInfo* Table::GetClass(const std::string& name, const Position& position) const

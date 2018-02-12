@@ -1,4 +1,5 @@
 #include "IExp.h"
+#include "Unaryop.h"
 #include "Binop.h"
 #include "Call.h"
 #include "Const.h"
@@ -14,3 +15,5 @@
 #include "Move.h"
 #include "Seq.h"
 #include "List.h"
+#include "StmWrapper.h"
+#include "ExpWrapper.h"

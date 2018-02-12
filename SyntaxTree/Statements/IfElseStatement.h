@@ -21,7 +21,7 @@ struct IfElseStatement : public IStatement {
     {
     }
 
-    ACCEPT_VISITOR
+    ACCEPT_AST_VISITOR
 };
 
 }

@@ -14,6 +14,8 @@ public:
     Jump(const Label* label):
         LabelToJump(label)
     {}
+
+    ACCEPT_IR_VISITOR
 };
 
 }

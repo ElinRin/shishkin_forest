@@ -1,23 +1,20 @@
-#ifndef PRINTVISITOR_H
-#define PRINTVISITOR_H
+#ifndef PRINTAST_VISITOR_H
+#define PRINTAST_VISITOR_H
 #include "common.h"
 
 #include <fstream>
 #include <vector>
 
+#include "Framework/DotPrint.h"
 #include "TreeTypes.h"
 
 namespace AST {
 
-class PrintVisitor : public IVisitor {
+class PrintVisitor : public IVisitor, private DotPrint {
 public:
     PrintVisitor(std::string filename) :
-        dot(filename)
+        DotPrint(filename)
     {}
-
-    ~PrintVisitor() {
-        dot.close();
-    }
 
     void CreateGraph(Program* program);
 
@@ -55,23 +52,13 @@ protected:
     virtual void Visit(const Id *node) override;
 
 private:
-    struct Arrow {
-        std::string From;
-        std::string To;
-    };
+    int NodeCounter = 0;
 
-    std::vector<Arrow> arrows;
-    int nodeCounter = 0;
-    std::ofstream dot;
-    std::string parentName;
-
-    std::string addNode(std::string label);
     std::string format(const Coordinates &coords);
     std::string format(const T_Type& type);
     std::string format(const T_Qualifier& type);
     std::string format(const T_BinaryExpressionType& type);
     std::string format(const T_ValueType& type);
-    void addArrow(std::string& name);
 };
 
 }
