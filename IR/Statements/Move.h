@@ -13,6 +13,8 @@ public:
     Move(const IExp* destination, const IExp* source):
         Destination(destination), Source(source)
     {}
+
+    ACCEPT_IR_VISITOR
 };
 
 }

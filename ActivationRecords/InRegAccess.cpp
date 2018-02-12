@@ -18,6 +18,7 @@ void InRegAccess::print(TempAddress fp) const
 
 const IR::IExp* InRegAccess::GetExp(const IR::Temp* fp) const
 {
+    delete fp;
     return new IR::Temp(regNumber);
 }
 

@@ -5,9 +5,36 @@
 #include "DeclarationException.h"
 #include "FrameFiller.h"
 
-void SymbolTable::TableFiller::FillTable(AST::Program *program)
+void SymbolTable::TableFiller::FillTable(AST::Program* program)
 {
     program->AcceptVisitor(this);
+}
+
+void SymbolTable::TableFiller::FillClassStruct()
+{
+    auto names = table->GetClassesNames();
+    for( auto className : names ) {
+        auto classInfo = table->GetClass(className->GetString());
+        auto classStruct = classInfo->GetClassStruct();
+        std::vector<const ClassInfo*> classesStack;
+        for(auto info = classInfo->GetName(); info != nullptr;
+            info = table->GetClass(info->GetString())->GetSuperClassName())
+        {
+            classesStack.push_back(table->GetClass(info->GetString()));
+        }
+        std::set<const StringSymbol*> addedMethods;
+        for(auto info : classesStack) {
+            for(auto var : info->GetVarsNames()) {
+                const VariableInfo* varInfo = info->GetVariableBlock().find(var)->second.get();
+                classStruct->AddField(varInfo);
+            }
+            for(auto& method: info->GetMethodsBlock()) {
+                const MethodInfo* methodInfo = method.second.get();
+                addedMethods.insert(methodInfo->GetName());
+                classStruct->AddToVtable(methodInfo);
+            }
+        }
+    }
 }
 
 void SymbolTable::TableFiller::Visit(const AST::Program* node)
@@ -66,6 +93,7 @@ void SymbolTable::TableFiller::Visit(const AST::ClassDeclaration* node)
 
             methodInfo->AddFrameInfo(frameFiller.CreateFrame(*newClass, *methodInfo));
             newClass->AddMethodInfo(methodInfo);
+            table->AddFrame(methodInfo->GetFullName(), methodInfo->GetFrame());
         }
     }
     table->AddClass(newClass, fromCoords(node->Coords()));

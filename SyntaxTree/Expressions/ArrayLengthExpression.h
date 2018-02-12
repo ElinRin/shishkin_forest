@@ -15,7 +15,7 @@ struct ArrayLengthExpression : public IExpression {
         coords(coords)
     {}
 
-    ACCEPT_VISITOR
+    ACCEPT_AST_VISITOR
 };
 
 }

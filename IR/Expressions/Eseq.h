@@ -8,6 +8,7 @@
 namespace IR {
 
 class Eseq : public IExp {
+public:
     std::unique_ptr<const IStm> Statement;
     std::unique_ptr<const IExp> Expression;
 
@@ -15,6 +16,7 @@ class Eseq : public IExp {
         Statement(statement),
         Expression(expression)
     {}
+    ACCEPT_IR_VISITOR
 };
 
 }

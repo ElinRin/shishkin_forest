@@ -4,6 +4,7 @@
 
 #include "Exp.h"
 #include "JumpC.h"
+#include "Temp.h"
 
 namespace IRTranslate {
 

@@ -32,9 +32,9 @@ static SymbolTable::TypeInfo fromType(const AST::Type* type)
         return SymbolTable::TypeInfo(SymbolTable::VT_UserClass, type->TypeName->Name);
         break;
     default:
+        assert(false);
         break;
     }
-    assert(false);
 }
 
 inline bool operator ==(const AST::Type &a, const AST::Type &b) {
@@ -47,14 +47,21 @@ inline bool operator ==(const AST::Type &a, const AST::Type &b) {
              aSymbol == bSymbol;
 }
 
-void TypeChecker::CheckAST(AST::Program* root, SymbolTable::Table* table)
+TypeChecker::TypeChecker(SymbolTable::Table* table):
+    table(table),
+    TypeStackVisitor(table)
 {
-    this->table = table;
+}
+
+bool TypeChecker::CheckAST(AST::Program* root)
+{
     try {
         root->AcceptVisitor(this);
     } catch (SymbolTable::DeclarationException e) {
         std::cout << NF_RED << "Declaration error: " << e.what() << NF_RESET << std::endl;
+        return false;
     }
+    return true;
 }
 
 void TypeChecker::Visit(const AST::Program* node)
@@ -68,13 +75,13 @@ void TypeChecker::Visit(const AST::MainClass *node)
     node->MainStatement->AcceptVisitor(this);
 }
 
-void TypeChecker::Visit(const AST::ClassDeclaration *node)
+void TypeChecker::Visit(const AST::ClassDeclaration* node)
 {
-    table->AddClassToScope(node->ClassName->Name, fromCoords(node->Coords()));
+    SymbolTable::TypeScopeSwitcher switcher(node->ClassName->Name, table,
+                                            fromCoords(node->Coords()));
     if(node->MethodDeclarations) {
         node->MethodDeclarations->AcceptVisitor(this);
     }
-    table->FreeLastScope();
 }
 
 void TypeChecker::Visit(const AST::VarDeclaration* node)
@@ -86,7 +93,8 @@ void TypeChecker::Visit(const AST::VarDeclaration* node)
 
 void TypeChecker::Visit(const AST::MethodDeclaration* node)
 {
-    table->AddMethodToScope(node->MethodName->Name, fromCoords(node->Coords()));
+    SymbolTable::MethodScopeSwitcher switcher(node->MethodName->Name, table,
+                                              fromCoords(node->Coords()));
     if(node->Arguments) {
         node->Arguments->AcceptVisitor(this);
     }
@@ -97,7 +105,7 @@ void TypeChecker::Visit(const AST::MethodDeclaration* node)
         table->GetClass(node->ReturnType->TypeName->Name, fromCoords(node->Coords()));
     }
     node->StatementToReturn->AcceptVisitor(this);
-    auto returnedType = popTypeStack();
+    auto returnedType = TypeStackVisitor.PopTypeFromStack();
     if( !(*returnedType == fromType(node->ReturnType.get())) ) {
         throw SymbolTable::DeclarationException("Trying to return type " +
                                                 returnedType->GetTypeString() +
@@ -106,14 +114,13 @@ void TypeChecker::Visit(const AST::MethodDeclaration* node)
                                                 " of type " + node->ReturnType->ToString(),
                                                 fromCoords(node->Coords()));
     }
-    table->FreeLastScope();
 }
 
 template <class T>
-static void visitSequence(const AST::Sequence<T>* node, AST::IVisitor* visitor)
+static void visitSequence(const AST::Sequence<T>* node, AST::IVisitor* AST_VISITOR)
 {
     for(auto& cl: node->SequenceList) {
-        cl->AcceptVisitor(visitor);
+        cl->AcceptVisitor(AST_VISITOR);
     }
 }
 
@@ -159,7 +166,7 @@ void TypeChecker::Visit(const AST::AssignArrayElementStatement* node)
                                                         fromCoords(node->Coords()));
     }
     node->ElementNumberExpression->AcceptVisitor(this);
-    auto returned = popTypeStack();
+    auto returned = TypeStackVisitor.PopTypeFromStack();
     if(returned->GetType() != SymbolTable::VT_Int) {
         throw SymbolTable::DeclarationException("Trying to return type " +
                                                         returned->GetTypeString() +
@@ -168,7 +175,7 @@ void TypeChecker::Visit(const AST::AssignArrayElementStatement* node)
                                                         fromCoords(node->Coords()));
     }
     node->ExpressionToAssign->AcceptVisitor(this);
-    returned = popTypeStack();
+    returned = TypeStackVisitor.PopTypeFromStack();
     if(returned->GetType() != SymbolTable::VT_Int) {
             throw SymbolTable::DeclarationException("Trying to assign type " +
                                                             returned->GetTypeString() +
@@ -182,7 +189,7 @@ void TypeChecker::Visit(const AST::AssignStatement* node)
 {
     auto var = table->GetVariable(node->Identifier->Name, fromCoords(node->Coords()));
     node->ExpressionToAssign->AcceptVisitor(this);
-    auto returnedType = popTypeStack();
+    auto returnedType = TypeStackVisitor.PopTypeFromStack();
     if( !(var->GetType() == *returnedType) ) {
         throw SymbolTable::DeclarationException("Trying to assign type " +
                                                         returnedType->GetTypeString() +
@@ -197,7 +204,7 @@ void TypeChecker::Visit(const AST::AssignStatement* node)
 void TypeChecker::Visit(const AST::PrintLineStatement* node)
 {
     node->ExpressionToPrint->AcceptVisitor(this);
-    auto toPrint = popTypeStack();
+    auto toPrint = TypeStackVisitor.PopTypeFromStack();
     if(toPrint->GetType() == SymbolTable::VT_UserClass) {
         throw SymbolTable::DeclarationException("Trying to return user type " +
                                                         toPrint->GetTypeString(),
@@ -208,7 +215,7 @@ void TypeChecker::Visit(const AST::PrintLineStatement* node)
 void TypeChecker::Visit(const AST::WhileStatement* node)
 {
     node->Condition->AcceptVisitor(this);
-    auto returned = popTypeStack();
+    auto returned = TypeStackVisitor.PopTypeFromStack();
     if(returned->GetType() != SymbolTable::VT_Boolean) {
             throw SymbolTable::DeclarationException("Trying to use type " +
                                                             returned->GetTypeString() +
@@ -226,7 +233,7 @@ void TypeChecker::Visit(const AST::BraceSequenceStatement* node)
 void TypeChecker::Visit(const AST::IfElseStatement* node)
 {
     node->Condition->AcceptVisitor(this);
-    auto returned = popTypeStack();
+    auto returned = TypeStackVisitor.PopTypeFromStack();
     if(returned->GetType() != SymbolTable::VT_Boolean) {
             throw SymbolTable::DeclarationException("Trying to use type " +
                                                             returned->GetTypeString() +
@@ -245,7 +252,7 @@ void TypeChecker::Visit(const AST::Sequence<const AST::IStatement>* node)
 void TypeChecker::Visit(const AST::BinaryExpression* node)
 {
     node->Left->AcceptVisitor(this);
-    auto returned = popTypeStack();
+    auto returned = TypeStackVisitor.PopTypeFromStack();
     switch (node->Type) {
     case AST::BET_Plus:
     case AST::BET_Minus:
@@ -258,16 +265,11 @@ void TypeChecker::Visit(const AST::BinaryExpression* node)
                                                                 fromCoords(node->Coords()));
         }
         node->Right->AcceptVisitor(this);
-        returned = popTypeStack();
+        returned = TypeStackVisitor.PopTypeFromStack();
         if(returned->GetType() != SymbolTable::VT_Int) {
                 throw SymbolTable::DeclarationException("Trying to apply math operation to " +
                                                                 returned->GetTypeString(),
                                                                 fromCoords(node->Coords()));
-        }
-        if(node->Type == AST::BET_Less) {
-            typesStack.push(&BooleanType);
-        } else {
-            typesStack.push(&IntType);
         }
         break;
     case AST::BET_And:
@@ -278,23 +280,23 @@ void TypeChecker::Visit(const AST::BinaryExpression* node)
                                                                 fromCoords(node->Coords()));
         }
         node->Right->AcceptVisitor(this);
-        returned = popTypeStack();
+        returned = TypeStackVisitor.PopTypeFromStack();
         if(returned->GetType() != SymbolTable::VT_Boolean) {
                 throw SymbolTable::DeclarationException("Trying to apply logical operation to " +
                                                                 returned->GetTypeString(),
                                                                 fromCoords(node->Coords()));
         }
-        typesStack.push(&BooleanType);
     default:
         break;
     }
+    TypeStackVisitor.Visit(node);
 
 }
 
 void TypeChecker::Visit(const AST::ArrayMemberExpression* node)
 {
     node->BaseExpression->AcceptVisitor(this);
-    auto returnedBase = popTypeStack();
+    auto returnedBase = TypeStackVisitor.PopTypeFromStack();
     if(returnedBase->GetType() != SymbolTable::VT_IntArray) {
         throw SymbolTable::DeclarationException("Trying to use type " +
                                                         returnedBase->GetTypeString() +
@@ -302,33 +304,33 @@ void TypeChecker::Visit(const AST::ArrayMemberExpression* node)
                                                         fromCoords(node->Coords()));
     }
     node->ElementNumberExpression->AcceptVisitor(this);
-    auto returned = popTypeStack();
+    auto returned = TypeStackVisitor.PopTypeFromStack();
     if(returned->GetType()!= SymbolTable::VT_Int) {
         throw SymbolTable::DeclarationException("Trying to return type " +
                                                         returned->GetTypeString() +
                                                         " as index of array ",
                                                         fromCoords(node->Coords()));
     }
-    typesStack.push(&IntType);
+    TypeStackVisitor.Visit(node);
 }
 
 void TypeChecker::TypeChecker::Visit(const AST::ArrayLengthExpression* node)
 {
     node->ArrayExpression->AcceptVisitor(this);
-    auto returnedBase = popTypeStack();
+    auto returnedBase = TypeStackVisitor.PopTypeFromStack();
     if(returnedBase->GetType() != SymbolTable::VT_IntArray) {
         throw SymbolTable::DeclarationException("Trying to use type " +
                                                         returnedBase->GetTypeString() +
                                                         " as array",
                                                         fromCoords(node->Coords()));
     }
-    typesStack.push(&IntType);
+    TypeStackVisitor.Visit(node);
 }
 
 void TypeChecker::TypeChecker::Visit(const AST::CallMemberExpression* node)
 {
     node->BaseExpression->AcceptVisitor(this);
-    auto returnedBase = popTypeStack();
+    auto returnedBase = TypeStackVisitor.GetTypeFromStack();
     if(returnedBase->GetType() != SymbolTable::VT_UserClass) {
         throw SymbolTable::DeclarationException("Trying to use type " +
                                                         returnedBase->GetTypeString() +
@@ -364,7 +366,7 @@ void TypeChecker::TypeChecker::Visit(const AST::CallMemberExpression* node)
         }
         for(auto argument = methodInfo->GetArgs().rbegin(); argument != methodInfo->GetArgs().rend(); ++argument) {
             auto arg = *argument;
-            auto passed = popTypeStack();
+            auto passed = TypeStackVisitor.PopTypeFromStack();
             if( !(arg->GetType() == *passed) ) {
                 if(passed->GetType() == SymbolTable::VT_UserClass &&
                         table->DoesTypeHaveSuper(table->GetClass(passed->GetUserClass()->GetString(), fromCoords(node->Coords())),
@@ -380,7 +382,7 @@ void TypeChecker::TypeChecker::Visit(const AST::CallMemberExpression* node)
             }
         }
     }
-    typesStack.push(&(methodInfo->GetReturnType()));
+    TypeStackVisitor.Visit(node);
 }
 
 void TypeChecker::Visit(const AST::Sequence<const AST::IExpression>* node)
@@ -390,60 +392,48 @@ void TypeChecker::Visit(const AST::Sequence<const AST::IExpression>* node)
 
 void TypeChecker::Visit(const AST::ValueExpression* node)
 {
-    switch(node->ValueType) {
-        case AST::T_Int:
-            typesStack.push(&IntType);
-            return;
-        case AST::T_Boolean:
-            typesStack.push(&BooleanType);
-            return;
-        default:
-            assert(false);
-    }
+    TypeStackVisitor.Visit(node);
 }
 
 void TypeChecker::Visit(const AST::IdExpression* node)
 {
-    auto var = table->GetVariable(node->ExpressionId->Name, fromCoords(node->Coords()));
-    typesStack.push(&var->GetType());
+    TypeStackVisitor.Visit(node);
 }
 
 void TypeChecker::Visit(const AST::ThisExpression* node)
 {
-    auto scopedClass = table->GetScopedClass();
-    typesStack.push(&scopedClass->GetTypeInfo());
+    TypeStackVisitor.Visit(node);
 }
 
 void TypeChecker::Visit(const AST::NewIntArrayExpression* node)
 {
     node->NumberOfElements->AcceptVisitor(this);
-    auto returned = popTypeStack();
+    auto returned = TypeStackVisitor.PopTypeFromStack();
     if(returned->GetType()!= SymbolTable::VT_Int) {
         throw SymbolTable::DeclarationException("Trying to use type " +
                                                         returned->GetTypeString() +
                                                         " as size of array ",
                                                         fromCoords(node->Coords()));
     }
-    typesStack.push(&IntArrayType);
+    TypeStackVisitor.Visit(node);
 }
 
 void TypeChecker::Visit(const AST::NewObjectExpression* node)
 {
-    auto objectType = table->GetClass(node->ObjectId->Name, fromCoords(node->Coords()));
-    typesStack.push(&objectType->GetTypeInfo());
+    TypeStackVisitor.Visit(node);
 }
 
 void TypeChecker::TypeChecker::Visit(const AST::NotExpression* node)
 {
     node->Expression->AcceptVisitor(this);
-    auto returned = popTypeStack();
+    auto returned = TypeStackVisitor.PopTypeFromStack();
     if(returned->GetType() != SymbolTable::VT_Boolean) {
         throw SymbolTable::DeclarationException("Trying to use type " +
                                                         returned->GetTypeString() +
                                                         " as boolean expression ",
                                                         fromCoords(node->Coords()));
     }
-    typesStack.push(&BooleanType);
+    TypeStackVisitor.Visit(node);
 }
 
 void TypeChecker::TypeChecker::Visit(const AST::ContainerExpression *node)

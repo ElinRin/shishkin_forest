@@ -12,9 +12,11 @@ public:
     Name() :
         LabelName(Label::GetNextEnumeratedLabel())
     {}
-    Name(std::string& name) :
+    Name(const std::string& name) :
         LabelName(Label::GetLabel(name))
     {}
+
+    ACCEPT_IR_VISITOR
 };
 
 }

@@ -6,14 +6,14 @@ namespace IR {
 
 class Label {
 public:
-    static Label* GetLabel(std::string& name);
+    static Label* GetLabel(const std::string &name);
     static Label* GetNextEnumeratedLabel();
 
-    std::string GetName() { return name; }
+    std::string GetName() const { return name; }
 
 
 private:
-    Label(std::string& name);
+    Label(const std::string &name);
     std::string name;
 };
 

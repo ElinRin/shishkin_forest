@@ -8,7 +8,7 @@
 namespace AST {
 
 template <typename T>
-VISIT_NODE(Sequence<T>)
+AST_VISIT_NODE(Sequence<T>)
 
 }
 

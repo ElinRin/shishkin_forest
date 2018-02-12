@@ -9,7 +9,7 @@ namespace AST {
 struct ThisExpression : public IExpression
 {
     ThisExpression(Coordinates coords) : coords(coords) {}
-    ACCEPT_VISITOR
+    ACCEPT_AST_VISITOR
 };
 
 }

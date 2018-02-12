@@ -8,11 +8,12 @@ class StringSymbol {
 public:
     static StringSymbol* GetIntern(const std::string &name);
     const std::string& GetString() const { return body; }
+    operator const std::string() const { return GetString(); }
 
 private:
     std::string body;
 
-    StringSymbol(std::string name) : body(name) { }
+    StringSymbol(std::string name) : body(name) {}
 
     StringSymbol( const StringSymbol& ) = delete;
     void operator=( const StringSymbol& ) = delete;

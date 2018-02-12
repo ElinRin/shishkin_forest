@@ -17,7 +17,7 @@ public:
   bool operator ==( const Symbol& a );
   bool operator !=( const Symbol& a );
 
-  virtual ~Symbol() {};
+  virtual ~Symbol() {}
 
   const StringSymbol* GetName() const { return name; }
   const Position& GetPosition() const { return position; }

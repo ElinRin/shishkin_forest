@@ -17,7 +17,7 @@ struct ContainerExpression : public IExpression
 
     }
 
-    ACCEPT_VISITOR
+    ACCEPT_AST_VISITOR
 };
 
 }

@@ -16,8 +16,8 @@ namespace SymbolTable {
         frame(nullptr),
         returnType(_returnType),
         qualifier(_qualifier)
-		{	
-		}
+    {
+    }
 
     const TypeInfo& MethodInfo::GetReturnType() const
 	{

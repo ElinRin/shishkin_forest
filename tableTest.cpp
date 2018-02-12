@@ -12,10 +12,10 @@ int main(void) {
 
   TestClasses();
   yyparse();
-  SymbolTable::TableVisitor visitor;
+  SymbolTable::TableVisitor AST_VISITOR;
   if(program.get()) {
       try {
-        visitor.ParseProgram(program.get());
+        AST_VISITOR.ParseProgram(program.get());
       } catch(SymbolTable::DeclarationException e) {
         std::cout << NF_RED << "Declaration error: " << e.what() << NF_RESET << std::endl;
       }

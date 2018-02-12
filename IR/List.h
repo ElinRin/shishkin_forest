@@ -8,17 +8,22 @@
 namespace IR {
 
 template<typename T>
-class List {
+class List : public T{
 public:
-    std::unique_ptr<const T> Head;
-    std::unique_ptr<List<T>> Tail;
+    std::unique_ptr<List<T>> Head;
+    std::unique_ptr<const T> Tail;
 
-    List(const T* head, List<T>* tail = nullptr) :
+    List(const T* tail = nullptr, List<T>* head = nullptr) :
         Head(head),
         Tail(tail)
     {
-        assert(head != nullptr);
+        if(head != nullptr && head->Tail == nullptr) {
+            delete head;
+            Head = nullptr;
+        }
     }
+
+    ACCEPT_IR_VISITOR
 };
 
 typedef List<IExp> ExpList;

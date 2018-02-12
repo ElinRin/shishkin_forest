@@ -17,12 +17,20 @@ public:
     };
     const int Id;
 
-    Temp(std::string& name);
-    Temp(int localId);
+    explicit Temp(std::string name);
+    explicit Temp(int localId);
+    Temp(const Temp& temp);
+
+    const T_AdditionalInfo Info() const { return info; }
+    const std::string Name() const { return name; }
+    int LocalId() const { return localId; }
+
 private:
     const int localId;
     std::string name;
     T_AdditionalInfo info;
+
+    ACCEPT_IR_VISITOR
 };
 
 }

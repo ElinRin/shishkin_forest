@@ -11,8 +11,10 @@ namespace SymbolTable {
 ClassInfo::ClassInfo(const std::string _name, const Position _position ) :
     Symbol(_name,  _position),
     superClass(nullptr),
-    info(VT_UserClass, _name)
-{}
+    info(VT_UserClass, _name),
+    classStruct(Factory::Create<IClassStruct>())
+{
+}
 
 void ClassInfo::AddMethodInfo(const MethodInfo* method )
 {

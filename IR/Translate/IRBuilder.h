@@ -1,18 +1,23 @@
 #pragma once
-
-#include <unordered_map>
+#include "common.h"
 
 #include "Visitor.h"
 #include "SubtreeWrapper.h"
-#include "Table.h"
+#include "TypeStackVisitor.h"
 
 namespace IRTranslate {
 
 class IRBuilder : public AST::IVisitor {
 public:
+
     IRBuilder(SymbolTable::Table* table) :
-        table(table)
+        table(table),
+        TypeStackVisitor(table)
     {}
+
+    void Parse(const AST::Program *program);
+
+    IRForest& GetParseResults() { return trees; }
 
     virtual void Visit(const AST::Program* node) override;
     virtual void Visit(const AST::MainClass* node) override;
@@ -33,22 +38,24 @@ public:
     virtual void Visit(const AST::IfElseStatement* node) override;
     virtual void Visit(const AST::Sequence<const AST::IStatement>* node) override;
     virtual void Visit(const AST::BinaryExpression* node) override;
-    virtual void Visit(const AST::ArrayMemberExpression* node) override{}
-    virtual void Visit(const AST::ArrayLengthExpression* node) override{}
-    virtual void Visit(const AST::CallMemberExpression* node) override{}
-    virtual void Visit(const AST::Sequence<const AST::IExpression>* node) override{}
-    virtual void Visit(const AST::ValueExpression* node) override{}
-    virtual void Visit(const AST::IdExpression* node) override{}
-    virtual void Visit(const AST::ThisExpression* node) override{}
-    virtual void Visit(const AST::NewIntArrayExpression* node) override{}
-    virtual void Visit(const AST::NewObjectExpression* node) override{}
-    virtual void Visit(const AST::NotExpression* node) override{}
-    virtual void Visit(const AST::ContainerExpression* node) override{}
-    virtual void Visit(const AST::Id* node) override {}
+    virtual void Visit(const AST::ArrayMemberExpression* node) override;
+    virtual void Visit(const AST::ArrayLengthExpression* node) override;
+    virtual void Visit(const AST::CallMemberExpression* node) override;
+    virtual void Visit(const AST::Sequence<const AST::IExpression>* node) override;
+    virtual void Visit(const AST::ValueExpression* node) override;
+    virtual void Visit(const AST::IdExpression* node) override;
+    virtual void Visit(const AST::ThisExpression* node) override;
+    virtual void Visit(const AST::NewIntArrayExpression* node) override;
+    virtual void Visit(const AST::NewObjectExpression* node) override;
+    virtual void Visit(const AST::NotExpression* node) override;
+    virtual void Visit(const AST::ContainerExpression* node) override;
+    virtual void Visit(const AST::Id* node) override { assert(false); }
+
 private:
     std::unique_ptr<ISubtreeWrapper> mainSubtree;
-    std::unordered_map<const StringSymbol*, std::unique_ptr<ISubtreeWrapper>> trees;
+    IRForest trees;
     SymbolTable::Table* table;
+    SymbolTable::TypeStackVisitor TypeStackVisitor;
     const AR::IFrame* currentFrame;
 };
 

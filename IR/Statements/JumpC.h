@@ -14,8 +14,8 @@ public:
         TJ_EQ, TJ_NEQ, TJ_LT
     };
 
-    std::unique_ptr<const Label> TrueLabel;
-    std::unique_ptr<const Label> FalseLabel;
+    const Label* TrueLabel;
+    const Label* FalseLabel;
     std::unique_ptr<const IExp> ConditionLeftExpression;
     std::unique_ptr<const IExp> ConditionRightExpression;
     const TJumpType JumpType;
@@ -31,6 +31,8 @@ public:
         ConditionRightExpression(conditionRightExpression),
         JumpType(jumpType)
     {}
+
+    ACCEPT_IR_VISITOR
 };
 
 }

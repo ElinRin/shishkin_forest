@@ -36,7 +36,7 @@ struct Sequence : public ITreeNode
         SequenceList.emplace_back(appendix);
     }
 
-    ACCEPT_VISITOR
+    ACCEPT_AST_VISITOR
 };
 
 }

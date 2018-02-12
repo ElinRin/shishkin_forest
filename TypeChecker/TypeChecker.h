@@ -2,6 +2,7 @@
 #include "common.h"
 
 #include <stack>
+#include "TypeStackVisitor.h"
 #include "TreeTypes.h"
 #include "Table.h"
 
@@ -9,7 +10,9 @@ namespace TypeChecker {
 
 class TypeChecker : public AST::IVisitor {
 public:
-    void CheckAST(AST::Program* root, SymbolTable::Table* table);
+    TypeChecker(SymbolTable::Table* table);
+
+    bool CheckAST(AST::Program* root);
 
     virtual void Visit(const AST::Program* node) override;
     virtual void Visit(const AST::MainClass* node) override;
@@ -45,18 +48,7 @@ public:
 
 private:
     SymbolTable::Table* table;
-    std::stack<const SymbolTable::TypeInfo*> typesStack;
-
-    const SymbolTable::TypeInfo *popTypeStack();
+    SymbolTable::TypeStackVisitor TypeStackVisitor;
 };
-
-
-inline const SymbolTable::TypeInfo *TypeChecker::popTypeStack() {
-    auto type = typesStack.top();
-    typesStack.pop();
-    return type;
-}
-
-
 
 }

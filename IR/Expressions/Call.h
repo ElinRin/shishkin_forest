@@ -13,6 +13,8 @@ public:
         FuncExpression(func),
         Arguments(args)
     {}
+
+    ACCEPT_IR_VISITOR
 };
 
 }

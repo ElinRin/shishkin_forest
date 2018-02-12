@@ -16,7 +16,7 @@ struct ReturnStatement : public ITreeNode
         coords(coords)
     {}
 
-    ACCEPT_VISITOR
+    ACCEPT_AST_VISITOR
 };
 
 }

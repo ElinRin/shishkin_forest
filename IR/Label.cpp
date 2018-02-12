@@ -8,10 +8,10 @@ namespace  IR {
 static std::unordered_map<std::string, std::unique_ptr<Label>> Map;
 static const char* const LabelPrefix = "label_";
 
-Label* Label::GetLabel(std::string& name)
+Label* Label::GetLabel(const std::string& name)
 {
     auto found = Map.find(name);
-    if(found != Map.end()) {
+    if(found == Map.end()) {
         Label* l = new Label(name);
         Map.insert(std::make_pair(name, std::unique_ptr<Label>(l)));
         return l;
@@ -30,7 +30,7 @@ Label* Label::GetNextEnumeratedLabel()
     return GetLabel(labelName);
 }
 
-Label::Label(std::string& name) : name(name)
+Label::Label(const std::string& name) : name(name)
 {
 
 }

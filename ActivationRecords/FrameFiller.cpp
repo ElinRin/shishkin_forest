@@ -3,6 +3,7 @@
 #include <iostream>
 #include "assert.h"
 #include "X86MiniJavaFrame.h"
+#include "NameConventions.h"
 
 namespace ActivationRecords {
 
@@ -47,9 +48,9 @@ void FrameFiller::PrintFill()
 
 IFrame* FrameFiller::CreateFrame(const SymbolTable::ClassInfo& classInfo, const SymbolTable::MethodInfo& methodInfo)
 {
-    std::unique_ptr<IFrame> frame(new X86MiniJavaFrame());
+    std::unique_ptr<IFrame> frame(Factory::Create<IFrame>());
     SymbolTable::Position position;
-    SymbolTable::VariableInfo thisVariable("this", position, classInfo.GetTypeInfo());
+    SymbolTable::VariableInfo thisVariable(NameConventions::ThisName, position, classInfo.GetTypeInfo());
     frame->AddFormal(thisVariable);
     auto argNames = methodInfo.GetArgs();
     for (auto name : argNames) {

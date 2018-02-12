@@ -7,7 +7,7 @@
 
 #include "Visitor.h"
 
-#define ACCEPT_VISITOR virtual void AcceptVisitor(IVisitor *visitor) const override; \
+#define ACCEPT_AST_VISITOR virtual void AcceptVisitor(IVisitor* visitor) const override; \
     virtual const Coordinates& Coords() const { return coords; } \
     private: Coordinates coords; public:
 
@@ -32,7 +32,7 @@ struct Coordinates
 interface ITreeNode {
     virtual const Coordinates& Coords() const = 0;
     virtual ~ITreeNode();
-    virtual void AcceptVisitor(IVisitor* visitor) const = 0;
+    virtual void AcceptVisitor(IVisitor* AST_VISITOR) const = 0;
 };
 
 }

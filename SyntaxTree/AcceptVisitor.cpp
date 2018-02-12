@@ -1,39 +1,39 @@
-#ifndef ACCEPTVISITOR_CPP
-#define ACCEPTVISITOR_CPP
+#ifndef ACCEPTAST_VISITOR_CPP
+#define ACCEPTAST_VISITOR_CPP
 
 #include "Visitor.h"
 
 namespace AST {
 
-VISIT_NODE(Program)
-VISIT_NODE(MainClass)
-VISIT_NODE(ClassDeclaration)
-VISIT_NODE(VarDeclaration)
-VISIT_NODE(MethodDeclaration)
-VISIT_NODE(Qualifier)
-VISIT_NODE(Type)
+AST_VISIT_NODE(Program)
+AST_VISIT_NODE(MainClass)
+AST_VISIT_NODE(ClassDeclaration)
+AST_VISIT_NODE(VarDeclaration)
+AST_VISIT_NODE(MethodDeclaration)
+AST_VISIT_NODE(Qualifier)
+AST_VISIT_NODE(Type)
 
-VISIT_NODE(ReturnStatement)
-VISIT_NODE(AssignArrayElementStatement)
-VISIT_NODE(AssignStatement)
-VISIT_NODE(PrintLineStatement)
-VISIT_NODE(WhileStatement)
-VISIT_NODE(BraceSequenceStatement)
-VISIT_NODE(IfElseStatement)
+AST_VISIT_NODE(ReturnStatement)
+AST_VISIT_NODE(AssignArrayElementStatement)
+AST_VISIT_NODE(AssignStatement)
+AST_VISIT_NODE(PrintLineStatement)
+AST_VISIT_NODE(WhileStatement)
+AST_VISIT_NODE(BraceSequenceStatement)
+AST_VISIT_NODE(IfElseStatement)
 
-VISIT_NODE(BinaryExpression)
-VISIT_NODE(ArrayMemberExpression)
-VISIT_NODE(ArrayLengthExpression)
-VISIT_NODE(CallMemberExpression)
-VISIT_NODE(ValueExpression)
-VISIT_NODE(IdExpression)
-VISIT_NODE(ThisExpression)
-VISIT_NODE(NewIntArrayExpression)
-VISIT_NODE(NewObjectExpression)
-VISIT_NODE(NotExpression)
-VISIT_NODE(ContainerExpression)
-VISIT_NODE(Id)
+AST_VISIT_NODE(BinaryExpression)
+AST_VISIT_NODE(ArrayMemberExpression)
+AST_VISIT_NODE(ArrayLengthExpression)
+AST_VISIT_NODE(CallMemberExpression)
+AST_VISIT_NODE(ValueExpression)
+AST_VISIT_NODE(IdExpression)
+AST_VISIT_NODE(ThisExpression)
+AST_VISIT_NODE(NewIntArrayExpression)
+AST_VISIT_NODE(NewObjectExpression)
+AST_VISIT_NODE(NotExpression)
+AST_VISIT_NODE(ContainerExpression)
+AST_VISIT_NODE(Id)
 
 }
 
-#endif // ACCEPTVISITOR_CPP
+#endif // ACCEPTAST_VISITOR_CPP

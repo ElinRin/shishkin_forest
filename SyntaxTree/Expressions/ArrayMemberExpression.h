@@ -19,7 +19,7 @@ struct ArrayMemberExpression : public IExpression
         coords(coords)
     {}
 
-    ACCEPT_VISITOR
+    ACCEPT_AST_VISITOR
 };
 
 }
