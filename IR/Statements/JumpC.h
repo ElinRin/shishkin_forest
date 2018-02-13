@@ -25,11 +25,12 @@ public:
           const IExp* conditionLeftExpression,
           const IExp* conditionRightExpression,
           const Label* trueLabel,
-          const Label* falseLabel) :
+          const Label* falseLabel, const Coords& coords=Coords()) :
         TrueLabel(trueLabel), FalseLabel(falseLabel),
         ConditionLeftExpression(conditionLeftExpression),
         ConditionRightExpression(conditionRightExpression),
-        JumpType(jumpType)
+        JumpType(jumpType),
+        coords(coords)
     {}
 
     ACCEPT_IR_VISITOR

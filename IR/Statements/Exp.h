@@ -11,7 +11,10 @@ class Exp : public IStm {
 public:
     std::unique_ptr<const IExp> expression;
 
-    Exp(const IExp* expression) : expression(expression) {  }
+    Exp(const IExp* expression, const Coords& coords=Coords()) :
+        expression(expression),
+        coords(coords)
+    {}
 
     ACCEPT_IR_VISITOR
 };

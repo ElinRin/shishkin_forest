@@ -17,8 +17,10 @@ public:
     };
     const int Id;
 
-    explicit Temp(std::string name);
-    explicit Temp(int localId);
+    //explicit Temp(std::string name);
+    explicit Temp(std::string name, const Coords coords=Coords());
+    //Bexplicit Temp(int localId);
+    explicit Temp(int localId, const Coords coords=Coords());
     Temp(const Temp& temp);
 
     const T_AdditionalInfo Info() const { return info; }

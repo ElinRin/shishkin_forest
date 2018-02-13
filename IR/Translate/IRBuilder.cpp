@@ -57,10 +57,10 @@ void IRBuilder::Visit(const AST::MethodDeclaration* node)
     StmList* stm = nullptr;
     if( node->Statements != nullptr ) {
         node->Statements->AcceptVisitor(this);
-        stm = new StmList(mainSubtree->ToStm());
+        stm = new StmList(mainSubtree->ToStm(), nullptr, toPosition(node->Coords()));
     }
     node->StatementToReturn->AcceptVisitor(this);
-    stm = new StmList(mainSubtree->ToStm(), stm);
+    stm = new StmList(mainSubtree->ToStm(), stm, toPosition(node->Coords()));
     auto name = methodInfo->GetFullName();
     trees.insert(std::make_pair(name, std::unique_ptr<ISubtreeWrapper>(new StmWrapper(stm))));
 }
@@ -83,8 +83,8 @@ void IRBuilder::Visit(const AST::ReturnStatement* node)
 {
     node->Expression->AcceptVisitor(this);
     TypeStackVisitor.PopTypeFromStack();
-    const IExp* returnAddress = currentFrame->ExitAddress()->GetExp(new Temp(FpName));
-    mainSubtree.reset(new StmWrapper(new Move(returnAddress, mainSubtree->ToExp())));
+    const IExp* returnAddress = currentFrame->ExitAddress()->GetExp(new Temp(FpName, toPosition(node->Coords())), toPosition(node->Coords()));
+    mainSubtree.reset(new StmWrapper(new Move(returnAddress, mainSubtree->ToExp(), toPosition(node->Coords()))));
 }
 
 void IRBuilder::Visit(const AST::AssignArrayElementStatement* node)
@@ -97,19 +97,22 @@ void IRBuilder::Visit(const AST::AssignArrayElementStatement* node)
     const AR::IAccess* access = currentFrame->FindLocalOrFormal(identifierName);
     const IExp* baseAddresss = nullptr;
     if(access != nullptr) {
-        baseAddresss = access->GetExp(new Temp(FpName));
+        baseAddresss = access->GetExp(new Temp(FpName, toPosition(node->Coords())), toPosition(node->Coords()));
     } else {
         baseAddresss = table->GetScopedClass()->GetClassStruct()->GetFieldFrom(
                     identifierName,
                     currentFrame->FindLocalOrFormal(
                             StringSymbol::GetIntern(NameConventions::ThisName)
-                        )->GetExp(new Temp(FpName)));
+                        )->GetExp(new Temp(FpName, toPosition(node->Coords())), toPosition(node->Coords())), toPosition(node->Coords()));
     }
     IExp* address = new Mem(new Binop(Binop::TB_PLUS, baseAddresss,
                                       new Binop(Binop::TB_MUL,
-                                                new Const(currentFrame->TypeSize(currentFrame->WordType().GetType())),
-                                                elementNumberExp->ToExp())));
-    mainSubtree.reset(new StmWrapper(new Move(address, mainSubtree->ToExp())));
+                                                new Const(currentFrame->TypeSize(currentFrame->WordType().GetType()),
+                                                          toPosition(node->Coords())),
+                                                elementNumberExp->ToExp(), toPosition(node->Coords())),
+                                      toPosition(node->Coords())),
+                            toPosition(node->Coords()));
+    mainSubtree.reset(new StmWrapper(new Move(address, mainSubtree->ToExp(), toPosition(node->Coords()))));
 }
 
 void IRBuilder::Visit(const AST::AssignStatement *node)
@@ -120,22 +123,24 @@ void IRBuilder::Visit(const AST::AssignStatement *node)
     const IExp* baseAddresss = nullptr;
     //CP
     if(access != nullptr) {
-        baseAddresss = access->GetExp(new Temp(FpName));
+        baseAddresss = access->GetExp(new Temp(FpName, toPosition(node->Coords())), toPosition(node->Coords()));
     } else {
         baseAddresss = table->GetScopedClass()->GetClassStruct()->GetFieldFrom(
                     identifierName,
                     currentFrame->FindLocalOrFormal(
                             StringSymbol::GetIntern(NameConventions::ThisName)
-                        )->GetExp(new Temp(FpName)));
+                        )->GetExp(new Temp(FpName, toPosition(node->Coords())), toPosition(node->Coords())), toPosition(node->Coords()));
     }
-    mainSubtree.reset(new StmWrapper(new Move(baseAddresss, mainSubtree->ToExp())));
+    mainSubtree.reset(new StmWrapper(new Move(baseAddresss, mainSubtree->ToExp(), toPosition(node->Coords()))));
 }
 
 void IRBuilder::Visit(const AST::PrintLineStatement* node)
 {
     node->ExpressionToPrint->AcceptVisitor(this);
     TypeStackVisitor.PopTypeFromStack();
-    mainSubtree.reset(new ExpWrapper(new Call(new Name(PrintLnName), new ExpList(mainSubtree->ToExp()))));
+    mainSubtree.reset(new ExpWrapper(new Call(new Name(PrintLnName, toPosition(node->Coords())),
+                                              new ExpList(mainSubtree->ToExp(), nullptr, toPosition(node->Coords())),
+                                              toPosition(node->Coords()))));
 }
 
 void IRBuilder::Visit(const AST::WhileStatement* node)
@@ -145,10 +150,15 @@ void IRBuilder::Visit(const AST::WhileStatement* node)
     Label* bodyLabel = Label::GetNextEnumeratedLabel();
     Label* exitLabel = Label::GetNextEnumeratedLabel();
     const IStm* condition = mainSubtree->ToConditional(bodyLabel, exitLabel);
-    const IStm* conditionPart = new Seq(new LabelStm(conditionLabel), condition);
+    const IStm* conditionPart = new Seq(new LabelStm(conditionLabel, toPosition(node->Coords())),
+                                        condition, toPosition(node->Coords()));
     node->Body->AcceptVisitor(this);
-    const IStm* bodyPart = new Seq(new LabelStm(bodyLabel), new Seq(mainSubtree->ToStm(), new Jump(conditionLabel)));
-    mainSubtree.reset(new StmWrapper(new Seq(new Seq(conditionPart, bodyPart), new LabelStm(exitLabel))));
+    const IStm* bodyPart = new Seq(new LabelStm(bodyLabel, toPosition(node->Coords())),
+                                   new Seq(mainSubtree->ToStm(), new Jump(conditionLabel, toPosition(node->Coords())), toPosition(node->Coords())),
+                                   toPosition(node->Coords()));
+    mainSubtree.reset(new StmWrapper(new Seq(new Seq(conditionPart, bodyPart, toPosition(node->Coords())),
+                                             new LabelStm(exitLabel, toPosition(node->Coords())),
+                                             toPosition(node->Coords()))));
 }
 
 void IRBuilder::Visit(const AST::BraceSequenceStatement* node)
@@ -165,10 +175,18 @@ void IRBuilder::Visit(const AST::IfElseStatement* node)
     Label* exitLabel = Label::GetNextEnumeratedLabel();
     const IStm* condition = mainSubtree->ToConditional(ifBranchLabel, elseBranchLabel);
     node->IfStatement->AcceptVisitor(this);
-    const IStm* ifPart = new Seq(new Seq(new LabelStm(ifBranchLabel), mainSubtree->ToStm()), new Jump(exitLabel));
+    const IStm* ifPart = new Seq(new Seq(new LabelStm(ifBranchLabel, toPosition(node->Coords())),
+                                         mainSubtree->ToStm(), toPosition(node->Coords())),
+                                 new Jump(exitLabel, toPosition(node->Coords())),
+                                 toPosition(node->Coords()));
     node->ElseStatement->AcceptVisitor(this);
-    const IStm* elsePart = new Seq(new Seq(new LabelStm(elseBranchLabel), mainSubtree->ToStm()), new Jump(exitLabel));
-    mainSubtree.reset(new StmWrapper(new Seq(new Seq(condition, new Seq(ifPart, elsePart)), new LabelStm(exitLabel))));
+    const IStm* elsePart = new Seq(new Seq(new LabelStm(elseBranchLabel, toPosition(node->Coords())),
+                                           mainSubtree->ToStm(), toPosition(node->Coords())),
+                                   new Jump(exitLabel, toPosition(node->Coords())),
+                                   toPosition(node->Coords()));
+    mainSubtree.reset(new StmWrapper(new Seq(new Seq(condition, new Seq(ifPart, elsePart, toPosition(node->Coords())),
+                                                     toPosition(node->Coords())), new LabelStm(exitLabel, toPosition(node->Coords())),
+                                             toPosition(node->Coords()))));
 }
 
 void IRBuilder::Visit(const AST::Sequence<const AST::IStatement>* node)
@@ -182,9 +200,9 @@ void IRBuilder::Visit(const AST::Sequence<const AST::IStatement>* node)
     if(statements.size() == 1) {
         mainSubtree.reset(new StmWrapper(statements[0]));
     } else {
-        IStm* seq = new Seq(statements[0], statements[1]);
+        IStm* seq = new Seq(statements[0], statements[1], toPosition(node->Coords()));
         for(int i = 2; i < statements.size(); ++i) {
-            seq = new Seq(seq, statements[i]);
+            seq = new Seq(seq, statements[i], toPosition(node->Coords()));
         }
         mainSubtree.reset(new StmWrapper(seq));
     }
@@ -211,35 +229,44 @@ void IRBuilder::Visit(const AST::BinaryExpression* node)
 
     switch (node->Type) {
     case AST::BET_And:
-        result = new Binop(Binop::TB_AND, left, right);
+        result = new Binop(Binop::TB_AND, left, right, toPosition(node->Coords()));
         break;
     case AST::BET_Minus:
-        result = new Binop(Binop::TB_MINUS, left, right);
+        result = new Binop(Binop::TB_MINUS, left, right, toPosition(node->Coords()));
         break;
     case AST::BET_Mult:
-        result = new Binop(Binop::TB_MUL, left, right);
+        result = new Binop(Binop::TB_MUL, left, right, toPosition(node->Coords()));
         break;
     case AST::BET_Plus:
-        result = new Binop(Binop::TB_PLUS, left, right);
+        result = new Binop(Binop::TB_PLUS, left, right, toPosition(node->Coords()));
         break;
     case AST::BET_Or:
-        result = new Binop(Binop::TB_OR, left, right);
+        result = new Binop(Binop::TB_OR, left, right, toPosition(node->Coords()));
         break;
     case AST::BET_Less:
         trueLabel = Label::GetNextEnumeratedLabel();
         falseLabel = Label::GetNextEnumeratedLabel();
         returnLabel = Label::GetNextEnumeratedLabel();
-        condition = new JumpC(JumpC::TJ_LT, left, right, trueLabel, falseLabel);
-        expValue = new Temp("expValue");
-        trueBranch = new Seq(new Seq(new LabelStm(trueLabel), new Move(expValue, new Const(1))),
-                                   new Jump(returnLabel));
-        falseBranch = new Seq(new Seq(new LabelStm(falseLabel), new Move(new Temp(*expValue), new Const(1))),
-                                    new Jump(returnLabel));
-        result = new Eseq(new Seq(new Seq(new Seq(condition, trueBranch), falseBranch), new LabelStm(returnLabel)),
-                                        new Mem(new Temp(*expValue)));
+        condition = new JumpC(JumpC::TJ_LT, left, right, trueLabel, falseLabel,
+                              toPosition(node->Coords()));
+        expValue = new Temp("expValue", toPosition(node->Coords()));
+        trueBranch = new Seq(new Seq(new LabelStm(trueLabel, toPosition(node->Coords())),
+                                     new Move(expValue, new Const(1, toPosition(node->Coords())), toPosition(node->Coords())),
+                                     toPosition(node->Coords())),
+                                   new Jump(returnLabel, toPosition(node->Coords())), toPosition(node->Coords()));
+        falseBranch = new Seq(new Seq(new LabelStm(falseLabel, toPosition(node->Coords())),
+                                      new Move(new Temp(*expValue),
+                                               new Const(1, toPosition(node->Coords())),
+                                               toPosition(node->Coords())), toPosition(node->Coords())),
+                                    new Jump(returnLabel, toPosition(node->Coords())),
+                              toPosition(node->Coords()));
+        result = new Eseq(new Seq(new Seq(new Seq(condition, trueBranch, toPosition(node->Coords())),
+                                          falseBranch, toPosition(node->Coords())),
+                                  new LabelStm(returnLabel, toPosition(node->Coords())), toPosition(node->Coords())),
+                           new Mem(new Temp(*expValue), toPosition(node->Coords())), toPosition(node->Coords()));
         break;
      case AST::BET_Mod:
-        result = new Binop(Binop::TB_MOD, left, right);
+        result = new Binop(Binop::TB_MOD, left, right, toPosition(node->Coords()));
         break;
     default:
         break;
@@ -254,7 +281,7 @@ void IRBuilder::Visit(const AST::ArrayMemberExpression* node)
     const IExp* arrayBase = mainSubtree->ToExp();
     node->ElementNumberExpression->AcceptVisitor(this);
     const IExp* elementNumber = mainSubtree->ToExp();
-    mainSubtree.reset(new ExpWrapper(ArrayStruct::GetElement(arrayBase, elementNumber)));
+    mainSubtree.reset(new ExpWrapper(ArrayStruct::GetElement(arrayBase, elementNumber, toPosition(node->Coords()))));
     TypeStackVisitor.Visit(node);
 }
 
@@ -262,7 +289,7 @@ void IRBuilder::Visit(const AST::ArrayLengthExpression* node)
 {
     node->ArrayExpression->AcceptVisitor(this);
     const IExp* arrayBase = mainSubtree->ToExp();
-    mainSubtree.reset(new ExpWrapper(ArrayStruct::GetLength(arrayBase)));
+    mainSubtree.reset(new ExpWrapper(ArrayStruct::GetLength(arrayBase, toPosition(node->Coords()))));
     TypeStackVisitor.Visit(node);
 }
 
@@ -270,8 +297,8 @@ void IRBuilder::Visit(const AST::CallMemberExpression* node)
 {
     node->BaseExpression->AcceptVisitor(this);
     const Temp* baseAddress = new Temp(0);
-    const IExp* baseExp = new Eseq(new Move(baseAddress, mainSubtree->ToExp()),
-                                   new Temp(*baseAddress));
+    const IExp* baseExp = new Eseq(new Move(baseAddress, mainSubtree->ToExp(), toPosition(node->Coords())),
+                                   new Temp(*baseAddress), toPosition(node->Coords()));
     auto info = TypeStackVisitor.GetTypeFromStack();
     assert(info != nullptr);
     assert(info->GetType() == SymbolTable::VT_UserClass);
@@ -283,24 +310,24 @@ void IRBuilder::Visit(const AST::CallMemberExpression* node)
         for(auto arg = list.begin();
                 arg != list.end(); ++arg) {
             (*arg)->AcceptVisitor(this);
-            arguments = new ExpList(mainSubtree->ToExp(), arguments);
+            arguments = new ExpList(mainSubtree->ToExp(), arguments, toPosition(node->Coords()));
             TypeStackVisitor.PopTypeFromStack();
         }
     }
 
     auto classInfo = table->GetClass(*info->GetUserClass());
     const IExp* methodAddress = classInfo->GetClassStruct()->GetVirtualMethodAddress(
-                StringSymbol::GetIntern(node->CalledMember->Name), new Temp(*baseAddress));
-    mainSubtree.reset(new ExpWrapper(new Call(methodAddress, arguments)));
+                StringSymbol::GetIntern(node->CalledMember->Name), new Temp(*baseAddress), toPosition(node->Coords()));
+    mainSubtree.reset(new ExpWrapper(new Call(methodAddress, arguments, toPosition(node->Coords()))));
     TypeStackVisitor.Visit(node);
 }
 
 void IRBuilder::Visit(const AST::Sequence<const AST::IExpression>* node)
 {
-    ExpList* list = new ExpList();
+    ExpList* list = new ExpList(nullptr, nullptr, toPosition(node->Coords()));
     for(auto& exp: node->SequenceList) {
         exp->AcceptVisitor(this);
-        list = new ExpList(mainSubtree->ToExp(), list);
+        list = new ExpList(mainSubtree->ToExp(), list, toPosition(node->Coords()));
         TypeStackVisitor.PopTypeFromStack();
     }
     mainSubtree.reset(new ExpWrapper(list));
@@ -309,7 +336,7 @@ void IRBuilder::Visit(const AST::Sequence<const AST::IExpression>* node)
 
 void IRBuilder::Visit(const AST::ValueExpression* node)
 {
-    mainSubtree.reset(new ExpWrapper(new Const(node->Value)));
+    mainSubtree.reset(new ExpWrapper(new Const(node->Value, toPosition(node->Coords()))));
     TypeStackVisitor.Visit(node);
 }
 
@@ -319,13 +346,14 @@ void IRBuilder::Visit(const AST::IdExpression* node)
             currentFrame->FindLocalOrFormal(StringSymbol::GetIntern(node->ExpressionId->Name));
     const IExp* varExp = 0;
     if(varAccess != nullptr) {
-        varExp = varAccess->GetExp(new Temp(FpName));
+        varExp = varAccess->GetExp(new Temp(FpName, toPosition(node->Coords())), toPosition(node->Coords()));
     } else {
         assert(table->GetScopedClass() != nullptr);
         varExp = table->GetScopedClass()->GetClassStruct()->GetFieldFrom(
                     StringSymbol::GetIntern(node->ExpressionId->Name),
                     currentFrame->FindLocalOrFormal(
-                        StringSymbol::GetIntern(NameConventions::ThisName))->GetExp(new Temp(FpName)));
+                        StringSymbol::GetIntern(NameConventions::ThisName))->GetExp(new Temp(FpName, toPosition(node->Coords())), toPosition(node->Coords())),
+                    toPosition(node->Coords()));
     }
 
     TypeStackVisitor.Visit(node);
@@ -336,7 +364,8 @@ void IRBuilder::Visit(const AST::ThisExpression* node)
 {
     mainSubtree.reset(new ExpWrapper(
                           new Mem(currentFrame->FindLocalOrFormal(StringSymbol::GetIntern(NameConventions::ThisName))->GetExp(
-                                      new Temp(FpName)))));
+                                      new Temp(FpName, toPosition(node->Coords())), toPosition(node->Coords())),
+                                  toPosition(node->Coords()))));
     TypeStackVisitor.Visit(node);
 }
 
@@ -346,15 +375,15 @@ void IRBuilder::Visit(const AST::NewIntArrayExpression* node)
     TypeStackVisitor.PopTypeFromStack();
     const IExp* numberOfElements = mainSubtree->ToExp();
     ExpList* args = new ExpList(new Binop(Binop::TB_MUL, numberOfElements,
-                                          new Const(currentFrame->TypeSize(SymbolTable::VT_Int))));
-    mainSubtree.reset(new ExpWrapper(new Call(new Name(NameConventions::MallocName), args )));
+                                          new Const(currentFrame->TypeSize(SymbolTable::VT_Int), toPosition(node->Coords())), toPosition(node->Coords())));
+    mainSubtree.reset(new ExpWrapper(new Call(new Name(NameConventions::MallocName, toPosition(node->Coords())), args, toPosition(node->Coords()) )));
     TypeStackVisitor.Visit(node);
 }
 
 void IRBuilder::Visit(const AST::NewObjectExpression* node)
 {
     auto classInfo = table->GetClass(node->ObjectId->Name);
-    const IExp* allocActions = classInfo->GetClassStruct()->AllocateNew();
+    const IExp* allocActions = classInfo->GetClassStruct()->AllocateNew(toPosition(node->Coords()));
     mainSubtree.reset(new ExpWrapper(allocActions));
     TypeStackVisitor.Visit(node);
 }
@@ -363,7 +392,7 @@ void IRBuilder::Visit(const AST::NotExpression* node)
 {
     node->Expression->AcceptVisitor(this);
     TypeStackVisitor.PopTypeFromStack();
-    mainSubtree.reset(new ExpWrapper(new Unaryop(Unaryop::TU_NOT, mainSubtree->ToExp())));
+    mainSubtree.reset(new ExpWrapper(new Unaryop(Unaryop::TU_NOT, mainSubtree->ToExp(), toPosition(node->Coords()))));
     TypeStackVisitor.Visit(node);
 }
 

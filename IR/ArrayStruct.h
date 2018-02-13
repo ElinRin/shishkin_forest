@@ -10,8 +10,8 @@ namespace ArrayStruct {
 
 const int ElementsOffset = 1;
 
-IExp* GetElement(const IExp* base, const IExp* elementNumber);
-IExp* GetLength(const IExp* base);
+IExp* GetElement(const IExp* base, const IExp* elementNumber, const IR::Coords& coords=Coords());
+IExp* GetLength(const IExp* base, const IR::Coords& coords=Coords());
 IStm* AddReference(IExp* base);
 IStm* RemoveReference(IExp* base);
 

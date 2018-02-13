@@ -16,10 +16,10 @@ void InRegAccess::print(TempAddress fp) const
     std::cout << "Register: " << regNumber << std::endl;
 }
 
-const IR::IExp* InRegAccess::GetExp(const IR::Temp* fp) const
+const IR::IExp* InRegAccess::GetExp(const IR::Temp* fp, const SymbolTable::Position& position) const
 {
     delete fp;
-    return new IR::Temp(regNumber);
+    return new IR::Temp(regNumber, position);
 }
 
 }

@@ -20,10 +20,11 @@ public:
     std::unique_ptr<const IExp> RightExpression;
 
     Binop(TBinop operation, const IExp* leftExpression,
-          const IExp* rightExpression) :
+          const IExp* rightExpression, const Coords& coords=Coords()) :
         Operation(operation),
         LeftExpression(leftExpression),
-        RightExpression(rightExpression)
+        RightExpression(rightExpression),
+        coords(coords)
     {}
 
     ACCEPT_IR_VISITOR

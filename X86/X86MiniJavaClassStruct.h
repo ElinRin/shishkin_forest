@@ -14,10 +14,10 @@ public:
     virtual void AddField(const VariableInfo* info) override;
 
     virtual const IR::IExp* GetFieldFrom(const StringSymbol* fieldName,
-                                         const IR::IExp* base) const override;
+                                         const IR::IExp* base, const Position& position=Position()) const override;
     virtual const IR::IExp* GetVirtualMethodAddress(const StringSymbol* methodName,
-                                            const IR::IExp* base) const override;
-    virtual const IR::IExp* AllocateNew() const override;
+                                            const IR::IExp* base, const Position& position=Position()) const override;
+    virtual const IR::IExp* AllocateNew(const Position& position=Position()) const override;
 
 private:
     // Vtable

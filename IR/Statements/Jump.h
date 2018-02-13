@@ -11,8 +11,9 @@ class Jump : public IStm {
 public:
     const Label* LabelToJump;
 
-    Jump(const Label* label):
-        LabelToJump(label)
+    Jump(const Label* label, const Coords& coords=Coords()):
+        LabelToJump(label),
+        coords(coords)
     {}
 
     ACCEPT_IR_VISITOR

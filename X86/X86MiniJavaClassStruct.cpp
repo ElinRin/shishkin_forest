@@ -26,15 +26,16 @@ void X86MiniJavaClassStruct::AddField(const VariableInfo* info)
 }
 
 const IR::IExp* X86MiniJavaClassStruct::GetFieldFrom(const StringSymbol* fieldName,
-                                          const IR::IExp* base) const
+                                          const IR::IExp* base, const Position& position) const
 {
     assert(fieldsOffsets.find(fieldName) != fieldsOffsets.end());
     int wordSize = typeSpec->WordSize();
     return new IR::Mem(new IR::Binop(IR::Binop::TB_PLUS, base,
-                                     new IR::Const(wordSize*(1 + vtableEntries.size()) + fieldsOffsets.at(fieldName))));
+                                     new IR::Const(wordSize*(1 + vtableEntries.size()) + fieldsOffsets.at(fieldName), position),
+                                     position), position);
 }
 
-const IR::IExp* X86MiniJavaClassStruct::GetVirtualMethodAddress(const StringSymbol* methodName, const IR::IExp *base) const
+const IR::IExp* X86MiniJavaClassStruct::GetVirtualMethodAddress(const StringSymbol* methodName, const IR::IExp *base, const Position &position) const
 {
     assert(vTableIndices.find(methodName) != vTableIndices.end());
     int wordSize = typeSpec->WordSize();
@@ -42,37 +43,37 @@ const IR::IExp* X86MiniJavaClassStruct::GetVirtualMethodAddress(const StringSymb
                                                    new IR::Const(wordSize*(1 + vTableIndices.at(methodName)))));
 }
 
-const IR::IExp* X86MiniJavaClassStruct::AllocateNew() const
+const IR::IExp* X86MiniJavaClassStruct::AllocateNew(const Position& position) const
 {
     int wordSize = typeSpec->WordSize();
     IR::ExpList* allocArg = new IR::ExpList(new IR::Const(totalFieldsSize +
-                                                          wordSize*(vtableEntries.size() + 1)));
+                                                          wordSize*(vtableEntries.size() + 1), position), nullptr, position);
     const int baseAddressId = 0;
-    IR::StmList* prepareActions = new IR::StmList(new IR::Move(new IR::Temp(baseAddressId),
-                                                               new IR::Call(new IR::Name(NameConventions::MallocName),
-                                                                            allocArg)));
+    IR::StmList* prepareActions = new IR::StmList(new IR::Move(new IR::Temp(baseAddressId, position),
+                                                               new IR::Call(new IR::Name(NameConventions::MallocName, position),
+                                                                            allocArg, position), position), nullptr, position);
 
-    prepareActions = new IR::StmList(new IR::Move(new IR::Mem(new IR::Temp(baseAddressId)),
-                                                  new IR::Const((vtableEntries.size() + 1) * wordSize)), prepareActions);
+    prepareActions = new IR::StmList(new IR::Move(new IR::Mem(new IR::Temp(baseAddressId, position), position),
+                                                  new IR::Const((vtableEntries.size() + 1) * wordSize, position), position), prepareActions, position);
     int offset = 0;
     for(int i = 0; i < vtableEntries.size(); ++i) {
         prepareActions = new IR::StmList(new IR::Move(
                                                 new IR::Binop(IR::Binop::TB_PLUS,
-                                                              new IR::Mem(new IR::Temp(baseAddressId)),
-                                                              new IR::Const(offset+wordSize) ),
-                                                new IR::Name(vtableEntries[i]->GetFullName()->GetString())),
-                                         prepareActions);
+                                                              new IR::Mem(new IR::Temp(baseAddressId, position), position),
+                                                              new IR::Const(offset+wordSize, position), position ),
+                                                new IR::Name(vtableEntries[i]->GetFullName()->GetString(), position), position),
+                                         prepareActions, position);
         offset += wordSize;
     }
     for(auto offset = fieldsOffsets.begin(); offset != fieldsOffsets.end(); ++offset) {
         prepareActions = new IR::StmList(new IR::Move(
                                                 new IR::Binop(IR::Binop::TB_PLUS,
-                                                              new IR::Mem(new IR::Temp(baseAddressId)),
-                                                              new IR::Const(offset->second + wordSize*(vtableEntries.size() + 1))),
-                                                new IR::Const(0)),
-                                         prepareActions);
+                                                              new IR::Mem(new IR::Temp(baseAddressId, position), position),
+                                                              new IR::Const(offset->second + wordSize*(vtableEntries.size() + 1), position), position),
+                                                new IR::Const(0, position), position),
+                                         prepareActions, position);
     }
-    return new IR::Eseq(prepareActions, new IR::Temp(baseAddressId));
+    return new IR::Eseq(prepareActions, new IR::Temp(baseAddressId, position), position);
 }
 
 }

@@ -9,8 +9,9 @@ class LabelStm : public IStm {
 public:
     const Label* LabelName;
 
-    LabelStm(const Label* label) :
-        LabelName(label)
+    LabelStm(const Label* label, const Coords& coords=Coords()) :
+        LabelName(label),
+        coords(coords)
     {}
 
     ACCEPT_IR_VISITOR

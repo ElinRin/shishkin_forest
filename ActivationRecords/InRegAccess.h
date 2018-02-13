@@ -14,7 +14,7 @@ public:
     virtual const int GetSize() const override { return size; }
     virtual const T_RecordsType GetRecordType() override { return type; }
     virtual void print(TempAddress fp) const override;
-    virtual const IR::IExp* GetExp(const IR::Temp* fp) const override;
+    virtual const IR::IExp* GetExp(const IR::Temp* fp, const SymbolTable::Position& position) const override;
     virtual const int GetRegNumber() const { return regNumber; }
 
 private:

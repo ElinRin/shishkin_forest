@@ -10,8 +10,8 @@ public:
     std::unique_ptr<const IExp> Destination;
     std::unique_ptr<const IExp> Source;
 
-    Move(const IExp* destination, const IExp* source):
-        Destination(destination), Source(source)
+    Move(const IExp* destination, const IExp* source, const Coords& coords=Coords()):
+        Destination(destination), Source(source), coords(coords)
     {}
 
     ACCEPT_IR_VISITOR

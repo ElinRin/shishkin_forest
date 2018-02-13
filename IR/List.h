@@ -13,9 +13,10 @@ public:
     std::unique_ptr<List<T>> Head;
     std::unique_ptr<const T> Tail;
 
-    List(const T* tail = nullptr, List<T>* head = nullptr) :
+    List(const T* tail = nullptr, List<T>* head = nullptr, const Coords& coords=Coords()) :
         Head(head),
-        Tail(tail)
+        Tail(tail),
+        coords(coords)
     {
         if(head != nullptr && head->Tail == nullptr) {
             delete head;
