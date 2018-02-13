@@ -13,9 +13,10 @@ public:
     const TUnaryop Operation;
     std::unique_ptr<const IExp> Expression;
 
-    Unaryop(TUnaryop operation, const IExp* expression) :
+    Unaryop(TUnaryop operation, const IExp* expression, const Coords& coords=Coords()) :
         Operation(operation),
-        Expression(expression)
+        Expression(expression),
+        coords(coords)
     {
     }
 

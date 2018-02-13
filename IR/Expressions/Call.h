@@ -9,9 +9,10 @@ public:
     std::unique_ptr<const IExp> FuncExpression;
     std::unique_ptr<const ExpList> Arguments;
 
-    Call(const IExp* func, const ExpList* args):
+    Call(const IExp* func, const ExpList* args, const Coords& coords=Coords()):
         FuncExpression(func),
-        Arguments(args)
+        Arguments(args),
+        coords(coords)
     {}
 
     ACCEPT_IR_VISITOR

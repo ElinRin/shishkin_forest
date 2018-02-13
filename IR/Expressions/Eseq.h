@@ -12,9 +12,10 @@ public:
     std::unique_ptr<const IStm> Statement;
     std::unique_ptr<const IExp> Expression;
 
-    Eseq(const IStm* statement, const IExp* expression):
+    Eseq(const IStm* statement, const IExp* expression, const Coords& coords=Coords()):
         Statement(statement),
-        Expression(expression)
+        Expression(expression),
+        coords(coords)
     {}
     ACCEPT_IR_VISITOR
 };

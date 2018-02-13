@@ -23,7 +23,7 @@ void IRPrinter::CreateGraph(const IRForest& forest)
 
 void IRPrinter::Visit(const IR::Unaryop* node)
 {
-    std::string name = AddNode("Unary | " + format(node->Operation));
+    std::string name = AddNode("Unary | " + format(node->Operation) + " | " + format(node->GetCoords()));
     AddArrow(name);
     ParentName = name;
     node->Expression->AcceptVisitor(this);
@@ -31,7 +31,7 @@ void IRPrinter::Visit(const IR::Unaryop* node)
 
 void IRPrinter::Visit(const IR::Binop *node)
 {
-    std::string name = AddNode("Binary | " + format(node->Operation));
+    std::string name = AddNode("Binary | " + format(node->Operation) + " | " + format(node->GetCoords()));
     AddArrow(name);
     ParentName = name;
     node->LeftExpression->AcceptVisitor(this);
@@ -41,7 +41,7 @@ void IRPrinter::Visit(const IR::Binop *node)
 
 void IRPrinter::Visit(const IR::Call* node)
 {
-    std::string name = AddNode("Call");
+    std::string name = AddNode("Call | " + format(node->GetCoords()));
     AddArrow(name);
     ParentName = name;
     node->Arguments->AcceptVisitor(this);
@@ -51,13 +51,13 @@ void IRPrinter::Visit(const IR::Call* node)
 
 void IRPrinter::Visit(const IR::Const* node)
 {
-    std::string name = AddNode("Const | " + std::to_string(node->value));
+    std::string name = AddNode("Const | " + std::to_string(node->value) + " | " + format(node->GetCoords()));
     AddArrow(name);
 }
 
 void IRPrinter::Visit(const IR::Eseq* node)
 {
-    std::string name = AddNode("Eseq");
+    std::string name = AddNode("Eseq | " + format(node->GetCoords()));
     AddArrow(name);
     ParentName = name;
     node->Statement->AcceptVisitor(this);
@@ -67,7 +67,7 @@ void IRPrinter::Visit(const IR::Eseq* node)
 
 void IRPrinter::Visit(const IR::Mem* node)
 {
-    std::string name = AddNode("Mem");
+    std::string name = AddNode("Mem | " + format(node->GetCoords()));
     AddArrow(name);
     ParentName = name;
     node->Expression->AcceptVisitor(this);
@@ -75,19 +75,19 @@ void IRPrinter::Visit(const IR::Mem* node)
 
 void IRPrinter::Visit(const IR::Name* node)
 {
-    std::string name = AddNode("Name | " + node->LabelName->GetName());
+    std::string name = AddNode("Name | " + node->LabelName->GetName() + " | " + format(node->GetCoords()));
     AddArrow(name);
 }
 
 void IRPrinter::Visit(const IR::Temp* node)
 {
-    std::string name = AddNode("Temp | " + format(node));
+    std::string name = AddNode("Temp | " + format(node) + " | " + format(node->GetCoords()));
     AddArrow(name);
 }
 
 void IRPrinter::Visit(const IR::Exp* node)
 {
-    std::string name = AddNode("Exp");
+    std::string name = AddNode("Exp | " + format(node->GetCoords()));
     AddArrow(name);
     ParentName = name;
     node->expression->AcceptVisitor(this);
@@ -95,7 +95,7 @@ void IRPrinter::Visit(const IR::Exp* node)
 
 void IRPrinter::Visit(const IR::Jump* node)
 {
-    std::string name = AddNode("Jump | " + node->LabelToJump->GetName());
+    std::string name = AddNode("Jump | " + node->LabelToJump->GetName() + " | " + format(node->GetCoords()));
     AddArrow(name);
 }
 
@@ -103,7 +103,7 @@ void IRPrinter::Visit(const IR::JumpC* node)
 {
     std::string name = AddNode("JumpC | " + format(node->JumpType) +
                                " | True: " + node->TrueLabel->GetName() +
-                               " | False: " + node->FalseLabel->GetName());
+                               " | False: " + node->FalseLabel->GetName() + " | " + format(node->GetCoords()));
     AddArrow(name);
     ParentName = name;
     node->ConditionLeftExpression->AcceptVisitor(this);
@@ -113,13 +113,13 @@ void IRPrinter::Visit(const IR::JumpC* node)
 
 void IRPrinter::Visit(const IR::LabelStm* node)
 {
-    std::string name = AddNode("LabelStm | " + node->LabelName->GetName());
+    std::string name = AddNode("LabelStm | " + node->LabelName->GetName() + " | " + format(node->GetCoords()));
     AddArrow(name);
 }
 
 void IRPrinter::Visit(const IR::Move* node)
 {
-    std::string name = AddNode("Move");
+    std::string name = AddNode("Move | " + format(node->GetCoords()));
     AddArrow(name);
     ParentName = name;
     node->Source->AcceptVisitor(this);
@@ -129,7 +129,7 @@ void IRPrinter::Visit(const IR::Move* node)
 
 void IRPrinter::Visit(const IR::Seq* node)
 {
-    std::string name = AddNode("Seq");
+    std::string name = AddNode("Seq | " + format(node->GetCoords()));
     AddArrow(name);
     ParentName = name;
     node->LeftStm->AcceptVisitor(this);
@@ -139,7 +139,7 @@ void IRPrinter::Visit(const IR::Seq* node)
 
 void IRPrinter::Visit(const IR::ExpList* node)
 {
-    std::string name = AddNode("ExpList");
+    std::string name = AddNode("ExpList | " + format(node->GetCoords()));
     AddArrow(name);
     if(node->Head != nullptr) {
         ParentName = name;
@@ -153,7 +153,7 @@ void IRPrinter::Visit(const IR::ExpList* node)
 
 void IRPrinter::Visit(const IR::StmList* node)
 {
-    std::string name = AddNode("StmList");
+    std::string name = AddNode("StmList | " + format(node->GetCoords()));
     AddArrow(name);
     if(node->Head != nullptr) {
         ParentName = name;
@@ -235,6 +235,11 @@ std::string IRPrinter::format(IR::JumpC::TJumpType type)
         assert(false);
         break;
     }
+}
+
+std::string IRPrinter::format(const IR::Coords& coords)
+{
+    return coords.ToString();
 }
 
 }

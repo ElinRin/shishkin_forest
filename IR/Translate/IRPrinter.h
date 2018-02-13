@@ -43,6 +43,7 @@ private:
     std::string format(IR::Binop::TBinop op);
     std::string format(const IR::Temp *temp);
     std::string format(IR::JumpC::TJumpType type);
+    std::string format(const IR::Coords& coords);
 };
 
 }
