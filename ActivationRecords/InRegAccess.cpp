@@ -4,22 +4,31 @@
 
 namespace ActivationRecords {
 
-InRegAccess::InRegAccess(T_RecordsType _type, int _size, int regNumber) :
+InRegAccess::InRegAccess(T_RecordsType _type, int _size, const std::string& name) :
     type(_type),
     size(_size),
-    regNumber(regNumber)
+    id(-1),
+    name(name)
+{
+}
+
+InRegAccess::InRegAccess(T_RecordsType _type, int _size, int id) :
+    type(_type),
+    size(_size),
+    id(id),
+    name(std::to_string(id))
 {
 }
 
 void InRegAccess::print(TempAddress fp) const
 {
-    std::cout << "Register: " << regNumber << std::endl;
+    std::cout << "Register: " << name << std::endl;
 }
 
 const IR::IExp* InRegAccess::GetExp(const IR::Temp* fp, const SymbolTable::Position& position) const
 {
     delete fp;
-    return new IR::Temp(regNumber, position);
+    return new IR::Temp(name, position);
 }
 
 }

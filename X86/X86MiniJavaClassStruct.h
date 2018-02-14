@@ -10,8 +10,12 @@ class X86MiniJavaClassStruct : public IClassStruct {
 public:
     X86MiniJavaClassStruct();
 
+    virtual void AddClassName(const StringSymbol* className) override { this->className = className; }
     virtual void AddToVtable(const MethodInfo* info) override;
     virtual void AddField(const VariableInfo* info) override;
+
+    virtual const std::vector<const MethodInfo*>& GetVTable() const override { return vtableEntries; }
+    virtual const StringSymbol* GetTableName() const override;
 
     virtual const IR::IExp* GetFieldFrom(const StringSymbol* fieldName,
                                          const IR::IExp* base, const Position& position=Position()) const override;
@@ -28,7 +32,7 @@ private:
     std::unordered_map<const StringSymbol*, int> fieldsOffsets;
     std::unique_ptr<const ActivationRecords::ITypeSpec> typeSpec;
     int totalFieldsSize;
-
+    const StringSymbol* className;
 };
 
 }

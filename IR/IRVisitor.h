@@ -29,7 +29,6 @@ interface IIRVisitor {
     IR_VISITOR(Seq)
 
     IR_VISITOR(ExpList)
-    IR_VISITOR(StmList)
 
     IR_VISITOR(IRTranslate::StmWrapper)
     IR_VISITOR(IRTranslate::ExpWrapper)

@@ -83,7 +83,7 @@ void IRBuilder::Visit(const AST::ReturnStatement* node)
 {
     node->Expression->AcceptVisitor(this);
     TypeStackVisitor.PopTypeFromStack();
-    const IExp* returnAddress = currentFrame->ExitAddress()->GetExp(new Temp(FpName, toPosition(node->Coords())), toPosition(node->Coords()));
+    const IExp* returnAddress = currentFrame->ReturnAddress()->GetExp(new Temp(FpName, toPosition(node->Coords())), toPosition(node->Coords()));
     mainSubtree.reset(new StmWrapper(new Move(returnAddress, mainSubtree->ToExp(), toPosition(node->Coords()))));
 }
 
@@ -228,9 +228,6 @@ void IRBuilder::Visit(const AST::BinaryExpression* node)
     TypeStackVisitor.PopTypeFromStack();
 
     switch (node->Type) {
-    case AST::BET_And:
-        result = new Binop(Binop::TB_AND, left, right, toPosition(node->Coords()));
-        break;
     case AST::BET_Minus:
         result = new Binop(Binop::TB_MINUS, left, right, toPosition(node->Coords()));
         break;
@@ -239,9 +236,6 @@ void IRBuilder::Visit(const AST::BinaryExpression* node)
         break;
     case AST::BET_Plus:
         result = new Binop(Binop::TB_PLUS, left, right, toPosition(node->Coords()));
-        break;
-    case AST::BET_Or:
-        result = new Binop(Binop::TB_OR, left, right, toPosition(node->Coords()));
         break;
     case AST::BET_Less:
         trueLabel = Label::GetNextEnumeratedLabel();
@@ -267,6 +261,12 @@ void IRBuilder::Visit(const AST::BinaryExpression* node)
         break;
      case AST::BET_Mod:
         result = new Binop(Binop::TB_MOD, left, right, toPosition(node->Coords()));
+        break;
+    case AST::BET_And:
+        result = new Binop(Binop::TB_AND, left, right, toPosition(node->Coords()));
+        break;
+    case AST::BET_Or:
+        result = new Binop(Binop::TB_OR, left, right, toPosition(node->Coords()));
         break;
     default:
         break;
@@ -296,7 +296,7 @@ void IRBuilder::Visit(const AST::ArrayLengthExpression* node)
 void IRBuilder::Visit(const AST::CallMemberExpression* node)
 {
     node->BaseExpression->AcceptVisitor(this);
-    const Temp* baseAddress = new Temp(0);
+    const Temp* baseAddress = new Temp(0, toPosition(node->Coords()));
     const IExp* baseExp = new Eseq(new Move(baseAddress, mainSubtree->ToExp(), toPosition(node->Coords())),
                                    new Temp(*baseAddress), toPosition(node->Coords()));
     auto info = TypeStackVisitor.GetTypeFromStack();
@@ -304,7 +304,7 @@ void IRBuilder::Visit(const AST::CallMemberExpression* node)
     assert(info->GetType() == SymbolTable::VT_UserClass);
     SymbolTable::TypeScopeSwitcher typeSwitcher(*info, table, toPosition(node->Coords()));
 
-    ExpList* arguments = new ExpList(baseExp);
+    ExpList* arguments = new ExpList(baseExp, nullptr, toPosition(node->Coords()));
     if( node->ArgumentSequence != nullptr ) {
         auto& list = node->ArgumentSequence->SequenceList;
         for(auto arg = list.begin();

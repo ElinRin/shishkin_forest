@@ -33,7 +33,6 @@ public:
     virtual void Visit(const IR::Move* node) override;
     virtual void Visit(const IR::Seq* node) override;
     virtual void Visit(const IR::ExpList* node) override;
-    virtual void Visit(const IR::StmList* node) override;
 
     virtual void Visit(const StmWrapper* node) override;
     virtual void Visit(const ExpWrapper* node) override;

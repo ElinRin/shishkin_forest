@@ -18,12 +18,12 @@ IR_VISIT_NODE(Jump)
 IR_VISIT_NODE(JumpC)
 IR_VISIT_NODE(LabelStm)
 IR_VISIT_NODE(Move)
+
+template<>
 IR_VISIT_NODE(Seq)
 
 template<>
 IR_VISIT_NODE(ExpList)
-template<>
-IR_VISIT_NODE(StmList)
 
 }
 

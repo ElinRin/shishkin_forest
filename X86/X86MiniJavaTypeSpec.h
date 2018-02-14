@@ -10,6 +10,8 @@ public:
     virtual int TypeSize(SymbolTable::T_VariableType type) const override;
     virtual int ReferenceSize() const override;
     virtual int WordSize() const override;
+private:
+    short _sentiel = 0;
 };
 
 }
