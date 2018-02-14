@@ -127,16 +127,6 @@ void IRPrinter::Visit(const IR::Move* node)
     node->Destination->AcceptVisitor(this);
 }
 
-void IRPrinter::Visit(const IR::Seq* node)
-{
-    std::string name = AddNode("Seq | " + format(node->GetCoords()));
-    AddArrow(name);
-    ParentName = name;
-    node->LeftStm->AcceptVisitor(this);
-    ParentName = name;
-    node->RightStm->AcceptVisitor(this);
-}
-
 void IRPrinter::Visit(const IR::ExpList* node)
 {
     std::string name = AddNode("ExpList | " + format(node->GetCoords()));
@@ -153,7 +143,7 @@ void IRPrinter::Visit(const IR::ExpList* node)
 
 void IRPrinter::Visit(const IR::StmList* node)
 {
-    std::string name = AddNode("StmList | " + format(node->GetCoords()));
+    std::string name = AddNode("Seq | " + format(node->GetCoords()));
     AddArrow(name);
     if(node->Head != nullptr) {
         ParentName = name;

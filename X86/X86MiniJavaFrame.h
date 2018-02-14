@@ -18,6 +18,10 @@ class X86MiniJavaFrame : public IFrame {
 public:
 
     X86MiniJavaFrame();
+    ~X86MiniJavaFrame() {
+        returnAddress.reset();
+        typeSpec.reset();
+    }
 
     virtual void AddFormal( const SymbolTable::VariableInfo& name) override;
     virtual void AddLocal( const SymbolTable::VariableInfo& name) override;
@@ -39,13 +43,13 @@ private:
     std::vector<IAccess*> formalList;
     std::unordered_map<const StringSymbol*, std::unique_ptr<IAccess>> formalAccess;
     std::unordered_map<const StringSymbol*, std::unique_ptr<IAccess>> localAccess;
+    std::unique_ptr<const ITypeSpec> typeSpec;
+    std::unique_ptr<IAccess> returnAddress;
     TempAddress framePointer;
     TempAddress stackPointer;
     int addressExitIndex;
-    int addressReturnValueIndex;
     int formalTopPointer = 0;
     int localTopPointer = 0;
-    std::unique_ptr<const ITypeSpec> typeSpec;
 
     IAccess* createFormal(T_RecordsType type, int size);
 };

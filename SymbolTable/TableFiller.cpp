@@ -16,6 +16,7 @@ void SymbolTable::TableFiller::FillClassStruct()
     for( auto className : names ) {
         auto classInfo = table->GetClass(className->GetString());
         auto classStruct = classInfo->GetClassStruct();
+        classStruct->AddClassName(classInfo->GetName());
         std::vector<const ClassInfo*> classesStack;
         for(auto info = classInfo->GetName(); info != nullptr;
             info = table->GetClass(info->GetString())->GetSuperClassName())

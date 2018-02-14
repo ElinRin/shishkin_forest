@@ -4,6 +4,7 @@
 #include "Access.h"
 #include "InRegAccess.h"
 #include "InFrameAccess.h"
+#include "NameConventions.h"
 
 #include <unordered_map> 
 #include <vector>
@@ -20,7 +21,9 @@ int X86MiniJavaFrame::TypeSize(SymbolTable::T_VariableType type) const {
     return typeSpec->TypeSize(type);
 }
 
-X86MiniJavaFrame::X86MiniJavaFrame() : typeSpec(Factory::Create<ITypeSpec>())
+X86MiniJavaFrame::X86MiniJavaFrame() :
+    typeSpec(Factory::Create<ITypeSpec>()),
+    returnAddress(new InRegAccess(RT_AddressReturnValue, typeSpec->WordSize(), NameConventions::ReturnAddress))
 {
 }
 
@@ -45,11 +48,7 @@ void X86MiniJavaFrame::AddAddressExit() {
 }
 
 void X86MiniJavaFrame::AddAddressReturnValue(SymbolTable::T_VariableType type) {
-    IAccess* var = createFormal(T_RecordsType::RT_AddressReturnValue, typeSpec->ReferenceSize());
-    formalAccess.insert(std::make_pair(StringSymbol::GetIntern(RETURN_ADDRESS_NAME),
-                                       std::unique_ptr<IAccess>(var)));
-    this->addressReturnValueIndex = formalList.size();
-    formalList.push_back(var);
+
 }
 
 int X86MiniJavaFrame::FormalsCount() const {
@@ -78,7 +77,7 @@ const IAccess* X86MiniJavaFrame::ExitAddress() const
 
 const IAccess* X86MiniJavaFrame::ReturnAddress() const
 {
-    return formalList[addressReturnValueIndex];
+    return returnAddress.get();
 }
 
 const int X86MiniJavaFrame::FormalSize(int index) const {
