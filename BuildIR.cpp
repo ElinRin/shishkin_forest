@@ -9,12 +9,9 @@
 #include "IRBuilder.h"
 #include "IRPrinter.h"
 
-#include <unistd.h>
-
 extern std::unique_ptr<AST::Program> program;
 
 int main(void) {
-  //sleep(6);
   yyparse();
   SymbolTable::TableFiller filler;
   if(program.get()) {
