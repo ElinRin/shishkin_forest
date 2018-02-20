@@ -8,11 +8,13 @@
 #include "TypeChecker.h"
 #include "IRBuilder.h"
 #include "IRPrinter.h"
+#include <unistd.h>
 
 extern std::unique_ptr<AST::Program> program;
 
 int main(void) {
   yyparse();
+  //sleep(10);
   SymbolTable::TableFiller filler;
   if(program.get()) {
       try {

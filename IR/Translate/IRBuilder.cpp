@@ -214,6 +214,7 @@ void IRBuilder::Visit(const AST::BinaryExpression* node)
     Label* trueLabel;
     Label* falseLabel;
     Label* returnLabel;
+    Label* continueLabel;
     IStm* condition;
     Temp* expValue;
     IStm* trueBranch;
@@ -263,10 +264,98 @@ void IRBuilder::Visit(const AST::BinaryExpression* node)
         result = new Binop(Binop::TB_MOD, left, right, toPosition(node->Coords()));
         break;
     case AST::BET_And:
-        result = new Binop(Binop::TB_AND, left, right, toPosition(node->Coords()));
+        trueLabel = Label::GetNextEnumeratedLabel();
+        falseLabel = Label::GetNextEnumeratedLabel();
+        continueLabel = Label::GetNextEnumeratedLabel();
+        returnLabel = Label::GetNextEnumeratedLabel();
+        expValue = new Temp("expValue", toPosition(node->Coords()));
+        condition = new JumpC(JumpC::TJ_EQ, left, new Const(1, toPosition(node->Coords())), continueLabel, falseLabel,toPosition(node->Coords()));
+        trueBranch = new Seq(
+                            new Seq(
+                                        new LabelStm(continueLabel, toPosition(node->Coords())),
+                                        new JumpC(JumpC::TJ_EQ, right, new Const(1, toPosition(node->Coords())), trueLabel, falseLabel,toPosition(node->Coords())),
+                                        toPosition(node->Coords())
+                                    ),
+                            new Seq(
+                                        new LabelStm(trueLabel, toPosition(node->Coords())),
+                                        new Seq(
+                                            new Move(expValue, new Const(1, toPosition(node->Coords())), toPosition(node->Coords())),
+                                            new Jump(returnLabel, toPosition(node->Coords())),
+                                            toPosition(node->Coords())
+                                        ),
+                                        toPosition(node->Coords())
+                                    ),
+                                    toPosition(node->Coords())
+                             );
+        falseBranch = new Seq(
+                        new LabelStm(falseLabel, toPosition(node->Coords())),
+                        new Seq(
+                            new Move(new Temp(*expValue), new Const(0, toPosition(node->Coords())), toPosition(node->Coords())),
+                            new Jump(returnLabel, toPosition(node->Coords())),
+                            toPosition(node->Coords())
+                        ),
+                        toPosition(node->Coords())
+                    );
+        result = new Eseq(
+                        new Seq(
+                            new Seq(
+                                condition,
+                                trueBranch,
+                                toPosition(node->Coords())
+                            ),
+                            falseBranch,
+                            toPosition(node->Coords())
+                        ),
+                        new Temp(*expValue),
+                        toPosition(node->Coords())
+                    );
         break;
     case AST::BET_Or:
-        result = new Binop(Binop::TB_OR, left, right, toPosition(node->Coords()));
+        trueLabel = Label::GetNextEnumeratedLabel();
+        falseLabel = Label::GetNextEnumeratedLabel();
+        continueLabel = Label::GetNextEnumeratedLabel();
+        returnLabel = Label::GetNextEnumeratedLabel();
+        expValue = new Temp("expValue", toPosition(node->Coords()));
+        condition = new JumpC(JumpC::TJ_EQ, left, new Const(1, toPosition(node->Coords())), trueLabel, continueLabel,toPosition(node->Coords()));
+        trueBranch = new Seq(
+                            new Seq(
+                                        new LabelStm(continueLabel, toPosition(node->Coords())),
+                                        new JumpC(JumpC::TJ_EQ, right, new Const(1, toPosition(node->Coords())), trueLabel, falseLabel,toPosition(node->Coords())),
+                                        toPosition(node->Coords())
+                                    ),
+                            new Seq(
+                                        new LabelStm(trueLabel, toPosition(node->Coords())),
+                                        new Seq(
+                                            new Move(expValue, new Const(1, toPosition(node->Coords())), toPosition(node->Coords())),
+                                            new Jump(returnLabel, toPosition(node->Coords())),
+                                            toPosition(node->Coords())
+                                        ),
+                                        toPosition(node->Coords())
+                                    ),
+                                    toPosition(node->Coords())
+                             );
+        falseBranch = new Seq(
+                        new LabelStm(falseLabel, toPosition(node->Coords())),
+                        new Seq(
+                            new Move(new Temp(*expValue), new Const(0, toPosition(node->Coords())), toPosition(node->Coords())),
+                            new Jump(returnLabel, toPosition(node->Coords())),
+                            toPosition(node->Coords())
+                        ),
+                        toPosition(node->Coords())
+                    );
+        result = new Eseq(
+                        new Seq(
+                            new Seq(
+                                condition,
+                                trueBranch,
+                                toPosition(node->Coords())
+                            ),
+                            falseBranch,
+                            toPosition(node->Coords())
+                        ),
+                        new Temp(*expValue),
+                        toPosition(node->Coords())
+                    );
         break;
     default:
         break;
