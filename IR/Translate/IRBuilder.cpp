@@ -60,7 +60,7 @@ void IRBuilder::Visit(const AST::MethodDeclaration* node)
         stm = new StmList(mainSubtree->ToStm(), nullptr, toPosition(node->Coords()));
     }
     node->StatementToReturn->AcceptVisitor(this);
-    stm = new StmList(mainSubtree->ToStm(), stm, toPosition(node->Coords()));
+    stm = new StmList(stm, mainSubtree->ToStm(), toPosition(node->Coords()));
     auto name = methodInfo->GetFullName();
     trees.insert(std::make_pair(name, std::unique_ptr<ISubtreeWrapper>(new StmWrapper(stm))));
 }
@@ -251,7 +251,7 @@ void IRBuilder::Visit(const AST::BinaryExpression* node)
                                    new Jump(returnLabel, toPosition(node->Coords())), toPosition(node->Coords()));
         falseBranch = new Seq(new Seq(new LabelStm(falseLabel, toPosition(node->Coords())),
                                       new Move(new Temp(*expValue),
-                                               new Const(1, toPosition(node->Coords())),
+                                               new Const(0, toPosition(node->Coords())),
                                                toPosition(node->Coords())), toPosition(node->Coords())),
                                     new Jump(returnLabel, toPosition(node->Coords())),
                               toPosition(node->Coords()));

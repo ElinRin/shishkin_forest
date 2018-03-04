@@ -11,7 +11,6 @@ public:
 
     std::string GetName() const { return name; }
 
-
 private:
     Label(const std::string &name);
     std::string name;

@@ -60,15 +60,15 @@ const IR::IExp* X86MiniJavaClassStruct::AllocateNew(const Position& position) co
                                                                new IR::Call(new IR::Name(NameConventions::MallocName, position),
                                                                             allocArg, position), position), nullptr, position);
 
-    prepareActions = new IR::StmList(new IR::Move(new IR::Mem(new IR::Temp(*baseAddress), position),
-                                                  new IR::Name(GetTableName()->GetString(),position), position), prepareActions, position);
+    prepareActions = new IR::StmList(prepareActions, new IR::Move(new IR::Mem(new IR::Temp(*baseAddress), position),
+                                                  new IR::Name(GetTableName()->GetString(),position), position), position);
     for(auto offset = fieldsOffsets.begin(); offset != fieldsOffsets.end(); ++offset) {
-        prepareActions = new IR::StmList(new IR::Move(
+        prepareActions = new IR::StmList(prepareActions, new IR::Move(
                                                 new IR::Binop(IR::Binop::TB_PLUS,
                                                               new IR::Mem(new IR::Temp(*baseAddress), position),
                                                               new IR::Const(offset->second + wordSize*(1), position), position),
                                                 new IR::Const(0, position), position),
-                                         prepareActions, position);
+                                         position);
     }
     return new IR::Eseq(prepareActions, new IR::Temp(*baseAddress), position);
 }
