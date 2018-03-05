@@ -14,7 +14,7 @@ public:
         coords(coords)
     {}
 
-    virtual bool IsCommutative() const override { return false; }
+    virtual bool IsCommutative() const override { return Expression->IsCommutative(); }
 
     ACCEPT_IR_VISITOR
 };

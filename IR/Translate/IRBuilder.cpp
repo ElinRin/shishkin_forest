@@ -298,7 +298,7 @@ void IRBuilder::Visit(const AST::BinaryExpression* node)
                             toPosition(node->Coords())
                         ),
                         new LabelStm(returnLabel, toPosition(node->Coords()))),
-                        new Temp(*expValue),
+                        new Mem(new Temp(*expValue), toPosition(node->Coords())),
                         toPosition(node->Coords())
                     );
         break;
@@ -343,7 +343,7 @@ void IRBuilder::Visit(const AST::BinaryExpression* node)
                         new LabelStm(returnLabel, toPosition(node->Coords())),
                         toPosition(node->Coords())
                         ),
-                     new Temp(*expValue),
+                     new Mem(new Temp(*expValue), toPosition(node->Coords())),
                      toPosition(node->Coords())
                  );
         break;
@@ -377,7 +377,7 @@ void IRBuilder::Visit(const AST::CallMemberExpression* node)
     node->BaseExpression->AcceptVisitor(this);
     Temp* baseAddress = new Temp(0, toPosition(node->Coords()));
     IExp* baseExp = new Eseq(new Move(baseAddress, mainSubtree->ToExp(), toPosition(node->Coords())),
-                                   new Temp(*baseAddress), toPosition(node->Coords()));
+                                   new Mem(new Temp(*baseAddress), toPosition(node->Coords())), toPosition(node->Coords()));
     auto info = TypeStackVisitor.GetTypeFromStack();
     assert(info != nullptr);
     assert(info->GetType() == SymbolTable::VT_UserClass);

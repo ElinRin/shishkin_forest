@@ -43,7 +43,9 @@ void EseqCanonizer::Visit(Eseq* node)
 
 void EseqCanonizer::Visit(Mem* node)
 {
-    lastEseq->Statement.reset(reorder(node->Expression));
+    node->Expression->AcceptVisitor(this);
+    node->Expression.release();
+    node->Expression.reset(lastEseq->Expression.release());
     lastEseq->Expression.reset(node);
 }
 
@@ -166,7 +168,7 @@ void EseqCanonizer::decomposeEseq()
     if(lastEseq->Expression->IsCommutative()) {
         return;
     } else {
-        Temp* holder = new Temp(0);
+        Temp* holder = new Temp(Temp::TempHolderLocalId);
         lastEseq->Statement.reset(new Seq(lastEseq->Statement.release(),
                                           new Move(holder, lastEseq->Expression.release())));
         lastEseq->Expression.reset(new Mem(new Temp(*holder)));

@@ -70,7 +70,7 @@ IR::IExp* X86MiniJavaClassStruct::AllocateNew(const Position& position) const
                                                 new IR::Const(0, position), position),
                                          position);
     }
-    return new IR::Eseq(prepareActions, new IR::Temp(*baseAddress), position);
+    return new IR::Eseq(prepareActions, new IR::Mem(new IR::Temp(*baseAddress), position), position);
 }
 
 }
