@@ -28,7 +28,7 @@ void InRegAccess::print(TempAddress fp) const
 IR::IExp* InRegAccess::GetExp(IR::Temp* fp, const SymbolTable::Position& position) const
 {
     delete fp;
-    return new IR::Temp(name, position);
+    return new IR::Mem(new IR::Temp(name, position));
 }
 
 }
