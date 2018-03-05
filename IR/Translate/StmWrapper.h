@@ -13,8 +13,7 @@ public:
 
     virtual const IR::IExp* ToExp() override { assert(false); }
     virtual const IR::IStm* ToStm() override { return statement.release(); }
-    virtual const IR::IStm* ToConditional(const IR::Label* trueLabel,
-                                           const IR::Label* falseLabel) override { assert(false); }
+    virtual const IR::IStm* ToConditional(IR::JumpC::TJumpType, const IR::Label* trueLabel) override { assert(false); }
 
     const IR::IStm* Stm() const { return statement.get(); }
 

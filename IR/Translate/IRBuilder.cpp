@@ -147,14 +147,12 @@ void IRBuilder::Visit(const AST::WhileStatement* node)
 {
     node->Condition->AcceptVisitor(this);
     Label* conditionLabel = Label::GetNextEnumeratedLabel();
-    Label* bodyLabel = Label::GetNextEnumeratedLabel();
     Label* exitLabel = Label::GetNextEnumeratedLabel();
-    const IStm* condition = mainSubtree->ToConditional(bodyLabel, exitLabel);
+    const IStm* condition = mainSubtree->ToConditional(IR::JumpC::TJ_NEQ, exitLabel);
     const IStm* conditionPart = new Seq(new LabelStm(conditionLabel, toPosition(node->Coords())),
                                         condition, toPosition(node->Coords()));
     node->Body->AcceptVisitor(this);
-    const IStm* bodyPart = new Seq(new LabelStm(bodyLabel, toPosition(node->Coords())),
-                                   new Seq(mainSubtree->ToStm(), new Jump(conditionLabel, toPosition(node->Coords())), toPosition(node->Coords())),
+    const IStm* bodyPart = new Seq(mainSubtree->ToStm(), new Jump(conditionLabel, toPosition(node->Coords())),
                                    toPosition(node->Coords()));
     mainSubtree.reset(new StmWrapper(new Seq(new Seq(conditionPart, bodyPart, toPosition(node->Coords())),
                                              new LabelStm(exitLabel, toPosition(node->Coords())),
@@ -170,13 +168,11 @@ void IRBuilder::Visit(const AST::IfElseStatement* node)
 {
     node->Condition->AcceptVisitor(this);
     TypeStackVisitor.PopTypeFromStack();
-    Label* ifBranchLabel = Label::GetNextEnumeratedLabel();
     Label* elseBranchLabel = Label::GetNextEnumeratedLabel();
     Label* exitLabel = Label::GetNextEnumeratedLabel();
-    const IStm* condition = mainSubtree->ToConditional(ifBranchLabel, elseBranchLabel);
+    const IStm* condition = mainSubtree->ToConditional(IR::JumpC::TJ_NEQ, elseBranchLabel);
     node->IfStatement->AcceptVisitor(this);
-    const IStm* ifPart = new Seq(new Seq(new LabelStm(ifBranchLabel, toPosition(node->Coords())),
-                                         mainSubtree->ToStm(), toPosition(node->Coords())),
+    const IStm* ifPart = new Seq(mainSubtree->ToStm(),
                                  new Jump(exitLabel, toPosition(node->Coords())),
                                  toPosition(node->Coords()));
     node->ElseStatement->AcceptVisitor(this);
@@ -242,7 +238,7 @@ void IRBuilder::Visit(const AST::BinaryExpression* node)
         trueLabel = Label::GetNextEnumeratedLabel();
         falseLabel = Label::GetNextEnumeratedLabel();
         returnLabel = Label::GetNextEnumeratedLabel();
-        condition = new JumpC(JumpC::TJ_LT, left, right, trueLabel, falseLabel,
+        condition = new JumpC(JumpC::TJ_LT, left, right, trueLabel,
                               toPosition(node->Coords()));
         expValue = new Temp("expValue", toPosition(node->Coords()));
         trueBranch = new Seq(new Seq(new LabelStm(trueLabel, toPosition(node->Coords())),
@@ -255,8 +251,8 @@ void IRBuilder::Visit(const AST::BinaryExpression* node)
                                                toPosition(node->Coords())), toPosition(node->Coords())),
                                     new Jump(returnLabel, toPosition(node->Coords())),
                               toPosition(node->Coords()));
-        result = new Eseq(new Seq(new Seq(new Seq(condition, trueBranch, toPosition(node->Coords())),
-                                          falseBranch, toPosition(node->Coords())),
+        result = new Eseq(new Seq(new Seq(new Seq(condition, falseBranch, toPosition(node->Coords())),
+                                          trueBranch, toPosition(node->Coords())),
                                   new LabelStm(returnLabel, toPosition(node->Coords())), toPosition(node->Coords())),
                            new Mem(new Temp(*expValue), toPosition(node->Coords())), toPosition(node->Coords()));
         break;
@@ -266,24 +262,14 @@ void IRBuilder::Visit(const AST::BinaryExpression* node)
     case AST::BET_And:
         trueLabel = Label::GetNextEnumeratedLabel();
         falseLabel = Label::GetNextEnumeratedLabel();
-        continueLabel = Label::GetNextEnumeratedLabel();
         returnLabel = Label::GetNextEnumeratedLabel();
         expValue = new Temp("expValue", toPosition(node->Coords()));
-        condition = new JumpC(JumpC::TJ_EQ, left, new Const(1, toPosition(node->Coords())), continueLabel, falseLabel,toPosition(node->Coords()));
-        trueBranch = new Seq(
-                            new Seq(
-                                        new LabelStm(continueLabel, toPosition(node->Coords())),
-                                        new JumpC(JumpC::TJ_EQ, right, new Const(1, toPosition(node->Coords())), trueLabel, falseLabel,toPosition(node->Coords())),
-                                        toPosition(node->Coords())
-                                    ),
-                            new Seq(
-                                        new LabelStm(trueLabel, toPosition(node->Coords())),
+        condition = new JumpC(JumpC::TJ_NEQ, left, new Const(1, toPosition(node->Coords())), falseLabel,toPosition(node->Coords()));
+        trueBranch = new Seq(new JumpC(JumpC::TJ_NEQ, right, new Const(1, toPosition(node->Coords())), falseLabel,toPosition(node->Coords())),
                                         new Seq(
                                             new Move(expValue, new Const(1, toPosition(node->Coords())), toPosition(node->Coords())),
                                             new Jump(returnLabel, toPosition(node->Coords())),
                                             toPosition(node->Coords())
-                                        ),
-                                        toPosition(node->Coords())
                                     ),
                                     toPosition(node->Coords())
                              );
@@ -297,6 +283,7 @@ void IRBuilder::Visit(const AST::BinaryExpression* node)
                         toPosition(node->Coords())
                     );
         result = new Eseq(
+                    new Seq(
                         new Seq(
                             new Seq(
                                 condition,
@@ -306,6 +293,7 @@ void IRBuilder::Visit(const AST::BinaryExpression* node)
                             falseBranch,
                             toPosition(node->Coords())
                         ),
+                        new LabelStm(returnLabel, toPosition(node->Coords()))),
                         new Temp(*expValue),
                         toPosition(node->Coords())
                     );
@@ -313,16 +301,10 @@ void IRBuilder::Visit(const AST::BinaryExpression* node)
     case AST::BET_Or:
         trueLabel = Label::GetNextEnumeratedLabel();
         falseLabel = Label::GetNextEnumeratedLabel();
-        continueLabel = Label::GetNextEnumeratedLabel();
         returnLabel = Label::GetNextEnumeratedLabel();
         expValue = new Temp("expValue", toPosition(node->Coords()));
-        condition = new JumpC(JumpC::TJ_EQ, left, new Const(1, toPosition(node->Coords())), trueLabel, continueLabel,toPosition(node->Coords()));
-        trueBranch = new Seq(
-                            new Seq(
-                                        new LabelStm(continueLabel, toPosition(node->Coords())),
-                                        new JumpC(JumpC::TJ_EQ, right, new Const(1, toPosition(node->Coords())), trueLabel, falseLabel,toPosition(node->Coords())),
-                                        toPosition(node->Coords())
-                                    ),
+        condition = new JumpC(JumpC::TJ_EQ, left, new Const(1, toPosition(node->Coords())), trueLabel, toPosition(node->Coords()));
+        trueBranch = new Seq(new JumpC(JumpC::TJ_NEQ, right, new Const(1, toPosition(node->Coords())), falseLabel, toPosition(node->Coords())),
                             new Seq(
                                         new LabelStm(trueLabel, toPosition(node->Coords())),
                                         new Seq(
@@ -344,6 +326,7 @@ void IRBuilder::Visit(const AST::BinaryExpression* node)
                         toPosition(node->Coords())
                     );
         result = new Eseq(
+                    new Seq(
                         new Seq(
                             new Seq(
                                 condition,
@@ -353,9 +336,12 @@ void IRBuilder::Visit(const AST::BinaryExpression* node)
                             falseBranch,
                             toPosition(node->Coords())
                         ),
-                        new Temp(*expValue),
+                        new LabelStm(returnLabel, toPosition(node->Coords())),
                         toPosition(node->Coords())
-                    );
+                        ),
+                     new Temp(*expValue),
+                     toPosition(node->Coords())
+                 );
         break;
     default:
         break;

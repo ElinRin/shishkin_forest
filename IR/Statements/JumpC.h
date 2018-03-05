@@ -15,7 +15,6 @@ public:
     };
 
     const Label* TrueLabel;
-    const Label* FalseLabel;
     std::unique_ptr<const IExp> ConditionLeftExpression;
     std::unique_ptr<const IExp> ConditionRightExpression;
     const TJumpType JumpType;
@@ -24,9 +23,8 @@ public:
     JumpC(const TJumpType jumpType,
           const IExp* conditionLeftExpression,
           const IExp* conditionRightExpression,
-          const Label* trueLabel,
-          const Label* falseLabel, const Coords& coords=Coords()) :
-        TrueLabel(trueLabel), FalseLabel(falseLabel),
+          const Label* trueLabel, const Coords& coords=Coords()) :
+        TrueLabel(trueLabel),
         ConditionLeftExpression(conditionLeftExpression),
         ConditionRightExpression(conditionRightExpression),
         JumpType(jumpType),

@@ -103,7 +103,7 @@ void IRPrinter::Visit(const IR::JumpC* node)
 {
     std::string name = AddNode("JumpC | " + format(node->JumpType) +
                                " | True: " + node->TrueLabel->GetName() +
-                               " | False: " + node->FalseLabel->GetName() + " | " + format(node->GetCoords()));
+                               " | " + format(node->GetCoords()));
     AddArrow(name);
     ParentName = name;
     node->ConditionLeftExpression->AcceptVisitor(this);

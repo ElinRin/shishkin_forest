@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include "IExp.h"
 #include "IStm.h"
+#include "JumpC.h"
 #include "StringSymbol.h"
 #include "Label.h"
 
@@ -14,8 +15,7 @@ interface ISubtreeWrapper {
 
     virtual const IR::IExp* ToExp() = 0;
     virtual const IR::IStm* ToStm() = 0;
-    virtual const IR::IStm* ToConditional(const IR::Label* trueLabel,
-                                          const IR::Label* falseLabel) = 0;
+    virtual const IR::IStm* ToConditional(IR::JumpC::TJumpType, const IR::Label* trueLabel) = 0;
     virtual void AcceptVisitor(IR::IIRVisitor* visitor) const = 0;
 };
 
