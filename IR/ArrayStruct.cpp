@@ -3,7 +3,7 @@
 
 namespace IR {
 
-IExp* ArrayStruct::GetElement(const IExp* base, const IExp* elementNumber, const IR::Coords& coords)
+IExp* ArrayStruct::GetElement(IExp* base, IExp* elementNumber, const IR::Coords& coords)
 {
     return new Mem(
                 new Binop(Binop::TB_PLUS,
@@ -12,7 +12,7 @@ IExp* ArrayStruct::GetElement(const IExp* base, const IExp* elementNumber, const
 
 }
 
-IExp* ArrayStruct::GetLength(const IExp* base, const Coords &coords)
+IExp* ArrayStruct::GetLength(IExp* base, const Coords &coords)
 {
     return new Mem(base, coords);
 }

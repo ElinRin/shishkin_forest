@@ -6,14 +6,16 @@ namespace IR {
 
 class Call : public IExp {
 public:
-    std::unique_ptr<const IExp> FuncExpression;
-    std::unique_ptr<const ExpList> Arguments;
+    std::unique_ptr<IExp> FuncExpression;
+    std::unique_ptr<ExpList> Arguments;
 
-    Call(const IExp* func, const ExpList* args, const Coords& coords=Coords()):
+    Call(IExp* func, ExpList* args, const Coords& coords=Coords()):
         FuncExpression(func),
         Arguments(args),
         coords(coords)
     {}
+
+    virtual bool IsCommutative() const override { return false; }
 
     ACCEPT_IR_VISITOR
 };

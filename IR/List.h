@@ -10,15 +10,17 @@ namespace IR {
 template<typename T>
 class List : public T{
 public:
-    std::unique_ptr<const T> Head;
-    std::unique_ptr<const T> Tail;
+    std::unique_ptr<T> Head;
+    std::unique_ptr<T> Tail;
 
-    List(const T* head=nullptr, const T* tail=nullptr, const Coords& coords=Coords()) :
+    List(T* head=nullptr, T* tail=nullptr, const Coords& coords=Coords()) :
         Head(head),
         Tail(tail),
         coords(coords)
     {
     }
+
+    virtual bool IsCommutative() const { return false; }
 
     ACCEPT_IR_VISITOR
 };

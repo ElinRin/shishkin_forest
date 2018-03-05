@@ -16,16 +16,18 @@ public:
     };
 
     const TBinop Operation;
-    std::unique_ptr<const IExp> LeftExpression;
-    std::unique_ptr<const IExp> RightExpression;
+    std::unique_ptr<IExp> LeftExpression;
+    std::unique_ptr<IExp> RightExpression;
 
-    Binop(TBinop operation, const IExp* leftExpression,
-          const IExp* rightExpression, const Coords& coords=Coords()) :
+    Binop(TBinop operation, IExp* leftExpression,
+          IExp* rightExpression, const Coords& coords=Coords()) :
         Operation(operation),
         LeftExpression(leftExpression),
         RightExpression(rightExpression),
         coords(coords)
     {}
+
+    virtual bool IsCommutative() const override { return false; }
 
     ACCEPT_IR_VISITOR
 };

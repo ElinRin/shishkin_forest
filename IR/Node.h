@@ -3,7 +3,7 @@
 
 #include "Position.h"
 
-#define ACCEPT_IR_VISITOR public: virtual void AcceptVisitor(IR::IIRVisitor* visitor) const override; \
+#define ACCEPT_IR_VISITOR public: virtual void AcceptVisitor(IR::IIRVisitor* visitor) override; \
                         private: const IR::Coords coords; \
                         public: const IR::Coords& GetCoords() const { return coords; }
 
@@ -16,7 +16,7 @@ interface IIRVisitor;
 interface INode
 {
     virtual ~INode() {}
-    virtual void AcceptVisitor(IIRVisitor* visitor) const = 0;
+    virtual void AcceptVisitor(IIRVisitor* visitor) = 0;
 };
 
 }

@@ -6,18 +6,18 @@ namespace IRTranslate {
 class ExpWrapper : public ISubtreeWrapper
 {
 public:
-    ExpWrapper(const IR::IExp* expression) : expression(expression) {}
+    ExpWrapper(IR::IExp* expression) : expression(expression) {}
 
-    virtual const IR::IExp* ToExp() override { return expression.release(); }
-    virtual const IR::IStm* ToStm() override;
-    virtual const IR::IStm* ToConditional(IR::JumpC::TJumpType type,
+    virtual IR::IExp* ToExp() override { return expression.release(); }
+    virtual IR::IStm* ToStm() override;
+    virtual IR::IStm* ToConditional(IR::JumpC::TJumpType type,
                                           const IR::Label* trueLabel) override;
 
-    const IR::IExp* Exp() const { return expression.get(); }
+    IR::IExp* Exp() { return expression.get(); }
 
     ACCEPT_IR_VISITOR
 private:
-    std::unique_ptr<const IR::IExp> expression;
+    std::unique_ptr<IR::IExp> expression;
 };
 
 }

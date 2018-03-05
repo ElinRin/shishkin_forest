@@ -8,12 +8,12 @@
 
 namespace IRTranslate {
 
-const IR::IStm* ExpWrapper::ToStm()
+IR::IStm* ExpWrapper::ToStm()
 {
     return new IR::Exp(expression.release());
 }
 
-const IR::IStm* ExpWrapper::ToConditional(IR::JumpC::TJumpType type,
+IR::IStm* ExpWrapper::ToConditional(IR::JumpC::TJumpType type,
                                           const IR::Label* trueLabel)
 {
     std::string name = "true";

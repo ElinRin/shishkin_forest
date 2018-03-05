@@ -11,14 +11,16 @@ public:
     };
 
     const TUnaryop Operation;
-    std::unique_ptr<const IExp> Expression;
+    std::unique_ptr<IExp> Expression;
 
-    Unaryop(TUnaryop operation, const IExp* expression, const Coords& coords=Coords()) :
+    Unaryop(TUnaryop operation, IExp* expression, const Coords& coords=Coords()) :
         Operation(operation),
         Expression(expression),
         coords(coords)
     {
     }
+
+    virtual bool IsCommutative() const override { return false; }
 
     ACCEPT_IR_VISITOR
 };

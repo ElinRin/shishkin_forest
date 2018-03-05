@@ -17,11 +17,11 @@ public:
     virtual const std::vector<const MethodInfo*>& GetVTable() const override { return vtableEntries; }
     virtual const StringSymbol* GetTableName() const override;
 
-    virtual const IR::IExp* GetFieldFrom(const StringSymbol* fieldName,
-                                         const IR::IExp* base, const Position& position=Position()) const override;
-    virtual const IR::IExp* GetVirtualMethodAddress(const StringSymbol* methodName,
-                                            const IR::IExp* base, const Position& position=Position()) const override;
-    virtual const IR::IExp* AllocateNew(const Position& position=Position()) const override;
+    virtual IR::IExp* GetFieldFrom(const StringSymbol* fieldName,
+                                         IR::IExp* base, const Position& position=Position()) const override;
+    virtual IR::IExp* GetVirtualMethodAddress(const StringSymbol* methodName,
+                                            IR::IExp* base, const Position& position=Position()) const override;
+    virtual IR::IExp* AllocateNew(const Position& position=Position()) const override;
 
 private:
     // Vtable

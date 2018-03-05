@@ -16,10 +16,10 @@ public:
     virtual void AddAddressExit() = 0;
     virtual void AddAddressReturnValue(SymbolTable::T_VariableType type) = 0;
     virtual int FormalsCount() const = 0;
-    virtual const IAccess* Formal( int index ) const = 0;
-    virtual const IAccess* FindLocalOrFormal( const StringSymbol* name ) const = 0;
-    virtual const IAccess* ExitAddress() const = 0;
-    virtual const IAccess* ReturnAddress() const = 0;
+    virtual IAccess* Formal( int index ) const = 0;
+    virtual IAccess* FindLocalOrFormal( const StringSymbol* name ) const = 0;
+    virtual IAccess* ExitAddress() const = 0;
+    virtual IAccess* ReturnAddress() const = 0;
     virtual const TempAddress FP() const = 0;
     virtual const TempAddress SP() const = 0;
     virtual const SymbolTable::TypeInfo WordType() const = 0;

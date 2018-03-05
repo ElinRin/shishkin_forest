@@ -26,7 +26,7 @@ public:
     virtual ~IAccess() {}
     virtual const T_RecordsType GetRecordType() = 0;
     virtual const int GetSize() const = 0;
-    virtual const IR::IExp* GetExp(const IR::Temp* fp, const SymbolTable::Position& position) const = 0;
+    virtual IR::IExp* GetExp(IR::Temp* fp, const SymbolTable::Position& position) const = 0;
     virtual void print(TempAddress fp) const = 0;
 };
 

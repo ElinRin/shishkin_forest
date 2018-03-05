@@ -2,7 +2,7 @@
 
 namespace IRTranslate {
 
-void IRPrinter::CreateGraph(const IRForest& forest)
+void IRPrinter::CreateGraph(IRForest& forest)
 {
     Dot << "digraph g {\n" <<
            "graph [ rankdir = LR ];\n"
@@ -21,7 +21,7 @@ void IRPrinter::CreateGraph(const IRForest& forest)
     Dot << "}" << std::endl;
 }
 
-void IRPrinter::Visit(const IR::Unaryop* node)
+void IRPrinter::Visit(IR::Unaryop* node)
 {
     std::string name = AddNode("Unary | " + format(node->Operation) + " | " + format(node->GetCoords()));
     AddArrow(name);
@@ -29,7 +29,7 @@ void IRPrinter::Visit(const IR::Unaryop* node)
     node->Expression->AcceptVisitor(this);
 }
 
-void IRPrinter::Visit(const IR::Binop *node)
+void IRPrinter::Visit(IR::Binop* node)
 {
     std::string name = AddNode("Binary | " + format(node->Operation) + " | " + format(node->GetCoords()));
     AddArrow(name);
@@ -39,7 +39,7 @@ void IRPrinter::Visit(const IR::Binop *node)
     node->RightExpression->AcceptVisitor(this);
 }
 
-void IRPrinter::Visit(const IR::Call* node)
+void IRPrinter::Visit(IR::Call* node)
 {
     std::string name = AddNode("Call | " + format(node->GetCoords()));
     AddArrow(name);
@@ -49,13 +49,13 @@ void IRPrinter::Visit(const IR::Call* node)
     node->FuncExpression->AcceptVisitor(this);
 }
 
-void IRPrinter::Visit(const IR::Const* node)
+void IRPrinter::Visit(IR::Const* node)
 {
     std::string name = AddNode("Const | " + std::to_string(node->value) + " | " + format(node->GetCoords()));
     AddArrow(name);
 }
 
-void IRPrinter::Visit(const IR::Eseq* node)
+void IRPrinter::Visit(IR::Eseq* node)
 {
     std::string name = AddNode("Eseq | " + format(node->GetCoords()));
     AddArrow(name);
@@ -65,7 +65,7 @@ void IRPrinter::Visit(const IR::Eseq* node)
     node->Expression->AcceptVisitor(this);
 }
 
-void IRPrinter::Visit(const IR::Mem* node)
+void IRPrinter::Visit(IR::Mem* node)
 {
     std::string name = AddNode("Mem | " + format(node->GetCoords()));
     AddArrow(name);
@@ -73,19 +73,19 @@ void IRPrinter::Visit(const IR::Mem* node)
     node->Expression->AcceptVisitor(this);
 }
 
-void IRPrinter::Visit(const IR::Name* node)
+void IRPrinter::Visit(IR::Name* node)
 {
     std::string name = AddNode("Name | " + node->LabelName->GetName() + " | " + format(node->GetCoords()));
     AddArrow(name);
 }
 
-void IRPrinter::Visit(const IR::Temp* node)
+void IRPrinter::Visit(IR::Temp* node)
 {
     std::string name = AddNode("Temp | " + format(node) + " | " + format(node->GetCoords()));
     AddArrow(name);
 }
 
-void IRPrinter::Visit(const IR::Exp* node)
+void IRPrinter::Visit(IR::Exp* node)
 {
     std::string name = AddNode("Exp | " + format(node->GetCoords()));
     AddArrow(name);
@@ -93,13 +93,13 @@ void IRPrinter::Visit(const IR::Exp* node)
     node->expression->AcceptVisitor(this);
 }
 
-void IRPrinter::Visit(const IR::Jump* node)
+void IRPrinter::Visit(IR::Jump* node)
 {
     std::string name = AddNode("Jump | " + node->LabelToJump->GetName() + " | " + format(node->GetCoords()));
     AddArrow(name);
 }
 
-void IRPrinter::Visit(const IR::JumpC* node)
+void IRPrinter::Visit(IR::JumpC* node)
 {
     std::string name = AddNode("JumpC | " + format(node->JumpType) +
                                " | True: " + node->TrueLabel->GetName() +
@@ -111,13 +111,13 @@ void IRPrinter::Visit(const IR::JumpC* node)
     node->ConditionRightExpression->AcceptVisitor(this);
 }
 
-void IRPrinter::Visit(const IR::LabelStm* node)
+void IRPrinter::Visit(IR::LabelStm* node)
 {
     std::string name = AddNode("LabelStm | " + node->LabelName->GetName() + " | " + format(node->GetCoords()));
     AddArrow(name);
 }
 
-void IRPrinter::Visit(const IR::Move* node)
+void IRPrinter::Visit(IR::Move* node)
 {
     std::string name = AddNode("Move | " + format(node->GetCoords()));
     AddArrow(name);
@@ -127,7 +127,7 @@ void IRPrinter::Visit(const IR::Move* node)
     node->Destination->AcceptVisitor(this);
 }
 
-void IRPrinter::Visit(const IR::ExpList* node)
+void IRPrinter::Visit(IR::ExpList* node)
 {
     std::string name = AddNode("ExpList | " + format(node->GetCoords()));
     AddArrow(name);
@@ -141,7 +141,7 @@ void IRPrinter::Visit(const IR::ExpList* node)
     }
 }
 
-void IRPrinter::Visit(const IR::StmList* node)
+void IRPrinter::Visit(IR::StmList* node)
 {
     std::string name = AddNode("Seq | " + format(node->GetCoords()));
     AddArrow(name);
@@ -155,12 +155,12 @@ void IRPrinter::Visit(const IR::StmList* node)
     }
 }
 
-void IRPrinter::Visit(const StmWrapper* node)
+void IRPrinter::Visit(StmWrapper* node)
 {
     node->Stm()->AcceptVisitor(this);
 }
 
-void IRPrinter::Visit(const ExpWrapper *node)
+void IRPrinter::Visit(ExpWrapper *node)
 {
     node->Exp()->AcceptVisitor(this);
 }

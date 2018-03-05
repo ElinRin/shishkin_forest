@@ -9,18 +9,18 @@ namespace IRTranslate {
 class StmWrapper : public ISubtreeWrapper
 {
 public:
-    StmWrapper(const IR::IStm* statement) : statement(statement) {}
+    StmWrapper(IR::IStm* statement) : statement(statement) {}
 
-    virtual const IR::IExp* ToExp() override { assert(false); }
-    virtual const IR::IStm* ToStm() override { return statement.release(); }
-    virtual const IR::IStm* ToConditional(IR::JumpC::TJumpType, const IR::Label* trueLabel) override { assert(false); }
+    virtual IR::IExp* ToExp() override { assert(false); }
+    virtual IR::IStm* ToStm() override { return statement.release(); }
+    virtual IR::IStm* ToConditional(IR::JumpC::TJumpType, const IR::Label* trueLabel) override { assert(false); }
 
-    const IR::IStm* Stm() const { return statement.get(); }
+    IR::IStm* Stm() { return statement.get(); }
 
     ACCEPT_IR_VISITOR
 
 private:
-    std::unique_ptr<const IR::IStm> statement;
+    std::unique_ptr<IR::IStm> statement;
 };
 
 }

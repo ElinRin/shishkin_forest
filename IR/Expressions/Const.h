@@ -13,6 +13,8 @@ public:
         coords(coords)
     {}
 
+    virtual bool IsCommutative() const override { return true; }
+
     ACCEPT_IR_VISITOR
 };
 

@@ -9,9 +9,9 @@ namespace IR {
 
 class Exp : public IStm {
 public:
-    std::unique_ptr<const IExp> expression;
+    std::unique_ptr<IExp> expression;
 
-    Exp(const IExp* expression, const Coords& coords=Coords()) :
+    Exp(IExp* expression, const Coords& coords=Coords()) :
         expression(expression),
         coords(coords)
     {}
