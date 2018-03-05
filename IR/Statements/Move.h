@@ -7,10 +7,10 @@ namespace IR {
 
 class Move: public IStm {
 public:
-    std::unique_ptr<const IExp> Destination;
-    std::unique_ptr<const IExp> Source;
+    std::unique_ptr<IExp> Destination;
+    std::unique_ptr<IExp> Source;
 
-    Move(const IExp* destination, const IExp* source, const Coords& coords=Coords()):
+    Move(IExp* destination, IExp* source, const Coords& coords=Coords()):
         Destination(destination), Source(source), coords(coords)
     {}
 

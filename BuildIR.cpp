@@ -8,6 +8,7 @@
 #include "TypeChecker.h"
 #include "IRBuilder.h"
 #include "IRPrinter.h"
+#include "EseqCanonizer.h"
 #include <unistd.h>
 
 extern std::unique_ptr<AST::Program> program;
@@ -33,7 +34,12 @@ int main(void) {
         auto& forest = builder.GetParseResults();
         IRTranslate::IRPrinter printer("IR.dot");
         printer.CreateGraph(forest);
-
+        IRTranslate::EseqCanonizer canonizer;
+        for(auto& tree: forest) {
+            tree.second.reset(canonizer.Canonize(tree.second.get()));
+        }
+        IRTranslate::IRPrinter printerCan("can_IR.dot");
+        printerCan.CreateGraph(forest);
       } catch(SymbolTable::DeclarationException e) {
         std::cout << NF_RED << "Declaration error: " << e.what() << NF_RESET << std::endl;
         return 1;

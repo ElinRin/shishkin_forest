@@ -16,26 +16,26 @@ public:
     {
     }
 
-    void CreateGraph(const IRForest& forest);
+    void CreateGraph(IRForest& forest);
 
-    virtual void Visit(const IR::Unaryop* node) override;
-    virtual void Visit(const IR::Binop* node) override;
-    virtual void Visit(const IR::Call* node) override;
-    virtual void Visit(const IR::Const* node) override;
-    virtual void Visit(const IR::Eseq* node) override;
-    virtual void Visit(const IR::Mem* node) override;
-    virtual void Visit(const IR::Name* node) override;
-    virtual void Visit(const IR::Temp* node) override;
-    virtual void Visit(const IR::Exp* node) override;
-    virtual void Visit(const IR::Jump* node) override;
-    virtual void Visit(const IR::JumpC* node) override;
-    virtual void Visit(const IR::LabelStm* node) override;
-    virtual void Visit(const IR::Move* node) override;
-    virtual void Visit(const IR::Seq* node) override;
-    virtual void Visit(const IR::ExpList* node) override;
+    virtual void Visit(IR::Unaryop* node) override;
+    virtual void Visit(IR::Binop* node) override;
+    virtual void Visit(IR::Call* node) override;
+    virtual void Visit(IR::Const* node) override;
+    virtual void Visit(IR::Eseq* node) override;
+    virtual void Visit(IR::Mem* node) override;
+    virtual void Visit(IR::Name* node) override;
+    virtual void Visit(IR::Temp* node) override;
+    virtual void Visit(IR::Exp* node) override;
+    virtual void Visit(IR::Jump* node) override;
+    virtual void Visit(IR::JumpC* node) override;
+    virtual void Visit(IR::LabelStm* node) override;
+    virtual void Visit(IR::Move* node) override;
+    virtual void Visit(IR::Seq* node) override;
+    virtual void Visit(IR::ExpList* node) override;
 
-    virtual void Visit(const StmWrapper* node) override;
-    virtual void Visit(const ExpWrapper* node) override;
+    virtual void Visit(StmWrapper* node) override;
+    virtual void Visit(ExpWrapper* node) override;
 
 private:
     std::string format(IR::Unaryop::TUnaryop op);

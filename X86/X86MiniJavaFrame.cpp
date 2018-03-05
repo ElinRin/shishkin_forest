@@ -55,11 +55,11 @@ int X86MiniJavaFrame::FormalsCount() const {
     return formalList.size();
 }
 
-const IAccess* X86MiniJavaFrame::Formal( int index ) const {
+IAccess* X86MiniJavaFrame::Formal( int index ) const {
     return formalList[index];
 }
 
-const IAccess* X86MiniJavaFrame::FindLocalOrFormal( const StringSymbol* name ) const {
+IAccess* X86MiniJavaFrame::FindLocalOrFormal( const StringSymbol* name ) const {
     auto res = localAccess.find(name);
     if( res == localAccess.end() ) {
         res = formalAccess.find(name);
@@ -70,12 +70,12 @@ const IAccess* X86MiniJavaFrame::FindLocalOrFormal( const StringSymbol* name ) c
     return res->second.get();
 }
 
-const IAccess* X86MiniJavaFrame::ExitAddress() const
+IAccess* X86MiniJavaFrame::ExitAddress() const
 {
     return formalList[addressExitIndex];
 }
 
-const IAccess* X86MiniJavaFrame::ReturnAddress() const
+IAccess* X86MiniJavaFrame::ReturnAddress() const
 {
     return returnAddress.get();
 }

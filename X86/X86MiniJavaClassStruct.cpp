@@ -30,8 +30,8 @@ const StringSymbol* X86MiniJavaClassStruct::GetTableName() const
     return StringSymbol::GetIntern(NameConventions::VtablePrefix + className->GetString());
 }
 
-const IR::IExp* X86MiniJavaClassStruct::GetFieldFrom(const StringSymbol* fieldName,
-                                          const IR::IExp* base, const Position& position) const
+IR::IExp* X86MiniJavaClassStruct::GetFieldFrom(const StringSymbol* fieldName,
+                                          IR::IExp* base, const Position& position) const
 {
     assert(fieldsOffsets.find(fieldName) != fieldsOffsets.end());
     int wordSize = typeSpec->WordSize();
@@ -40,7 +40,7 @@ const IR::IExp* X86MiniJavaClassStruct::GetFieldFrom(const StringSymbol* fieldNa
                                      position), position);
 }
 
-const IR::IExp* X86MiniJavaClassStruct::GetVirtualMethodAddress(const StringSymbol* methodName, const IR::IExp *base, const Position &position) const
+IR::IExp* X86MiniJavaClassStruct::GetVirtualMethodAddress(const StringSymbol* methodName, IR::IExp *base, const Position &position) const
 {
     assert(vTableIndices.find(methodName) != vTableIndices.end());
     int wordSize = typeSpec->WordSize();
@@ -49,13 +49,13 @@ const IR::IExp* X86MiniJavaClassStruct::GetVirtualMethodAddress(const StringSymb
                                      position), position);
 }
 
-const IR::IExp* X86MiniJavaClassStruct::AllocateNew(const Position& position) const
+IR::IExp* X86MiniJavaClassStruct::AllocateNew(const Position& position) const
 {
     int wordSize = typeSpec->WordSize();
     IR::ExpList* allocArg = new IR::ExpList(new IR::Const(totalFieldsSize +
                                                           wordSize*(vtableEntries.size() + 1), position), nullptr, position);
     const int baseAddressId = 0;
-    const IR::Temp* baseAddress = new IR::Temp(baseAddressId, position);
+    IR::Temp* baseAddress = new IR::Temp(baseAddressId, position);
     IR::StmList* prepareActions = new IR::StmList(new IR::Move(baseAddress,
                                                                new IR::Call(new IR::Name(NameConventions::MallocName, position),
                                                                             allocArg, position), position), nullptr, position);

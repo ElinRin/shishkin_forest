@@ -3,8 +3,8 @@
 
 #include "IRNodeTypes.h"
 
-#define IR_VISITOR(TREE_INTERFACE) virtual void Visit(const TREE_INTERFACE* node) = 0;
-#define IR_VISIT_NODE(NODE_TYPE) void NODE_TYPE::AcceptVisitor(IR::IIRVisitor* visitor) const {\
+#define IR_VISITOR(TREE_INTERFACE) virtual void Visit(TREE_INTERFACE* node) = 0;
+#define IR_VISIT_NODE(NODE_TYPE) void NODE_TYPE::AcceptVisitor(IR::IIRVisitor* visitor) {\
     visitor->Visit(this); \
 }
 

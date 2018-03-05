@@ -28,10 +28,10 @@ public:
     virtual void AddAddressExit() override;
     virtual void AddAddressReturnValue(SymbolTable::T_VariableType type) override;
     virtual int FormalsCount() const override;
-    virtual const IAccess* Formal( int index ) const override;
-    virtual const IAccess* FindLocalOrFormal(const StringSymbol* name ) const override;
-    virtual const IAccess* ExitAddress() const override;
-    virtual const IAccess* ReturnAddress() const override;
+    virtual IAccess* Formal( int index ) const override;
+    virtual IAccess* FindLocalOrFormal(const StringSymbol* name ) const override;
+    virtual IAccess* ExitAddress() const override;
+    virtual IAccess* ReturnAddress() const override;
     const int FormalSize(int index) const;
     const int FormalSize(const StringSymbol* name) const;
     virtual const SymbolTable::TypeInfo WordType() const override;

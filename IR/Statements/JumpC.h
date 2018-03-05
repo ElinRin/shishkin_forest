@@ -15,14 +15,14 @@ public:
     };
 
     const Label* TrueLabel;
-    std::unique_ptr<const IExp> ConditionLeftExpression;
-    std::unique_ptr<const IExp> ConditionRightExpression;
+    std::unique_ptr<IExp> ConditionLeftExpression;
+    std::unique_ptr<IExp> ConditionRightExpression;
     const TJumpType JumpType;
 
 
     JumpC(const TJumpType jumpType,
-          const IExp* conditionLeftExpression,
-          const IExp* conditionRightExpression,
+          IExp* conditionLeftExpression,
+          IExp* conditionRightExpression,
           const Label* trueLabel, const Coords& coords=Coords()) :
         TrueLabel(trueLabel),
         ConditionLeftExpression(conditionLeftExpression),

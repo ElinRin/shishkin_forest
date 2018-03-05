@@ -7,12 +7,14 @@ namespace IR {
 
 class Mem: public IExp {
 public:
-    std::unique_ptr<const IExp> Expression;
+    std::unique_ptr<IExp> Expression;
 
-    Mem(const IExp* expression, const Coords& coords=Coords()) :
+    Mem(IExp* expression, const Coords& coords=Coords()) :
         Expression(expression),
         coords(coords)
     {}
+
+    virtual bool IsCommutative() const override { return false; }
 
     ACCEPT_IR_VISITOR
 };

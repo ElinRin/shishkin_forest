@@ -13,7 +13,7 @@ InFrameAccess::InFrameAccess(T_RecordsType _type, int _size, int offset) :
 {
 }
 
-const IR::IExp* InFrameAccess::GetExp(const IR::Temp* fp, const SymbolTable::Position& position) const
+IR::IExp* InFrameAccess::GetExp(IR::Temp* fp, const SymbolTable::Position& position) const
 {
     return new IR::Mem(new IR::Binop(IR::Binop::TB_PLUS, fp,
                                      new IR::Const(address.GetAddress(), position),

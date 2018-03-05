@@ -9,14 +9,17 @@ namespace IR {
 
 class Eseq : public IExp {
 public:
-    std::unique_ptr<const IStm> Statement;
-    std::unique_ptr<const IExp> Expression;
+    std::unique_ptr<IStm> Statement;
+    std::unique_ptr<IExp> Expression;
 
-    Eseq(const IStm* statement, const IExp* expression, const Coords& coords=Coords()):
+    Eseq(IStm* statement, IExp* expression, const Coords& coords=Coords()):
         Statement(statement),
         Expression(expression),
         coords(coords)
     {}
+
+    virtual bool IsCommutative() const override { return false; }
+
     ACCEPT_IR_VISITOR
 };
 

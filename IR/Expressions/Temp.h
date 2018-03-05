@@ -27,6 +27,8 @@ public:
     const std::string Name() const { return name; }
     int LocalId() const { return localId; }
 
+    virtual bool IsCommutative() const override { return false; }
+
 private:
     const int localId;
     std::string name;
