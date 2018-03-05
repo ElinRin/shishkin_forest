@@ -16,6 +16,7 @@ public:
     {}
 
     virtual bool IsCommutative() const override { return false; }
+    virtual bool IsAbsolutelyCommutative() const override { return false; }
 
     ACCEPT_IR_VISITOR
 };
