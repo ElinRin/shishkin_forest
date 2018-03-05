@@ -21,6 +21,7 @@ public:
     }
 
     virtual bool IsCommutative() const { return false; }
+    virtual bool IsAbsolutelyCommutative() const { return false; }
 
     ACCEPT_IR_VISITOR
 };

@@ -14,7 +14,8 @@ public:
         coords(coords)
     {}
 
-    virtual bool IsCommutative() const override { return Expression->IsCommutative(); }
+    virtual bool IsCommutative() const override { return Expression->IsAbsolutelyCommutative(); }
+    virtual bool IsAbsolutelyCommutative() const override { return false; }
 
     ACCEPT_IR_VISITOR
 };

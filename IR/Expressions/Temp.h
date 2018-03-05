@@ -29,6 +29,7 @@ public:
     int LocalId() const { return localId; }
 
     virtual bool IsCommutative() const override { return true; }
+    virtual bool IsAbsolutelyCommutative() const override { return localId == TempHolderLocalId; }
 
 private:
     const int localId;
