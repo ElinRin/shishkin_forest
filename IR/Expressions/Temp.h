@@ -15,6 +15,7 @@ public:
       AI_Id,
       AI_Name
     };
+    static const int TempHolderLocalId = 2;
     const int Id;
 
     //explicit Temp(std::string name);
@@ -27,7 +28,7 @@ public:
     const std::string Name() const { return name; }
     int LocalId() const { return localId; }
 
-    virtual bool IsCommutative() const override { return false; }
+    virtual bool IsCommutative() const override { return true; }
 
 private:
     const int localId;
