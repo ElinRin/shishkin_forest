@@ -10,7 +10,8 @@ public:
 
     virtual const IR::IExp* ToExp() override { return expression.release(); }
     virtual const IR::IStm* ToStm() override;
-    virtual const IR::IStm* ToConditional(const IR::Label* trueLabel, const IR::Label* falseLabel)override;
+    virtual const IR::IStm* ToConditional(IR::JumpC::TJumpType type,
+                                          const IR::Label* trueLabel) override;
 
     const IR::IExp* Exp() const { return expression.get(); }
 
