@@ -9,7 +9,7 @@
 #include "IRBuilder.h"
 #include "IRPrinter.h"
 #include "EseqCanonizer.h"
-#include "Linerazier.h"
+#include "Linerizer.h"
 #include <unistd.h>
 
 extern std::unique_ptr<AST::Program> program;

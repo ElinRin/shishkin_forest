@@ -1,4 +1,4 @@
-#include <Linerazier.h>
+#include <Linerizer.h>
 
 namespace IRTranslate {
 
