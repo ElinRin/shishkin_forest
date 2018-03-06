@@ -9,6 +9,7 @@
 #include "IRBuilder.h"
 #include "IRPrinter.h"
 #include "EseqCanonizer.h"
+#include "Linerazier.h"
 #include <unistd.h>
 
 extern std::unique_ptr<AST::Program> program;
@@ -40,6 +41,14 @@ int main(void) {
         }
         IRTranslate::IRPrinter printerCan("can_IR.dot");
         printerCan.CreateGraph(forest);
+        IRTranslate::Linerizer linerizer;
+        IRTranslate::IRLinearForest linerized;
+        for(auto& tree: forest) {
+            linerized.insert({tree.first, std::vector<std::unique_ptr<IR::IStm>>()});
+            linerizer.Linerize(tree.second.get(), linerized.at(tree.first));
+        }
+        IRTranslate::IRPrinter printerLin("lin_IR.dot");
+        printerLin.CreateGraph(linerized);
       } catch(SymbolTable::DeclarationException e) {
         std::cout << NF_RED << "Declaration error: " << e.what() << NF_RESET << std::endl;
         return 1;

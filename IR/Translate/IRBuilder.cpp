@@ -214,7 +214,6 @@ void IRBuilder::Visit(const AST::BinaryExpression* node)
     Label* trueLabel;
     Label* falseLabel;
     Label* returnLabel;
-    Label* continueLabel;
     IStm* condition;
     Temp* expValue;
     IStm* trueBranch;
@@ -255,8 +254,8 @@ void IRBuilder::Visit(const AST::BinaryExpression* node)
                                                toPosition(node->Coords())), toPosition(node->Coords())),
                                     new Jump(returnLabel, toPosition(node->Coords())),
                               toPosition(node->Coords()));
-        result = new Eseq(new Seq(new Seq(new Seq(condition, trueBranch, toPosition(node->Coords())),
-                                          falseBranch, toPosition(node->Coords())),
+        result = new Eseq(new Seq(new Seq(new Seq(condition, falseBranch, toPosition(node->Coords())),
+                                          trueBranch    , toPosition(node->Coords())),
                                   new LabelStm(returnLabel, toPosition(node->Coords())), toPosition(node->Coords())),
                            new Mem(new Temp(*expValue), toPosition(node->Coords())), toPosition(node->Coords()));
         break;

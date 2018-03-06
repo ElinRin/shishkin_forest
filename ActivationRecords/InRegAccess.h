@@ -4,6 +4,7 @@
 
 #include "Access.h"
 #include "TempAddress.h"
+#include "IRNodeTypes.h"
 
 namespace ActivationRecords {
 
@@ -11,6 +12,7 @@ class InRegAccess : public IAccess {
 public: 
     InRegAccess(T_RecordsType _type, int _size, const std::string& name);
     InRegAccess(T_RecordsType _type, int _size, int id);
+    InRegAccess(const InRegAccess& other);
 
     virtual const int GetSize() const override { return size; }
     virtual const T_RecordsType GetRecordType() override { return type; }
@@ -24,6 +26,7 @@ private:
     int size;
     int id;
     const std::string name;
+    std::unique_ptr<IR::Temp> temp;
 };
 
 }

@@ -21,6 +21,28 @@ void IRPrinter::CreateGraph(IRForest& forest)
     Dot << "}" << std::endl;
 }
 
+void IRPrinter::CreateGraph(IRLinearForest& forest)
+{
+    Dot << "digraph g {\n" <<
+           "graph [ rankdir = LR ];\n"
+           "node [\n"
+           "fontsize = \"16\"\n"
+           "shape = \"ellipse\"\n"
+           "];\n"
+           "edge [\n"
+           "];\n" << std::endl;
+    for(auto&& tree : forest) {
+        std::string name = AddNode(" Method | " + tree.first->GetString());
+        ParentName = name;
+        for(auto&& stm: tree.second) {
+            stm->AcceptVisitor(this);
+            ParentName = name;
+        }
+    }
+    PrintArrows();
+    Dot << "}" << std::endl;
+}
+
 void IRPrinter::Visit(IR::Unaryop* node)
 {
     std::string name = AddNode("Unary | " + format(node->Operation) + " | " + format(node->GetCoords()));

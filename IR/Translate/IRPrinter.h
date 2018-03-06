@@ -17,6 +17,7 @@ public:
     }
 
     void CreateGraph(IRForest& forest);
+    void CreateGraph(IRLinearForest& forest);
 
     virtual void Visit(IR::Unaryop* node) override;
     virtual void Visit(IR::Binop* node) override;
