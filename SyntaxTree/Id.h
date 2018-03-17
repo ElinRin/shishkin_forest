@@ -2,7 +2,7 @@
 #define ID_H
 #include "common.h"
 
-#include <string.h>
+#include <string>
 
 #include "TreeNode.h"
 
