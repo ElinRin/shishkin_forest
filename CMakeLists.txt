@@ -33,7 +33,7 @@ if (BISON_PATH)
 endif ()
 
 if (NOT BISON_FOUND)
-    message( FATAL_ERROR "Bison not found." )
+    message(FATAL_ERROR "Bison not found.")
 endif ()
 
 if (BISON_FOUND)
@@ -62,12 +62,12 @@ find_package(FLEX 2.6)
 if (FLEX_PATH)
     message("Use custom flex.")
     set(FLEX_EXECUTABLE ${FLEX_PATH}/bin/flex)
-    set(FLEX_LIBRARIES ${FLEX_PATH}/lib)
+    set(FLEX_LIBRARIES ${FLEX_PATH}/lib/libfl.a)
     set(FLEX_FOUND TRUE)
 endif ()
 
 if (NOT FLEX_FOUND)
-    message( FATAL_ERROR "Flex not found." )
+    message(FATAL_ERROR "Flex not found.")
 endif ()
 
 if (FLEX_FOUND)
@@ -82,11 +82,14 @@ if (FLEX_FOUND)
     )
 endif ()
 
-add_library(lexer STATIC ${FlexOutput})
-target_link_libraries(lexer ${FLEX_LIBRARIES}/libfl.a)
-if (FLEX_PATH)
+if (FLEX_PATH) # Dirty hack
+    add_library(lexer STATIC ${FlexOutput})
     target_include_directories(lexer PRIVATE ${FLEX_PATH}/include)
-endif()
+else ()
+    add_library(lexer SHARED ${FlexOutput})
+endif ()
+
+target_link_libraries(lexer ${FLEX_LIBRARIES})
 
 # build library SymbolTable
 file(GLOB SymbolTable_SRC SymbolTable/*.cpp)
@@ -119,6 +122,7 @@ add_library(type_checker STATIC ${TypeChecker_SRC})
 # build library X86
 file(GLOB X86_SRC X86/*.cpp)
 add_library(x86 STATIC ${X86_SRC})
+target_link_libraries(x86 ir activation_records)
 
 # build graph
 add_executable(graph graph.cpp)
@@ -137,7 +141,6 @@ target_link_libraries(
         syntax_tree
         type_checker
         symbol_table
-        activation_records ir
         x86
 )
 
@@ -148,7 +151,6 @@ target_link_libraries(
         lexer bison_spec
         syntax_tree
         test_symbol_table symbol_table
-        activation_records ir
         x86
 )
 
@@ -160,7 +162,6 @@ target_link_libraries(
         syntax_tree
         symbol_table
         type_checker
-        activation_records ir
         x86
 )
 
@@ -172,6 +173,5 @@ target_link_libraries(
         syntax_tree
         test_symbol_table symbol_table
         type_checker
-        activation_records ir
         x86
 )
