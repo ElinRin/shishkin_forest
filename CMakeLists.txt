@@ -175,3 +175,17 @@ target_link_libraries(
         type_checker
         x86
 )
+
+set(scripts_path "./scripts/")
+
+file(GLOB Scripts
+    "${scripts_path}*.sh"
+)
+
+foreach(script ${Scripts})
+    get_filename_component(script_name ${script} NAME)
+    configure_file(${script} ${CMAKE_CURRENT_BINARY_DIR}/${scripts_path}${script_name})
+    if(EXTERNAL_BUILD)
+        configure_file(${script} ${CMAKE_CURRENT_SOURCE_DIR}/493KholopovData/${scripts_path}${script_name})
+    endif()
+endforeach(script)

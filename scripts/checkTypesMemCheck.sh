@@ -1,2 +1,2 @@
 #!/bin/bash
-make all && cat $1 |   valgrind --leak-check=full -v ./checkTypes
+cat $1 |   valgrind --leak-check=full -v ./checkTypes
