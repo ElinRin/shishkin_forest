@@ -1,2 +1,2 @@
 #!/bin/bash
-make all && cat $1 | ./testTableListClasses
+cat $1 | ./testTableListClasses
