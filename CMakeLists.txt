@@ -49,8 +49,6 @@ if (BISON_FOUND)
     )
 endif ()
 
-add_library(bison_spec STATIC ${BisonOutput})
-
 # Build library lexer
 
 file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/parser_src/flex)
@@ -82,14 +80,7 @@ if (FLEX_FOUND)
     )
 endif ()
 
-if (FLEX_PATH) # Dirty hack
-    add_library(lexer STATIC ${FlexOutput})
-    target_include_directories(lexer PRIVATE ${FLEX_PATH}/include)
-else ()
-    add_library(lexer SHARED ${FlexOutput})
-endif ()
-
-target_link_libraries(lexer ${FLEX_LIBRARIES})
+add_library(bison_spec STATIC ${BisonOutput} ${FlexOutput})
 
 # build library SymbolTable
 file(GLOB SymbolTable_SRC SymbolTable/*.cpp)
@@ -128,52 +119,57 @@ target_link_libraries(x86 ir activation_records)
 add_executable(graph graph.cpp)
 target_link_libraries(
         graph
-        lexer bison_spec
+        bison_spec
         syntax_tree pretty_print
         x86
+        ${FLEX_LIBRARIES}
 )
 
 # build checkTypes
 add_executable(checkTypes CheckTypes.cpp)
 target_link_libraries(
         checkTypes
-        lexer bison_spec
+        bison_spec
         syntax_tree
         type_checker
         symbol_table
         x86
+        ${FLEX_LIBRARIES}
 )
 
 #build testTableListClasses
 add_executable(testTableListClasses tableTest.cpp)
 target_link_libraries(
         testTableListClasses
-        lexer bison_spec
+        bison_spec
         syntax_tree
         test_symbol_table symbol_table
         x86
+        ${FLEX_LIBRARIES}
 )
 
 #build listActivations
 add_executable(listActivations ListActivations.cpp)
 target_link_libraries(
         listActivations
-        lexer bison_spec
+        bison_spec
         syntax_tree
         symbol_table
         type_checker
         x86
+        ${FLEX_LIBRARIES}
 )
 
 #build buildIR
 add_executable(buildIR BuildIR.cpp)
 target_link_libraries(
         buildIR
-        lexer bison_spec
+        bison_spec
         syntax_tree
         test_symbol_table symbol_table
         type_checker
         x86
+        ${FLEX_LIBRARIES}
 )
 
 set(scripts_path "./scripts/")
