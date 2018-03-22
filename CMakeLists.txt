@@ -82,6 +82,10 @@ endif ()
 
 add_library(bison_spec STATIC ${BisonOutput} ${FlexOutput})
 
+if (FLEX_PATH)
+    target_include_directories(bison_spec PRIVATE ${FLEX_PATH}/include)
+endif ()
+
 # build library SymbolTable
 file(GLOB SymbolTable_SRC SymbolTable/*.cpp)
 add_library(symbol_table STATIC ${SymbolTable_SRC})
