@@ -44,7 +44,7 @@ int main(void) {
         IRTranslate::Linerizer linerizer;
         IRTranslate::IRLinearForest linerized;
         for(auto& tree: forest) {
-            linerized.insert({tree.first, std::vector<std::unique_ptr<IR::IStm>>()});
+            linerized.insert(std::make_pair(tree.first, std::vector<std::unique_ptr<IR::IStm>>()));
             linerizer.Linerize(tree.second.get(), linerized.at(tree.first));
         }
         IRTranslate::IRPrinter printerLin("lin_IR.dot");
