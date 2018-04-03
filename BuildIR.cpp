@@ -10,13 +10,12 @@
 #include "IRPrinter.h"
 #include "EseqCanonizer.h"
 #include "Linerizer.h"
-#include <unistd.h>
+#include "NoJumpBlock.h"
 
 extern std::unique_ptr<AST::Program> program;
 
 int main(void) {
   yyparse();
-  //sleep(10);
   SymbolTable::TableFiller filler;
   if(program.get()) {
       try {
@@ -49,6 +48,19 @@ int main(void) {
         }
         IRTranslate::IRPrinter printerLin("lin_IR.dot");
         printerLin.CreateGraph(linerized);
+
+        IRTranslate::NoJumpBlocksForest noJumpForest;
+        for(auto& tree: linerized) {
+            noJumpForest.insert(std::move(std::make_pair(tree.first, IRTranslate::NoJumpTree(tree.second))));
+        }
+
+        IRTranslate::IRLinearForest reblocked;
+        for(auto& tree: noJumpForest) {
+            reblocked.insert(std::make_pair(tree.first, tree.second.BuildTree()));
+        }
+
+        IRTranslate::IRPrinter printerReblokced("reblocked_IR.dot");
+        printerReblokced.CreateGraph(reblocked);
       } catch(SymbolTable::DeclarationException e) {
         std::cout << NF_RED << "Declaration error: " << e.what() << NF_RESET << std::endl;
         return 1;
