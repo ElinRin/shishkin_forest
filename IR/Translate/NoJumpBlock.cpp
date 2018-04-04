@@ -61,7 +61,7 @@ NoJumpBlock::NoJumpBlock(std::unique_ptr<IRTranslate::LinearTree>&& _tree) :
     inLabel(nullptr),
     outLabel(nullptr)
 {
-    assert(tree->size() > 0);
+    assert(!tree->empty());
     InLabelVisitor inVisitor;
     tree->at(0)->AcceptVisitor(&inVisitor);
     inLabel = inVisitor.GetLabel();
@@ -82,14 +82,14 @@ NoJumpBlock::NoJumpBlock(NoJumpBlock&& other):
 NoJumpTree::NoJumpTree(LinearTree& fullTree)
 {
     std::unique_ptr<LinearTree> currentTree(new LinearTree());
-    while(fullTree.size() > 0) {
+    while(!fullTree.empty()) {
         InLabelVisitor inVisitor;
         fullTree[0]->AcceptVisitor(&inVisitor);
         if(inVisitor.GetLabel() != nullptr && currentTree->size() > 0) {
             addWithJumpAtTheEnd(inVisitor.GetLabel(), currentTree);
             continue;
         }
-        currentTree->push_back(std::unique_ptr(std::move(fullTree[0])));
+        currentTree->push_back(std::unique_ptr<IR::IStm>(std::move(fullTree[0])));
         fullTree.erase(fullTree.begin());
         OutLabelVisitor outVisitor;
         currentTree->rbegin()->get()->AcceptVisitor(&outVisitor);
@@ -98,7 +98,7 @@ NoJumpTree::NoJumpTree(LinearTree& fullTree)
             continue;
         }
     }
-    if(currentTree->size() > 0) {
+    if(!currentTree->empty()) {
         addLast(currentTree);
     }
 }
@@ -167,7 +167,7 @@ void NoJumpTree::addLast(std::unique_ptr<LinearTree>& currentTree)
 
 void NoJumpTree::addEndedWith(const Label* label, std::unique_ptr<LinearTree>& currentTree, LinearTree& fullTree)
 {
-    if(fullTree.size() == 0) {
+    if(fullTree.empty()) {
         blocks.push_back(std::make_unique<NoJumpBlock>(std::move(currentTree)));
         currentTree.reset(new LinearTree());
         return;
