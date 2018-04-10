@@ -29,3 +29,4 @@ checkTypes
 listActivations
 buildIR
 parser_src/*
+.idea/
