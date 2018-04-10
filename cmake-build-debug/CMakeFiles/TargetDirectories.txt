@@ -1,0 +1,16 @@
+/home/mike/shishkin_forest/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/mike/shishkin_forest/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/mike/shishkin_forest/cmake-build-debug/CMakeFiles/buildIR.dir
+/home/mike/shishkin_forest/cmake-build-debug/CMakeFiles/listActivations.dir
+/home/mike/shishkin_forest/cmake-build-debug/CMakeFiles/testTableListClasses.dir
+/home/mike/shishkin_forest/cmake-build-debug/CMakeFiles/checkTypes.dir
+/home/mike/shishkin_forest/cmake-build-debug/CMakeFiles/symbol_table.dir
+/home/mike/shishkin_forest/cmake-build-debug/CMakeFiles/syntax_tree.dir
+/home/mike/shishkin_forest/cmake-build-debug/CMakeFiles/pretty_print.dir
+/home/mike/shishkin_forest/cmake-build-debug/CMakeFiles/test_symbol_table.dir
+/home/mike/shishkin_forest/cmake-build-debug/CMakeFiles/bison_spec.dir
+/home/mike/shishkin_forest/cmake-build-debug/CMakeFiles/type_checker.dir
+/home/mike/shishkin_forest/cmake-build-debug/CMakeFiles/activation_records.dir
+/home/mike/shishkin_forest/cmake-build-debug/CMakeFiles/ir.dir
+/home/mike/shishkin_forest/cmake-build-debug/CMakeFiles/x86.dir
+/home/mike/shishkin_forest/cmake-build-debug/CMakeFiles/graph.dir

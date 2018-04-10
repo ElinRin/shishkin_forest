@@ -1,0 +1,2 @@
+/usr/bin/ar qc libbison_spec.a  CMakeFiles/bison_spec.dir/parser_src/bison/parser.cpp.o CMakeFiles/bison_spec.dir/parser_src/flex/lex.yy.cc.o
+/usr/bin/ranlib libbison_spec.a

@@ -1,0 +1,2 @@
+/usr/bin/ar qc libtype_checker.a  CMakeFiles/type_checker.dir/TypeChecker/TypeChecker.cpp.o
+/usr/bin/ranlib libtype_checker.a

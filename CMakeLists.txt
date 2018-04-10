@@ -14,6 +14,7 @@ include_directories(
         TestActivationRecords
         IR IR/Expressions IR/Statements IR/Translate
         X86
+        CodeGeneration
 )
 
 # Build library bison_spec

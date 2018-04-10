@@ -1,0 +1,2 @@
+/usr/bin/ar qc libir.a  CMakeFiles/ir.dir/IR/AcceptIRVisitor.cpp.o CMakeFiles/ir.dir/IR/ArrayStruct.cpp.o CMakeFiles/ir.dir/IR/Label.cpp.o CMakeFiles/ir.dir/IR/Translate/EseqCanonizer.cpp.o CMakeFiles/ir.dir/IR/Translate/ExpWrapper.cpp.o CMakeFiles/ir.dir/IR/Translate/IRBuilder.cpp.o CMakeFiles/ir.dir/IR/Translate/IRPrinter.cpp.o CMakeFiles/ir.dir/IR/Translate/Linerizer.cpp.o CMakeFiles/ir.dir/IR/Translate/NoJumpBlock.cpp.o CMakeFiles/ir.dir/IR/Translate/StmWrapper.cpp.o CMakeFiles/ir.dir/IR/Expressions/Temp.cpp.o
+/usr/bin/ranlib libir.a
