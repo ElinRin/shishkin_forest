@@ -1,6 +1,7 @@
 #include "SymbolTable/TableFiller.h"
 
 #include <iostream>
+#include <unistd.h>
 
 #include "tokens.h"
 #include "DeclarationException.h"
@@ -11,6 +12,7 @@
 #include "EseqCanonizer.h"
 #include "Linerizer.h"
 #include "NoJumpBlock.h"
+#include "X86CodeGeneration.h"
 
 extern std::unique_ptr<AST::Program> program;
 
@@ -19,6 +21,7 @@ int main(void) {
   SymbolTable::TableFiller filler;
   if(program.get()) {
       try {
+        //sleep(6);
         filler.FillTable(program.get());
         std::unique_ptr<SymbolTable::Table> symbolTable(filler.DetachTable());
         TypeChecker::TypeChecker checker(symbolTable.get());
@@ -61,6 +64,17 @@ int main(void) {
 
         IRTranslate::IRPrinter printerReblokced("reblocked_IR.dot");
         printerReblokced.CreateGraph(reblocked);
+
+        for(auto& trees: reblocked) {
+            CodeGeneration::Muncher muncher(trees.second);
+            auto list = muncher.CreateInstractionsList();
+            std::cout << trees.first->GetString() << std::endl;
+            std::cout << "-------------------------" << std::endl;
+            for(auto& l: list.Instructions) {
+                std::cout  << l->Format() << std::endl;
+            }
+            std::cout << std::endl;
+        }
       } catch(SymbolTable::DeclarationException e) {
         std::cout << NF_RED << "Declaration error: " << e.what() << NF_RESET << std::endl;
         return 1;

@@ -1,1 +1,0 @@
-/usr/bin/c++  -Wall -g -g   CMakeFiles/buildIR.dir/BuildIR.cpp.o  -o buildIR libbison_spec.a libsyntax_tree.a libtest_symbol_table.a libsymbol_table.a libtype_checker.a libx86.a /usr/lib/x86_64-linux-gnu/libfl.so libir.a libactivation_records.a 

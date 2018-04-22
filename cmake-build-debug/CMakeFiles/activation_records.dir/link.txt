@@ -1,2 +1,0 @@
-/usr/bin/ar qc libactivation_records.a  CMakeFiles/activation_records.dir/ActivationRecords/FrameFiller.cpp.o CMakeFiles/activation_records.dir/ActivationRecords/InFrameAccess.cpp.o CMakeFiles/activation_records.dir/ActivationRecords/InRegAccess.cpp.o CMakeFiles/activation_records.dir/ActivationRecords/TempAddress.cpp.o
-/usr/bin/ranlib libactivation_records.a

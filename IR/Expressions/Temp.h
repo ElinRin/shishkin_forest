@@ -4,6 +4,7 @@
 #include "TempAddress.h"
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace AR = ActivationRecords;
 
@@ -16,27 +17,31 @@ public:
       AI_Name
     };
     static const int TempHolderLocalId = 9000;
-    const int Id;
+    int Id;
 
     //explicit Temp(std::string name);
-    explicit Temp(std::string name, const Coords coords=Coords());
-    //Bexplicit Temp(int localId);
-    explicit Temp(int localId, const Coords coords=Coords());
+    explicit Temp(std::string name, const Coords& coords=Coords(), int uniqueId = -1);
+    //explicit Temp(int localId);
+    explicit Temp(int localId, const Coords& coords=Coords());
     Temp(const Temp& temp);
 
     const T_AdditionalInfo Info() const { return info; }
     const std::string Name() const { return name; }
     int LocalId() const { return localId; }
+    bool IsUnique() const { return unique; }
 
     virtual bool IsCommutative() const override { return true; }
     virtual bool IsAbsolutelyCommutative() const override { return localId == TempHolderLocalId; }
 
 private:
-    const int localId;
+    int localId;
     std::string name;
     T_AdditionalInfo info;
+    bool unique;
 
     ACCEPT_IR_VISITOR
 };
+
+typedef std::vector<const Temp*> TempList;
 
 }

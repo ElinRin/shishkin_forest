@@ -1,2 +1,0 @@
-/usr/bin/ar qc libsyntax_tree.a  CMakeFiles/syntax_tree.dir/SyntaxTree/AcceptVisitor.cpp.o CMakeFiles/syntax_tree.dir/SyntaxTree/TreeNode.cpp.o
-/usr/bin/ranlib libsyntax_tree.a

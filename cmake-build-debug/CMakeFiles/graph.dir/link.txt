@@ -1,1 +1,0 @@
-/usr/bin/c++  -Wall -g -g   CMakeFiles/graph.dir/graph.cpp.o  -o graph libbison_spec.a libsyntax_tree.a libpretty_print.a libx86.a /usr/lib/x86_64-linux-gnu/libfl.so libir.a libactivation_records.a 

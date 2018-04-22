@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace IR {
 
@@ -15,5 +16,7 @@ private:
     Label(const std::string &name);
     std::string name;
 };
+
+typedef std::vector<const Label*> LabelList;
 
 }

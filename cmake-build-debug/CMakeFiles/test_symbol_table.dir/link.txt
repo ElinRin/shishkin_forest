@@ -1,2 +1,0 @@
-/usr/bin/ar qc libtest_symbol_table.a  CMakeFiles/test_symbol_table.dir/TestSymbolTable/TableVisitor.cpp.o
-/usr/bin/ranlib libtest_symbol_table.a

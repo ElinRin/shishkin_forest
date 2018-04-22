@@ -1,2 +1,0 @@
-/usr/bin/ar qc libx86.a  CMakeFiles/x86.dir/X86/Dependencies.cpp.o CMakeFiles/x86.dir/X86/X86CodeGeneration.cpp.o CMakeFiles/x86.dir/X86/X86MiniJavaClassStruct.cpp.o CMakeFiles/x86.dir/X86/X86MiniJavaFrame.cpp.o CMakeFiles/x86.dir/X86/X86MiniJavaTypeSpec.cpp.o
-/usr/bin/ranlib libx86.a
