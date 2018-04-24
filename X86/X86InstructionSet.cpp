@@ -8,6 +8,12 @@ RegMove::RegMove(const std::string code, const IR::Temp* from, const IR::Temp* t
     asmCode = code;
 }
 
+RegMove::RegMove(const std::string code, const IR::TempList&& from):
+    MoveInstruction(std::move(from))
+{
+    asmCode = code;
+}
+
 RegMove::RegMove(const std::string code, const IR::Const* from, const IR::Temp* to):
     MoveInstruction(from, to)
 {

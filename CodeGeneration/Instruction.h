@@ -31,7 +31,16 @@ public:
             }
             s.erase(0, pos + 2);
         }
-        return instructionString + s;
+        instructionString += s;
+        instructionString += "\tUsed:";
+        for(auto& tmp: src) {
+            instructionString += " r" + tmp->Name() + std::to_string(tmp->Id) + ";";
+        }
+        instructionString += "\tDefined:";
+        for(auto& tmp: dst) {
+            instructionString += " r" + tmp->Name() + std::to_string(tmp->Id) + ";";
+        }
+        return instructionString;
     }
 
 protected:
@@ -48,7 +57,10 @@ public:
         src.push_back(from);
         dst.push_back(to);
     }
-
+    MoveInstruction(const IR::TempList&& from)
+    {
+        src = from;
+    }
     MoveInstruction(const IR::Const* from, const IR::Temp* to): fromConst(from) { dst.push_back(to); }
 
 private:

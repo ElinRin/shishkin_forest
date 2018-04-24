@@ -150,23 +150,23 @@ void Muncher::munchMove(const IExp* source, const Mem* destination)
         // MOVE(MEM(BINOP(PLUS, e1, CONST(i))), e2)
         if(const Const* c = dynamic_cast<const Const*>(binop->RightExpression.get())) {
             emit(new X86::RegMove("MOV [%0 + " + std::to_string(c->value) + "] %1",
-                              munchExp(source), munchExp(binop->LeftExpression.get())));
+                                  std::move(TempList({munchExp(source), munchExp(binop->LeftExpression.get())}))));
         }
         // MOVE(MEM(BINOP(PLUS, CONST(i), e1)), e2)
         else if(const Const* c = dynamic_cast<const Const*>(binop->LeftExpression.get())) {
             emit(new X86::RegMove("MOV [%0 + " + std::to_string(c->value) + "] %1",
-                              munchExp(source), munchExp(binop->RightExpression.get())));
+                              std::move(TempList({munchExp(source), munchExp(binop->RightExpression.get())}))));
         }
         // MOVE(MEM())
         else {
             emit(new X86::RegMove("MOV [%0] %1",
-                              munchExp(source), munchExp(binop)));
+                              std::move(TempList({munchExp(source), munchExp(binop)}))));
         }
     }
     // MOVE(MEM(e1), e2)
     else  {
         emit(new X86::RegMove("MOV [%0] %1",
-                          munchExp(source), munchExp(destination->Expression.get())));
+                          std::move(TempList({munchExp(source), munchExp(destination->Expression.get())}))));
     }
 }
 
@@ -258,13 +258,13 @@ const Temp*Muncher::munchCall(const Call* call)
         const Temp* funcAddress = dynamic_cast<const Temp*>(mem->Expression.get());
         assert(funcAddress);
         listArgs.push_back(funcAddress);
-        emit(new X86::CISCOperation("CALL [%" + std::to_string(listArgs.size() - 1) +"]", std::move(TempList()),
-                                    std::move(listArgs)));
+        emit(new X86::CISCOperation("CALL [%" + std::to_string(listArgs.size() - 1) +"]", std::move(listArgs),
+                                    std::move(TempList())));
         return eax;
     }
     if(const Name* name = dynamic_cast<const Name*>(call->FuncExpression.get())) {
-        emit(new X86::CISCOperation("CALL " + name->LabelName->GetName(), std::move(TempList()),
-                                    std::move(listArgs)));
+        emit(new X86::CISCOperation("CALL " + name->LabelName->GetName(), std::move(listArgs),
+                                    std::move(TempList())));
         return eax;
     }
     assert(false);
