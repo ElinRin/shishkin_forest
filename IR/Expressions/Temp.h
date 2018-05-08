@@ -45,3 +45,23 @@ private:
 typedef std::vector<const Temp*> TempList;
 
 }
+
+namespace std {
+  template <> struct hash<IR::Temp>
+  {
+    size_t operator()(const IR::Temp& x) const
+    {
+        return std::hash<int>()(x.Id);
+    }
+  };
+}
+
+namespace std {
+  template <> struct hash< std::unique_ptr<const IR::Temp> >
+  {
+    size_t operator()(const std::unique_ptr<const IR::Temp>& x) const
+    {
+        return std::hash<IR::Temp>()(*x);
+    }
+  };
+}

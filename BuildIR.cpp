@@ -13,6 +13,7 @@
 #include "Linerizer.h"
 #include "NoJumpBlock.h"
 #include "X86CodeGeneration.h"
+#include "LifecycleNode.h"
 
 extern std::unique_ptr<AST::Program> program;
 

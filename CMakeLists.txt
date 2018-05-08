@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.8)
 project(shishkin_forest)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "-Wall -g")
+set(CMAKE_CXX_FLAGS "-Wall -Wno-sign-compare -Wno-write-strings -g")
 
 include_directories(
         .
@@ -15,6 +15,7 @@ include_directories(
         IR IR/Expressions IR/Statements IR/Translate
         CodeGeneration
         X86
+        RegLifecycle
 )
 
 # Build library bison_spec
@@ -119,6 +120,11 @@ add_library(type_checker STATIC ${TypeChecker_SRC})
 file(GLOB X86_SRC X86/*.cpp)
 add_library(x86 STATIC ${X86_SRC})
 target_link_libraries(x86 ir activation_records)
+
+# build library RegLifecycle
+file(GLOB RegLifecycle_SRC RegLifecycle/*.cpp)
+add_library(reg_lifecycle STATIC ${RegLifecycle_SRC})
+target_link_libraries(reg_lifecycle ir)
 
 # build graph
 add_executable(graph graph.cpp)
