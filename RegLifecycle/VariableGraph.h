@@ -15,6 +15,7 @@ public:
 
         void AddConnection(Node* with);
         void AddMove(Node* with);
+        const IR::Temp& GetReg() const { return temp; }
 
     private:
         IR::Temp temp;
@@ -25,6 +26,8 @@ public:
     };
 
     VariableGraph(const LifecycleGraph& graph);
+
+    const std::unordered_map<IR::Temp, std::unique_ptr<Node> >& GetNodes() const { return nodes; }
 
 private:
     std::unordered_map<IR::Temp, std::unique_ptr<Node> > nodes;

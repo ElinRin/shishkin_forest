@@ -9,6 +9,7 @@ protected:
     struct Arrow {
         std::string From;
         std::string To;
+        bool Dashed;
     };
 
     std::vector<Arrow> Arrows;
@@ -24,9 +25,9 @@ protected:
         Dot.close();
     }
 
-    void AddArrow(const std::string &name)
+    void AddArrow(const std::string &name, bool dashed = false)
     {
-        Arrows.push_back({"\"" + ParentName + "\"", "\"" + name + "\""});
+        Arrows.push_back({"\"" + ParentName + "\"", "\"" + name + "\"", dashed});
     }
 
     const std::string AddNode(const std::string label)
@@ -40,10 +41,11 @@ protected:
         return name;
     }
 
-    void PrintArrows() {
+    void PrintArrows(bool direct = true) {
         for(int i = 0; i < Arrows.size(); ++i) {
             Arrow& arrow = Arrows[i];
-            Dot << arrow.From << " -> " << arrow.To << " [\n" <<
+            Dot << arrow.From << (direct ? " -> " : " -- ") << arrow.To << " [\n" <<
+                   (arrow.Dashed ? "style=dashed " : "") <<
                    "id = " << i << "\n" <<
                    "];" << std::endl;
         }
