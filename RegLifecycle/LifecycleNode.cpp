@@ -4,13 +4,19 @@ namespace RegLifecycle {
 
 LifecycleNode::LifecycleNode(const CodeGeneration::IInstruction* instruction,
                              const IR::TempList& used, const IR::TempList& defined):
-    instruction(instruction)
+    instruction(instruction),
+    isMove(false)
 {
     for(auto u: used) {
         this->used.insert(u);
     }
     for(auto d: defined) {
         this->defined.insert(d);
+    }
+    if(dynamic_cast<const CG::MoveInstruction*>(instruction) != nullptr &&
+            instruction->DefinedVars().size() > 0)
+    {
+        isMove = true;
     }
 }
 
@@ -32,6 +38,20 @@ bool LifecycleNode::Update()
         }
     }
     return inserted;
+}
+
+std::string LifecycleNode::Format() const
+{
+    std::string name = isMove ? "move |" : " |";
+//    for(auto t: in) {
+//        name += " " + t->Name() + "[" + std::to_string(t->Id) + " ]";
+//    }
+//    name += " |";
+//    for(auto t: out) {
+//        name += " " + t->Name() + "[" + std::to_string(t->Id) + " ]";
+//    }
+    name += instruction->Format();
+    return name;
 }
 
 }

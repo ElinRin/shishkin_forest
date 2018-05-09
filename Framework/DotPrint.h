@@ -24,12 +24,12 @@ protected:
         Dot.close();
     }
 
-    void AddArrow(std::string &name)
+    void AddArrow(const std::string &name)
     {
         Arrows.push_back({"\"" + ParentName + "\"", "\"" + name + "\""});
     }
 
-    std::string AddNode(std::string label)
+    const std::string AddNode(const std::string label)
     {
         std::string name = "name" + std::to_string(NodeCounter);
         Dot << "\"" << name << "\" [\n"

@@ -14,6 +14,7 @@ include_directories(
         TestActivationRecords
         IR IR/Expressions IR/Statements IR/Translate
         CodeGeneration
+        Framework
         X86
         RegLifecycle
 )
@@ -180,6 +181,7 @@ target_link_libraries(
         test_symbol_table symbol_table
         type_checker
         x86
+        reg_lifecycle
         ${FLEX_LIBRARIES}
 )
 
