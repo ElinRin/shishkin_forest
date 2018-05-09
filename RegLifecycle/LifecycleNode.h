@@ -15,23 +15,28 @@ public:
 
     bool Update();
 
-    void AddConnection(const LifecycleNode* target) { next.push_back(target); }
+    void AddConnection(LifecycleNode* target) {
+        next.push_back(target);
+        target->prev.push_back(this);
+    }
 
     std::string Format() const;
 
     const std::vector<const LifecycleNode*>& GetNext() const { return next; }
+    const std::vector<const LifecycleNode*>& GetPrev() const { return prev; }
 
 private:
     const CG::IInstruction* instruction;
 
     bool isMove;
-    std::unordered_set<const IR::Temp*> used;
-    std::unordered_set<const IR::Temp*> defined;
+    std::unordered_set<IR::Temp> used;
+    std::unordered_set<IR::Temp> defined;
 
     std::vector<const LifecycleNode*> next;
+    std::vector<const LifecycleNode*> prev;
 
-    std::unordered_set<const IR::Temp*> in;
-    std::unordered_set<const IR::Temp*> out;
+    std::unordered_set<IR::Temp> in;
+    std::unordered_set<IR::Temp> out;
 };
 
 }

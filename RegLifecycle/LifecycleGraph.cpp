@@ -45,27 +45,25 @@ LifecycleGraph::LifecycleGraph(LifecycleGraph&& other):
 
 void LifecycleGraph::BuildLifecycle()
 {
-    for(bool changed = true; changed;) {
-        changed = false;
-        for(auto& n: nodes) {
-            changed |= n->Update();
-        }
-    }
-
-    /*
     std::unordered_set<LifecycleNode*> nodesToUpdate;
     for(auto& n: nodes) {
         nodesToUpdate.insert(n.get());
     }
     while(nodesToUpdate.size() > 0) {
         LifecycleNode* node = *nodesToUpdate.begin();
+        nodesToUpdate.erase(nodesToUpdate.begin());
         if(node->Update()) {
-            auto toUpdate = node->GetNext();
-            for(auto next: toUpdate) {
-                nodesToUpdate.insert(to)
+            auto& toUpdateNext = node->GetNext();
+            for(auto next: toUpdateNext) {
+                nodesToUpdate.insert(const_cast<LifecycleNode*>(next));
+            }
+
+            auto& toUpdatePrev = node->GetPrev();
+            for(auto next: toUpdatePrev) {
+                nodesToUpdate.insert(const_cast<LifecycleNode*>(next));
             }
         }
-    }*/
+    }
 }
 
 }

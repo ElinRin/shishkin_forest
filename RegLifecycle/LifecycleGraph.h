@@ -15,7 +15,7 @@ public:
 
 private:
     std::vector< std::unique_ptr<LifecycleNode> > nodes;
-    std::unordered_set<std::unique_ptr<const IR::Temp>> regs;
+    std::unordered_set<std::unique_ptr<IR::Temp>> regs;
     std::unordered_map<const IR::Label*, int> labelsPositions;
 };
 

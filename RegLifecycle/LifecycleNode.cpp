@@ -8,10 +8,10 @@ LifecycleNode::LifecycleNode(const CodeGeneration::IInstruction* instruction,
     isMove(false)
 {
     for(auto u: used) {
-        this->used.insert(u);
+        this->used.insert(*u);
     }
     for(auto d: defined) {
-        this->defined.insert(d);
+        this->defined.insert(*d);
     }
     if(dynamic_cast<const CG::MoveInstruction*>(instruction) != nullptr &&
             instruction->DefinedVars().size() > 0)
@@ -43,13 +43,16 @@ bool LifecycleNode::Update()
 std::string LifecycleNode::Format() const
 {
     std::string name = isMove ? "move |" : " |";
-//    for(auto t: in) {
-//        name += " " + t->Name() + "[" + std::to_string(t->Id) + " ]";
-//    }
-//    name += " |";
-//    for(auto t: out) {
-//        name += " " + t->Name() + "[" + std::to_string(t->Id) + " ]";
-//    }
+    /*
+    for(auto& t: in) {
+        name += " " + t.Name() + "[" + std::to_string(t.Id) + " ]";
+    }
+    name += " |";
+    for(auto& t: out) {
+        name += " " + t.Name() + "[" + std::to_string(t.Id) + " ]";
+    }
+    name += " |";
+    */
     name += instruction->Format();
     return name;
 }

@@ -5,7 +5,7 @@ namespace RegLifecycle {
 void LifecyclePrinter::PrintPrefix()
 {
     Dot << "digraph g {\n" <<
-           "graph [ rankdir = LR ];\n"
+           "graph [ rankdir = TD ];\n"
            "node [\n"
            "fontsize = \"16\"\n"
            "shape = \"ellipse\"\n"

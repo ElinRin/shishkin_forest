@@ -44,10 +44,10 @@ void Muncher::munchStm(const IStm* s) {
 }
 
 void Muncher::munchMove(const IExp* source, const IExp* destination) {
-    if(const Mem* temp = dynamic_cast<const Mem*>(source)) {
+    if (const Mem* temp = dynamic_cast<const Mem*>(destination)) {
+            munchMove(source, temp);
+    } else if(const Mem* temp = dynamic_cast<const Mem*>(source)) {
             munchMove(temp, destination);
-    } else if (const Mem* temp = dynamic_cast<const Mem*>(destination)) {
-        munchMove(source, temp);
     } else if(const Temp* temp = dynamic_cast<const Temp*>(destination)){
         munchMove(source, temp);
     } else {
@@ -95,8 +95,8 @@ const Temp* Muncher::munchExp(const IExp* exp) {
             result = new Temp("NOT");
             instructionsList.Registers.push_back(std::unique_ptr<const Temp>(result));
             emit(new X86::RegMove("MOV %0 %1", munchExp(unary->Expression.get()), result));
-            emit(new X86::CISCOperation("NOT %0", std::move(TempList({result})),
-                                        std::move(TempList({result}))));
+            emit(new X86::CISCOperation("NOT %0", std::move(ConstTempList({result})),
+                                        std::move(ConstTempList({result}))));
             return result;
         default:
             assert(false);
@@ -150,23 +150,23 @@ void Muncher::munchMove(const IExp* source, const Mem* destination)
         // MOVE(MEM(BINOP(PLUS, e1, CONST(i))), e2)
         if(const Const* c = dynamic_cast<const Const*>(binop->RightExpression.get())) {
             emit(new X86::RegMove("MOV [%0 + " + std::to_string(c->value) + "] %1",
-                                  std::move(TempList({munchExp(source), munchExp(binop->LeftExpression.get())}))));
+                                  std::move(ConstTempList({munchExp(binop->LeftExpression.get()), munchExp(source)}))));
         }
         // MOVE(MEM(BINOP(PLUS, CONST(i), e1)), e2)
         else if(const Const* c = dynamic_cast<const Const*>(binop->LeftExpression.get())) {
             emit(new X86::RegMove("MOV [%0 + " + std::to_string(c->value) + "] %1",
-                              std::move(TempList({munchExp(source), munchExp(binop->RightExpression.get())}))));
+                              std::move(ConstTempList({munchExp(binop->RightExpression.get()), munchExp(source)}))));
         }
         // MOVE(MEM())
         else {
             emit(new X86::RegMove("MOV [%0] %1",
-                              std::move(TempList({munchExp(source), munchExp(binop)}))));
+                              std::move(ConstTempList({munchExp(binop), munchExp(source)}))));
         }
     }
     // MOVE(MEM(e1), e2)
     else  {
         emit(new X86::RegMove("MOV [%0] %1",
-                          std::move(TempList({munchExp(source), munchExp(destination->Expression.get())}))));
+                          std::move(ConstTempList({munchExp(destination->Expression.get()), munchExp(source)}))));
     }
 }
 
@@ -175,19 +175,19 @@ void Muncher::munchMove(const IExp* source, const Temp* destination) {
     emit(new X86::RegMove("MOV %0 %1", munchExp(source), destination));
 }
 
-TempList Muncher::munchExpList(const ExpList* list)
+ConstTempList Muncher::munchExpList(const ExpList* list)
 {
     const IExp* head = list->Head.get();
     const IExp* tail = list->Tail.get();
-    TempList temps;
+    ConstTempList temps;
     if(const ExpList* subList = dynamic_cast<const ExpList*>(head)) {
-        TempList subTemps = munchExpList(subList);
+        ConstTempList subTemps = munchExpList(subList);
         temps.insert(temps.end(), subTemps.begin(), subTemps.end());
     } else {
         temps.push_back(munchExp(head));
     }
     if(const ExpList* subList = dynamic_cast<const ExpList*>(tail)) {
-        TempList subTemps = munchExpList(subList);
+        ConstTempList subTemps = munchExpList(subList);
         temps.insert(temps.end(), subTemps.begin(), subTemps.end());
     } else if( tail != nullptr ){
         temps.push_back(munchExp(tail));
@@ -253,18 +253,18 @@ const Temp*Muncher::munchCall(const Call* call)
 {
     const Temp* eax = new Temp("EAX", Coords(), X86::EAX);
     instructionsList.Registers.push_back(std::unique_ptr<const Temp>(eax));
-    TempList listArgs(munchExpList(call->Arguments.get()));
+    ConstTempList listArgs(munchExpList(call->Arguments.get()));
     if(const Mem* mem = dynamic_cast<const Mem*>(call->FuncExpression.get())) {
         const Temp* funcAddress = dynamic_cast<const Temp*>(mem->Expression.get());
         assert(funcAddress);
         listArgs.push_back(funcAddress);
         emit(new X86::CISCOperation("CALL [%" + std::to_string(listArgs.size() - 1) +"]", std::move(listArgs),
-                                    std::move(TempList())));
+                                    std::move(ConstTempList())));
         return eax;
     }
     if(const Name* name = dynamic_cast<const Name*>(call->FuncExpression.get())) {
         emit(new X86::CISCOperation("CALL " + name->LabelName->GetName(), std::move(listArgs),
-                                    std::move(TempList())));
+                                    std::move(ConstTempList())));
         return eax;
     }
     assert(false);
@@ -299,22 +299,22 @@ const Temp* Muncher::munchBinopRegular(const Binop* binop, const std::string& pr
     if( const Const* left = dynamic_cast<const Const*>(binop->LeftExpression.get()) ) {
         emit(new X86::RegMove("MOV %0 %1", munchExp(binop->RightExpression.get()), returnReg));
         emit(new X86::CISCOperation(prefix + "%0 " + std::to_string(left->value),
-                                    std::move(TempList({returnReg})), std::move(TempList({returnReg}))));
+                                    std::move(ConstTempList({returnReg})), std::move(ConstTempList({returnReg}))));
         return returnReg;
     }
     //BINOP(_, Const, e1)
     else if(const Const* right = dynamic_cast<const Const*>(binop->RightExpression.get())) {
         emit(new X86::RegMove("MOV %0 %1", munchExp(binop->LeftExpression.get()), returnReg));
         emit(new X86::CISCOperation(prefix + "%0 " + std::to_string(right->value),
-                                    std::move(TempList({returnReg})), std::move(TempList({returnReg}))));
+                                    std::move(ConstTempList({returnReg})), std::move(ConstTempList({returnReg}))));
         return returnReg;
     }
     //BINOP(_, e1, e2)
     else {
         emit(new X86::RegMove("MOV %0 %1", munchExp(binop->LeftExpression.get()), returnReg));
         emit(new X86::CISCOperation(prefix + "%0 %1",
-                                    std::move(TempList({munchExp(binop->RightExpression.get())})),
-                                    std::move(TempList({returnReg}))));
+                                    std::move(ConstTempList({munchExp(binop->RightExpression.get())})),
+                                    std::move(ConstTempList({returnReg}))));
         return returnReg;
     }
 }
@@ -326,23 +326,23 @@ const Temp*Muncher::munchBinopMul(const Binop* binop)
     //BINOP(MUL, e1, Const)
     if( const Const* left = dynamic_cast<const Const*>(binop->LeftExpression.get()) ) {
         emit(new X86::CISCOperation("IMUL %0 %1 " + std::to_string(left->value),
-                                    std::move(TempList({munchExp(binop->RightExpression.get())})),
-                                    std::move(TempList({returnReg}))));
+                                    std::move(ConstTempList({munchExp(binop->RightExpression.get())})),
+                                    std::move(ConstTempList({returnReg}))));
         return returnReg;
     }
     //BINOP(MUL, Const, e1)
     else if(const Const* right = dynamic_cast<const Const*>(binop->RightExpression.get())) {
         emit(new X86::CISCOperation("IMUL %0 %1 " + std::to_string(right->value),
-                                    std::move(TempList({munchExp(binop->LeftExpression.get())})),
-                                    std::move(TempList({returnReg}))));
+                                    std::move(ConstTempList({munchExp(binop->LeftExpression.get())})),
+                                    std::move(ConstTempList({returnReg}))));
         return returnReg;
     }
     //BINOP(MUL, e1, e2)
     else {
         emit(new X86::RegMove("MOV %0 %1", munchExp(binop->LeftExpression.get()), returnReg));
         emit(new X86::CISCOperation("IMUL %0 %1",
-                                    std::move(TempList({munchExp(binop->RightExpression.get())})),
-                                    std::move(TempList({returnReg}))));
+                                    std::move(ConstTempList({munchExp(binop->RightExpression.get())})),
+                                    std::move(ConstTempList({returnReg}))));
         return returnReg;
     }
 }
@@ -355,8 +355,8 @@ const Temp* Muncher::munchBinopDiv(const Binop* binop)
     instructionsList.Registers.push_back(std::unique_ptr<const Temp>(edx));
     emit(new X86::RegMove("MOV %0 %1", munchExp(binop->LeftExpression.get()), eax));
     emit(new X86::CISCOperation("IDIV %1",
-                                std::move(TempList({munchExp(binop->RightExpression.get()), eax})),
-                                std::move(TempList({edx}))));
+                                std::move(ConstTempList({munchExp(binop->RightExpression.get()), eax})),
+                                std::move(ConstTempList({edx}))));
     Temp* returnReg = new Temp("BINOP(Regular)");
     instructionsList.Registers.push_back(std::unique_ptr<const Temp>(returnReg));
     emit(new X86::RegMove("MOV %0 %1", edx, returnReg));
@@ -365,8 +365,8 @@ const Temp* Muncher::munchBinopDiv(const Binop* binop)
 
 
 void Muncher::munchJump(const Label* LabelToJump) {
-    emit(new X86::CISCOperation("JMP %l", std::move(TempList()),
-                                std::move(TempList()), std::move(LabelList({LabelToJump}))));
+    emit(new X86::CISCOperation("JMP %l", std::move(ConstTempList()),
+                                std::move(ConstTempList()), std::move(LabelList({LabelToJump}))));
 }
 
 void Muncher::munchJumpC(const IExp* conditionLeftExpression, const IExp* conditionRightExpression,
@@ -375,26 +375,26 @@ void Muncher::munchJumpC(const IExp* conditionLeftExpression, const IExp* condit
 {
     if(const Const* c = dynamic_cast<const Const*>(conditionLeftExpression)) {
         const Temp* e = munchExp(conditionRightExpression);
-        emit(new X86::CISCOperation("CMP %0 " + std::to_string(c->value), std::move(TempList({e})), std::move(TempList())));
+        emit(new X86::CISCOperation("CMP %0 " + std::to_string(c->value), std::move(ConstTempList({e})), std::move(ConstTempList())));
     }
     else if(const Const* c = dynamic_cast<const Const*>(conditionRightExpression)) {
         const Temp* e = munchExp(conditionLeftExpression);
-        emit(new X86::CISCOperation("CMP %0 " + std::to_string(c->value), std::move(TempList({e})), std::move(TempList())));
+        emit(new X86::CISCOperation("CMP %0 " + std::to_string(c->value), std::move(ConstTempList({e})), std::move(ConstTempList())));
     }
     else {
         const Temp* e1 = munchExp(conditionLeftExpression);
         const Temp* e2 = munchExp(conditionRightExpression);
-        emit(new X86::CISCOperation("CMP %0 %1", std::move(TempList({e1, e2})), std::move(TempList())));
+        emit(new X86::CISCOperation("CMP %0 %1", std::move(ConstTempList({e1, e2})), std::move(ConstTempList())));
     }
     switch (jumpType) {
     case JumpC::TJ_EQ:
-        emit(new X86::CISCOperation("JE %l", std::move(TempList()), std::move(TempList()), std::move(LabelList({trueLabel}))));
+        emit(new X86::CISCOperation("JE %l", std::move(ConstTempList()), std::move(ConstTempList()), std::move(LabelList({trueLabel}))));
         break;
     case JumpC::TJ_LT:
-        emit(new X86::CISCOperation("JL %l", std::move(TempList()), std::move(TempList()), std::move(LabelList({trueLabel}))));
+        emit(new X86::CISCOperation("JL %l", std::move(ConstTempList()), std::move(ConstTempList()), std::move(LabelList({trueLabel}))));
         break;
     case JumpC::TJ_NEQ:
-        emit(new X86::CISCOperation("JNE %l", std::move(TempList()), std::move(TempList()), std::move(LabelList({trueLabel}))));
+        emit(new X86::CISCOperation("JNE %l", std::move(ConstTempList()), std::move(ConstTempList()), std::move(LabelList({trueLabel}))));
         break;
     default:
         break;

@@ -80,7 +80,7 @@ int main(void) {
             lifecycleGraph.BuildLifecycle();
             printerLifecycle.Print(lifecycleGraph.GetNodesList());
             for(auto& l: list.Instructions) {
-                std::cout  << l->Format() << std::endl;
+                std::cout  << l->FormatLong() << std::endl;
             }
             std::cout << std::endl;
         }

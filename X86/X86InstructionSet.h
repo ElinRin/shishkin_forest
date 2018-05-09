@@ -15,8 +15,8 @@ enum Regs {
 
 class CISCOperation: public CG::IInstruction {
 public:
-    CISCOperation(std::string code, const IR::TempList&& srcList,
-                  const IR::TempList&& dstList, const IR::LabelList&& targetLabels)
+    CISCOperation(std::string code, const IR::ConstTempList&& srcList,
+                  const IR::ConstTempList&& dstList, const IR::LabelList&& targetLabels)
     {
         src = srcList;
         dst = dstList;
@@ -24,8 +24,8 @@ public:
         asmCode = code;
     }
 
-    CISCOperation(std::string code, const IR::TempList&& srcList,
-                  const IR::TempList&& dstList)
+    CISCOperation(std::string code, const IR::ConstTempList&& srcList,
+                  const IR::ConstTempList&& dstList)
     {
         src = srcList;
         dst = dstList;
@@ -36,7 +36,7 @@ public:
 class RegMove: public CG::MoveInstruction {
 public:
     RegMove(const std::string code, const IR::Temp* from, const IR::Temp* to);
-    RegMove(const std::string code, const IR::TempList&& from);
+    RegMove(const std::string code, const IR::ConstTempList&& from);
     RegMove(const std::string code, const IR::Const* from, const IR::Temp* to);
 };
 

@@ -19,6 +19,7 @@ public:
     static const int TempHolderLocalId = 9000;
     int Id;
 
+    Temp():Id(-1), localId(-1), info(AI_Id), unique(false) {}
     //explicit Temp(std::string name);
     explicit Temp(std::string name, const Coords& coords=Coords(), int uniqueId = -1);
     //explicit Temp(int localId);
@@ -33,6 +34,8 @@ public:
     virtual bool IsCommutative() const override { return true; }
     virtual bool IsAbsolutelyCommutative() const override { return localId == TempHolderLocalId; }
 
+    bool operator==(const IR::Temp& other) const { return other.Id == Id; }
+
 private:
     int localId;
     std::string name;
@@ -42,7 +45,8 @@ private:
     ACCEPT_IR_VISITOR
 };
 
-typedef std::vector<const Temp*> TempList;
+typedef std::vector<const Temp*> ConstTempList;
+typedef std::vector<Temp*> TempList;
 
 }
 
