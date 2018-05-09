@@ -69,10 +69,16 @@ private:
 
 class LabelInstruction: public IInstruction {
 public:
-    LabelInstruction( const IR::Label* l ) { labelList.push_back(l); }
+    LabelInstruction( const IR::Label* l ): label(l) {}
+
+    const IR::Label* GetLabel() const { return label; }
+
     virtual std::string Format() const override {
-        return labelList[0]->GetName() + ":";
+        return label->GetName() + ":";
     }
+
+private:
+    const IR::Label* label;
 };
 
 struct InstructionList {

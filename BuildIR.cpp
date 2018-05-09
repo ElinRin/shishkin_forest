@@ -13,7 +13,8 @@
 #include "Linerizer.h"
 #include "NoJumpBlock.h"
 #include "X86CodeGeneration.h"
-#include "LifecycleNode.h"
+#include "LifecycleGraph.h"
+#include "LifecyclePrinter.h"
 
 extern std::unique_ptr<AST::Program> program;
 
@@ -66,16 +67,24 @@ int main(void) {
         IRTranslate::IRPrinter printerReblokced("reblocked_IR.dot");
         printerReblokced.CreateGraph(reblocked);
 
+        RegLifecycle::LifecyclesList graphs;
+
+        RegLifecycle::LifecyclePrinter printerLifecycle("lifecycle.dot");
+        printerLifecycle.PrintPrefix();
         for(auto& trees: reblocked) {
             CodeGeneration::Muncher muncher(trees.second);
             auto list = muncher.CreateInstractionsList();
             std::cout << trees.first->GetString() << std::endl;
             std::cout << "-------------------------" << std::endl;
+            RegLifecycle::LifecycleGraph lifecycleGraph(list);
+            lifecycleGraph.BuildLifecycle();
+            printerLifecycle.Print(lifecycleGraph.GetNodesList());
             for(auto& l: list.Instructions) {
                 std::cout  << l->Format() << std::endl;
             }
             std::cout << std::endl;
         }
+        printerLifecycle.PrintPostfix();
       } catch(SymbolTable::DeclarationException e) {
         std::cout << NF_RED << "Declaration error: " << e.what() << NF_RESET << std::endl;
         return 1;

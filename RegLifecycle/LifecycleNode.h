@@ -15,8 +15,16 @@ public:
 
     bool Update();
 
+    void AddConnection(const LifecycleNode* target) { next.push_back(target); }
+
+    std::string Format() const;
+
+    const std::vector<const LifecycleNode*>& GetNext() const { return next; }
+
 private:
     const CG::IInstruction* instruction;
+
+    bool isMove;
     std::unordered_set<const IR::Temp*> used;
     std::unordered_set<const IR::Temp*> defined;
 
