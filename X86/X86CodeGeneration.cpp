@@ -51,7 +51,7 @@ void Muncher::munchMove(const IExp* source, const IExp* destination) {
     } else if(const Temp* temp = dynamic_cast<const Temp*>(destination)){
         munchMove(source, temp);
     } else {
-        emit(new X86::RegMove("MOV %0 %1", munchExp(source), munchExp(destination)));
+        emit(new X86::RegMove("MOV %0 %1", munchExp(source), munchExp(destination), true));
     }
 }
 
@@ -94,7 +94,7 @@ const Temp* Muncher::munchExp(const IExp* exp) {
         case Unaryop::TU_NOT:
             result = new Temp("NOT");
             instructionsList.Registers.push_back(std::unique_ptr<const Temp>(result));
-            emit(new X86::RegMove("MOV %0 %1", munchExp(unary->Expression.get()), result));
+            emit(new X86::RegMove("MOV %0 %1", munchExp(unary->Expression.get()), result, true));
             emit(new X86::CISCOperation("NOT %0", std::move(ConstTempList({result})),
                                         std::move(ConstTempList({result}))));
             return result;
@@ -135,7 +135,7 @@ void Muncher::munchMove(const Mem* source, const IExp* destination) {
     // MOVE(MEM(e1), e2)
     else if(const Temp* temp = dynamic_cast<const Temp*>(source->Expression.get()) ) {
         emit(new X86::RegMove("MOV %0 %1",
-                          temp, munchExp(destination)));
+                          temp, munchExp(destination), true));
     } else {
         emit(new X86::RegMove("MOV %0 [%1]",
                           munchExp(source->Expression.get()), munchExp(destination)));
@@ -172,7 +172,7 @@ void Muncher::munchMove(const IExp* source, const Mem* destination)
 
 void Muncher::munchMove(const IExp* source, const Temp* destination) {
     // MOVE(TEMP(t1), e)
-    emit(new X86::RegMove("MOV %0 %1", munchExp(source), destination));
+    emit(new X86::RegMove("MOV %0 %1", munchExp(source), destination, true));
 }
 
 ConstTempList Muncher::munchExpList(const ExpList* list)
@@ -297,21 +297,21 @@ const Temp* Muncher::munchBinopRegular(const Binop* binop, const std::string& pr
     instructionsList.Registers.push_back(std::unique_ptr<const Temp>(returnReg));
     //BINOP(_, e1, Const)
     if( const Const* left = dynamic_cast<const Const*>(binop->LeftExpression.get()) ) {
-        emit(new X86::RegMove("MOV %0 %1", munchExp(binop->RightExpression.get()), returnReg));
+        emit(new X86::RegMove("MOV %0 %1", munchExp(binop->RightExpression.get()), returnReg, true));
         emit(new X86::CISCOperation(prefix + "%0 " + std::to_string(left->value),
                                     std::move(ConstTempList({returnReg})), std::move(ConstTempList({returnReg}))));
         return returnReg;
     }
     //BINOP(_, Const, e1)
     else if(const Const* right = dynamic_cast<const Const*>(binop->RightExpression.get())) {
-        emit(new X86::RegMove("MOV %0 %1", munchExp(binop->LeftExpression.get()), returnReg));
+        emit(new X86::RegMove("MOV %0 %1", munchExp(binop->LeftExpression.get()), returnReg, true));
         emit(new X86::CISCOperation(prefix + "%0 " + std::to_string(right->value),
                                     std::move(ConstTempList({returnReg})), std::move(ConstTempList({returnReg}))));
         return returnReg;
     }
     //BINOP(_, e1, e2)
     else {
-        emit(new X86::RegMove("MOV %0 %1", munchExp(binop->LeftExpression.get()), returnReg));
+        emit(new X86::RegMove("MOV %0 %1", munchExp(binop->LeftExpression.get()), returnReg, true));
         emit(new X86::CISCOperation(prefix + "%0 %1",
                                     std::move(ConstTempList({munchExp(binop->RightExpression.get())})),
                                     std::move(ConstTempList({returnReg}))));
@@ -339,7 +339,7 @@ const Temp*Muncher::munchBinopMul(const Binop* binop)
     }
     //BINOP(MUL, e1, e2)
     else {
-        emit(new X86::RegMove("MOV %0 %1", munchExp(binop->LeftExpression.get()), returnReg));
+        emit(new X86::RegMove("MOV %0 %1", munchExp(binop->LeftExpression.get()), returnReg, true));
         emit(new X86::CISCOperation("IMUL %0 %1",
                                     std::move(ConstTempList({munchExp(binop->RightExpression.get())})),
                                     std::move(ConstTempList({returnReg}))));
@@ -353,13 +353,13 @@ const Temp* Muncher::munchBinopDiv(const Binop* binop)
     instructionsList.Registers.push_back(std::unique_ptr<const Temp>(eax));
     const Temp* edx = new Temp("EDX", Coords(), X86::EDX);
     instructionsList.Registers.push_back(std::unique_ptr<const Temp>(edx));
-    emit(new X86::RegMove("MOV %0 %1", munchExp(binop->LeftExpression.get()), eax));
+    emit(new X86::RegMove("MOV %0 %1", munchExp(binop->LeftExpression.get()), eax, true));
     emit(new X86::CISCOperation("IDIV %1",
                                 std::move(ConstTempList({munchExp(binop->RightExpression.get()), eax})),
                                 std::move(ConstTempList({edx}))));
     Temp* returnReg = new Temp("BINOP(Regular)");
     instructionsList.Registers.push_back(std::unique_ptr<const Temp>(returnReg));
-    emit(new X86::RegMove("MOV %0 %1", edx, returnReg));
+    emit(new X86::RegMove("MOV %0 %1", edx, returnReg, true));
     return returnReg;
 }
 

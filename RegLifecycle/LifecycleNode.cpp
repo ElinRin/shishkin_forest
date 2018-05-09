@@ -3,20 +3,20 @@
 namespace RegLifecycle {
 
 LifecycleNode::LifecycleNode(const CodeGeneration::IInstruction* instruction,
-                             const IR::TempList& used, const IR::TempList& defined):
+                             const std::vector<IR::Temp>& used, const std::vector<IR::Temp>& defined):
     instruction(instruction),
     isMove(false)
 {
-    for(auto u: used) {
-        this->used.insert(*u);
+    for(auto& u: used) {
+        this->used.insert(u);
     }
-    for(auto d: defined) {
-        this->defined.insert(*d);
+    for(auto& d: defined) {
+        this->defined.insert(d);
     }
-    if(dynamic_cast<const CG::MoveInstruction*>(instruction) != nullptr &&
-            instruction->DefinedVars().size() > 0)
+    const CG::MoveInstruction* move = dynamic_cast<const CG::MoveInstruction*>(instruction);
+    if(move != nullptr && instruction->DefinedVars().size() > 0)
     {
-        isMove = true;
+        isMove = move->PureMove();
     }
 }
 

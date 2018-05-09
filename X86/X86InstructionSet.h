@@ -35,9 +35,9 @@ public:
 
 class RegMove: public CG::MoveInstruction {
 public:
-    RegMove(const std::string code, const IR::Temp* from, const IR::Temp* to);
-    RegMove(const std::string code, const IR::ConstTempList&& from);
-    RegMove(const std::string code, const IR::Const* from, const IR::Temp* to);
+    RegMove(const std::string code, const IR::Temp* from, const IR::Temp* to, bool pureMove=false);
+    RegMove(const std::string code, const IR::ConstTempList&& from, bool pureMove=false);
+    RegMove(const std::string code, const IR::Const* from, const IR::Temp* to, bool pureMove=false);
 };
 
 }

@@ -5,15 +5,15 @@ namespace RegLifecycle {
 LifecycleGraph::LifecycleGraph(CodeGeneration::InstructionList& list)
 {
     for(auto& instructionPtr: list.Instructions) {
-        IR::TempList used;
+        std::vector<IR::Temp> used;
         for(auto var: instructionPtr->UsedVars()) {
-            auto inserted = regs.insert(std::make_unique<IR::Temp>(*var));
-            used.push_back(inserted.first->get());
+            auto inserted = regs.insert(IR::Temp(*var));
+            used.push_back(*inserted.first);
         }
-        IR::TempList defined;
+        std::vector<IR::Temp> defined;
         for(auto var: instructionPtr->DefinedVars()) {
-            auto inserted = regs.insert(std::make_unique<IR::Temp>(*var));
-            defined.push_back(inserted.first->get());
+            auto inserted = regs.insert(IR::Temp(*var));
+            defined.push_back(*inserted.first);
         }
 
         nodes.push_back(std::make_unique<LifecycleNode>(instructionPtr.get(), used, defined));
