@@ -14,7 +14,7 @@
 #include "NoJumpBlock.h"
 #include "X86CodeGeneration.h"
 #include "LifecyclePrinter.h"
-#include "VariableGraph.h"
+#include "VariableGraphPrinter.h"
 
 extern std::unique_ptr<AST::Program> program;
 
@@ -71,6 +71,9 @@ int main(void) {
 
         RegLifecycle::LifecyclePrinter printerLifecycle("lifecycle.dot");
         printerLifecycle.PrintPrefix();
+
+        RegLifecycle::VariableGraphPrinter printerVariableGraph("variables.dot");
+        printerVariableGraph.PrintPrefix();
         for(auto& trees: reblocked) {
             CodeGeneration::Muncher muncher(trees.second);
             auto list = muncher.CreateInstractionsList();
@@ -82,12 +85,13 @@ int main(void) {
             printerLifecycle.Print(lifecycleGraph.GetNodesList());
 
             RegLifecycle::VariableGraph variablesGraph(lifecycleGraph);
-
+            printerVariableGraph.Print(variablesGraph);
             for(auto& l: list.Instructions) {
                 std::cout  << l->FormatLong() << std::endl;
             }
             std::cout << std::endl;
         }
+        printerVariableGraph.PrintPostfix();
         printerLifecycle.PrintPostfix();
       } catch(SymbolTable::DeclarationException e) {
         std::cout << NF_RED << "Declaration error: " << e.what() << NF_RESET << std::endl;
