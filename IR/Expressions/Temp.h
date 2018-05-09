@@ -35,6 +35,7 @@ public:
     virtual bool IsAbsolutelyCommutative() const override { return localId == TempHolderLocalId; }
 
     bool operator==(const IR::Temp& other) const { return other.Id == Id; }
+    bool operator!=(const IR::Temp& other) const { return !(*this == other); }
 
 private:
     int localId;

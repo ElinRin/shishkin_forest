@@ -13,8 +13,8 @@
 #include "Linerizer.h"
 #include "NoJumpBlock.h"
 #include "X86CodeGeneration.h"
-#include "LifecycleGraph.h"
 #include "LifecyclePrinter.h"
+#include "VariableGraph.h"
 
 extern std::unique_ptr<AST::Program> program;
 
@@ -76,9 +76,13 @@ int main(void) {
             auto list = muncher.CreateInstractionsList();
             std::cout << trees.first->GetString() << std::endl;
             std::cout << "-------------------------" << std::endl;
+
             RegLifecycle::LifecycleGraph lifecycleGraph(list);
             lifecycleGraph.BuildLifecycle();
             printerLifecycle.Print(lifecycleGraph.GetNodesList());
+
+            RegLifecycle::VariableGraph variablesGraph(lifecycleGraph);
+
             for(auto& l: list.Instructions) {
                 std::cout  << l->FormatLong() << std::endl;
             }

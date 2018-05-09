@@ -8,10 +8,11 @@ namespace RegLifecycle {
 
 class LifecycleNode {
 public:
-    LifecycleNode(const CG::IInstruction* instruction, const IR::TempList& used,
-                  const IR::TempList& defined);
+    LifecycleNode(const CG::IInstruction* instruction, const std::vector<IR::Temp>& used,
+                  const std::vector<IR::Temp>& defined);
 
     const CG::IInstruction* GetInstruction() const { return instruction; }
+    const std::unordered_set<IR::Temp>& GetOut() const { return out; }
 
     bool Update();
 

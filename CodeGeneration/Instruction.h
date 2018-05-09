@@ -57,18 +57,27 @@ protected:
 
 class MoveInstruction : public IInstruction {
 public:
-    MoveInstruction(const IR::Temp* from, const IR::Temp* to): fromConst(0)
+    MoveInstruction(const IR::Temp* from, const IR::Temp* to, bool pureMove=false):
+        pureMove(pureMove),
+        fromConst(0)
     {
         src.push_back(from);
         dst.push_back(to);
     }
-    MoveInstruction(const IR::ConstTempList&& from)
+    MoveInstruction(const IR::ConstTempList&& from, bool pureMove=false):
+        pureMove(pureMove)
     {
         src = from;
     }
-    MoveInstruction(const IR::Const* from, const IR::Temp* to): fromConst(from) { dst.push_back(to); }
+    MoveInstruction(const IR::Const* from, const IR::Temp* to, bool pureMove=false):
+        pureMove(pureMove),
+        fromConst(from)
+    { dst.push_back(to); }
+
+    bool PureMove() const { return pureMove; }
 
 private:
+    const bool pureMove;
     const IR::Const* fromConst;
 };
 
