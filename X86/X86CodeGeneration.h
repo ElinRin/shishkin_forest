@@ -27,7 +27,7 @@ namespace CodeGeneration {
         void munchMove(const IExp* source, const Mem* destination);
         void munchMove(const IExp* source, const Temp* destination);
 
-        TempList munchExpList(const ExpList* list);
+        ConstTempList munchExpList(const ExpList* list);
         const Temp* munchMem(const Mem* mem);
         const Temp* munchCall(const Call* call);
         const Temp* munchBinop(const Binop* binop);

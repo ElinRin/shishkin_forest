@@ -9,8 +9,8 @@ public:
 
     const std::string AsmCode() const { return asmCode; }
 
-    const IR::TempList& UsedVars() const { return src; }
-    const IR::TempList& DefinedVars() const { return dst; }
+    const IR::ConstTempList& UsedVars() const { return src; }
+    const IR::ConstTempList& DefinedVars() const { return dst; }
     const IR::LabelList& JumpTargets() const { return labelList; }
 
     virtual std::string Format() const {
@@ -32,6 +32,11 @@ public:
             s.erase(0, pos + 2);
         }
         instructionString += s;
+        return instructionString;
+    }
+
+    virtual std::string FormatLong() const {
+        std::string instructionString = Format();
         instructionString += "\tUsed:";
         for(auto& tmp: src) {
             instructionString += " r" + tmp->Name() + std::to_string(tmp->Id) + ";";
@@ -44,8 +49,8 @@ public:
     }
 
 protected:
-    IR::TempList src;
-    IR::TempList dst;
+    IR::ConstTempList src;
+    IR::ConstTempList dst;
     IR::LabelList labelList;
     std::string asmCode;
 };
@@ -57,7 +62,7 @@ public:
         src.push_back(from);
         dst.push_back(to);
     }
-    MoveInstruction(const IR::TempList&& from)
+    MoveInstruction(const IR::ConstTempList&& from)
     {
         src = from;
     }
