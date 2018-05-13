@@ -37,6 +37,7 @@ VariableGraph::VariableGraph(const LifecycleGraph& graph)
         nodes.insert({t, std::make_unique<Node>(t)});
     }
     buildGraph(graph);
+    colorizeGraph(4);
 }
 
 void VariableGraph::buildGraph(const LifecycleGraph& graph)
@@ -67,8 +68,13 @@ void VariableGraph::buildGraph(const LifecycleGraph& graph)
     }
 }
 
-
-
+void VariableGraph::colorizeGraph(int colorsNumber) {
+    int i = 0;
+    for(auto& node:nodes) {
+        node.second->color=i % colorsNumber;
+        ++i;
+    }
+}
 
 
 }

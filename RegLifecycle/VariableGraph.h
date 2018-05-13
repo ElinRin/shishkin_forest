@@ -17,6 +17,8 @@ public:
         void AddMove(Node* with);
         const IR::Temp& GetReg() const { return temp; }
 
+        int color;
+
     private:
         IR::Temp temp;
         std::unordered_set<const Node*> connections;
@@ -33,6 +35,7 @@ private:
     std::unordered_map<IR::Temp, std::unique_ptr<Node> > nodes;
 
     void buildGraph(const LifecycleGraph& graph);
+    void colorizeGraph(int colorsNumber);
 };
 
 }
