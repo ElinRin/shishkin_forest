@@ -1,6 +1,16 @@
+#include <array>
 #include <VariableGraphPrinter.h>
 
 namespace RegLifecycle {
+
+namespace {
+    static const std::array<std::string, 4> color = {
+            "red",
+            "blue",
+            "green",
+            "gold"
+    };
+}
 
 void VariableGraphPrinter::PrintPrefix()
 {
@@ -19,7 +29,7 @@ void VariableGraphPrinter::Print(const RegLifecycle::VariableGraph& graph)
     std::unordered_map<IR::Temp, std::string> nodeToName;
     for(auto& node: graph.GetNodes()) {
         const IR::Temp& t = node.first;
-        nodeToName.insert({t, AddNode(t.Name() + " [" + std::to_string(t.Id) + "]")});
+        nodeToName.insert({t, AddNode(t.Name() + " [" + std::to_string(t.Id) + "]", color[node.second->color])});
     }
 
     for(auto& node: graph.GetNodes()) {

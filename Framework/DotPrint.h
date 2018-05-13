@@ -41,6 +41,18 @@ protected:
         return name;
     }
 
+    const std::string AddNode(const std::string label, const std::string color)
+    {
+        std::string name = "name" + std::to_string(NodeCounter);
+        Dot << "\"" << name << "\" [\n"
+               "label = " << "\"<f0> " << label << "\"\n"
+               "shape = \"record\"\n"
+               "color = \""<< color <<"\"\n"
+               "];" << std::endl;
+        NodeCounter += 1;
+        return name;
+    }
+
     void PrintArrows(bool direct = true) {
         for(int i = 0; i < Arrows.size(); ++i) {
             Arrow& arrow = Arrows[i];
