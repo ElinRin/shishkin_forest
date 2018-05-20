@@ -4,11 +4,16 @@
 namespace RegLifecycle {
 
 namespace {
-    static const std::array<std::string, 4> color = {
+    static const std::array<std::string, 9> color = {
             "red",
-            "blue",
-            "green",
-            "gold"
+            "blue4",
+            "forestgreen",
+            "gold",
+            "darkviolet",
+            "deeppink",
+            "darkolivegreen",
+            "indigo",
+            "dodgerblue"
     };
 }
 
@@ -29,7 +34,11 @@ void VariableGraphPrinter::Print(const RegLifecycle::VariableGraph& graph)
     std::unordered_map<IR::Temp, std::string> nodeToName;
     for(auto& node: graph.GetNodes()) {
         const IR::Temp& t = node.first;
-        nodeToName.insert({t, AddNode(t.Name() + " [" + std::to_string(t.Id) + "]", color[node.second->color])});
+        std::string nodeColor = "black";
+        if (0 <= node.second->Color() && node.second->Color() < color.size()) {
+            nodeColor = color[node.second->Color()];
+        }
+        nodeToName.insert({t, AddNode(t.Name() + " [" + std::to_string(t.Id) + "]", nodeColor)});
     }
 
     for(auto& node: graph.GetNodes()) {
