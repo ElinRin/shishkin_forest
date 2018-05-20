@@ -80,12 +80,63 @@ int main(void) {
             std::cout << trees.first->GetString() << std::endl;
             std::cout << "-------------------------" << std::endl;
 
-            RegLifecycle::LifecycleGraph lifecycleGraph(list);
-            lifecycleGraph.BuildLifecycle();
-            printerLifecycle.Print(lifecycleGraph.GetNodesList());
+            int iteration = 0;
+            while (true) {
+                RegLifecycle::LifecycleGraph lifecycleGraph(list);
+                lifecycleGraph.BuildLifecycle();
 
-            RegLifecycle::VariableGraph variablesGraph(lifecycleGraph);
-            printerVariableGraph.Print(variablesGraph);
+                RegLifecycle::VariableGraph variablesGraph(lifecycleGraph);
+
+                const RegLifecycle::VariableGraph::INode* badNode = variablesGraph.GetBadNode();
+
+                if (badNode == nullptr) {
+                    printerLifecycle.Print(lifecycleGraph.GetNodesList());
+                    printerVariableGraph.Print(variablesGraph);
+                    break;
+                } else {
+                    ++iteration;
+                    std::cout << "ITERATION" << std::endl;
+                    list.Registers.push_back(std::make_unique<const IR::Temp>(
+                            "Additional stack: " + std::to_string(iteration)));
+                    const IR::Temp* stackRegister = list.Registers.back().get();
+                    int tempRead = 0;
+                    int tempPush = 0;
+                    for (int i = 0; i < list.Instructions.size(); ++i) {
+                        for (const IR::Temp* var : list.Instructions[i]->UsedVars()) {
+                            if ((*var) == badNode->GetReg()) {
+                                list.Instructions[i]->RemoveUsed(var);
+                                list.Registers.push_back(std::make_unique<const IR::Temp>(
+                                        "Temp read from stack: " + std::to_string(tempRead)));
+                                ++tempRead;
+                                list.Instructions[i]->AddUsed(list.Registers.back().get());
+
+                                list.Instructions.insert(list.Instructions.begin() + i,
+                                                         std::make_unique<X86::RegMove>("MOV %0 [%1]",
+                                                                      stackRegister,
+                                                                      list.Registers.back().get()));
+                                ++i;
+                                break;
+                            }
+                        }
+                        for (auto& var : list.Instructions[i]->DefinedVars()) {
+                            if ((*var) == badNode->GetReg()) {
+                                list.Instructions[i]->RemoveDefined(var);
+                                list.Registers.push_back(std::make_unique<const IR::Temp>(
+                                        "Temp push to stack: " + std::to_string(tempPush)));
+                                ++tempPush;
+                                list.Instructions[i]->AddDefined(list.Registers.back().get());
+
+                                list.Instructions.insert(list.Instructions.begin() + i + 1,
+                                                         std::make_unique<X86::RegMove>("MOV %0 [%1]",
+                                                                                        list.Registers.back().get(),
+                                                                                        stackRegister));
+                                ++i;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
             for(auto& l: list.Instructions) {
                 std::cout  << l->FormatLong() << std::endl;
             }

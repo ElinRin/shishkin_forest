@@ -8,7 +8,7 @@ using namespace IR;
 
 namespace CodeGeneration {
 
-const InstructionList Muncher::CreateInstractionsList()
+InstructionList Muncher::CreateInstractionsList()
 {
     generation();
     return InstructionList(std::move(instructionsList));
@@ -106,9 +106,9 @@ const Temp* Muncher::munchExp(const IExp* exp) {
     assert(false);
 }
 
-const IInstruction* Muncher::emit(const IInstruction* nextInstruction)
+const IInstruction* Muncher::emit(IInstruction* nextInstruction)
 {
-    instructionsList.Instructions.push_back( std::unique_ptr<const IInstruction>( nextInstruction ) );
+    instructionsList.Instructions.push_back( std::unique_ptr<IInstruction>( nextInstruction ) );
     return nextInstruction;
 }
 

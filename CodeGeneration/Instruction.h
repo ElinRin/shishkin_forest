@@ -13,6 +13,34 @@ public:
     const IR::ConstTempList& DefinedVars() const { return dst; }
     const IR::LabelList& JumpTargets() const { return labelList; }
 
+    void RemoveUsed(const IR::Temp* used) {
+        for (int i = 0; i < src.size(); ++i) {
+            if ((*src[i]) == (*used)) {
+                src.erase(src.begin() + i);
+                return;
+            }
+        }
+        assert(false);
+    }
+
+    void AddUsed(const IR::Temp* used) {
+        src.push_back(used);
+    }
+
+    void RemoveDefined(const IR::Temp* defined) {
+        for (int i = 0; i < dst.size(); ++i) {
+            if ((*dst[i]) == (*defined)) {
+                dst.erase(dst.begin() + i);
+                return;
+            }
+        }
+        assert(false);
+    }
+
+    void AddDefined(const IR::Temp* defined) {
+        dst.push_back(defined);
+    }
+
     virtual std::string Format() const {
         std::string s = asmCode;
         std::string instructionString;
@@ -96,7 +124,8 @@ private:
 };
 
 struct InstructionList {
-    std::vector<std::unique_ptr<const IInstruction>> Instructions;
+    std::vector<std::unique_ptr<IInstruction>> Instructions;
+    // Registers defined during munching. DOES NOT INCLUDE ALL REGISTERS
     std::vector<std::unique_ptr<const IR::Temp>> Registers;
 };
 

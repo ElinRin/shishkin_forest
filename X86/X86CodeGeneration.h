@@ -12,7 +12,7 @@ namespace CodeGeneration {
         Muncher(IRTranslate::LinearTree& tree) :
                 stmList(tree)
         {}
-        const InstructionList CreateInstractionsList();
+        InstructionList CreateInstractionsList();
 
     private:
         void generation();
@@ -38,7 +38,7 @@ namespace CodeGeneration {
         void munchJumpC(const IExp* conditionLeftExpression, const IExp* conditionRightExpression, const Label* trueLabel, JumpC::TJumpType jumpType);
         void munchLabelStm(const Label* LabelName);
 
-        const IInstruction* emit(const IInstruction* nextInstruction);
+        const IInstruction* emit(IInstruction* nextInstruction);
 
     };
 
