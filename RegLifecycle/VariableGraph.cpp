@@ -42,6 +42,8 @@ void VariableGraph::Node::AddConnection(VariableGraph::Node* with)
 
 void VariableGraph::Node::AddMove(VariableGraph::Node* with)
 {
+    AddConnection(with);
+    return;
     if(with == this) {
         return;
     }
@@ -54,18 +56,18 @@ void VariableGraph::Node::AddMove(VariableGraph::Node* with)
     }
 }
 
-VariableGraph::VariableGraph(const LifecycleGraph& graph): badNode(nullptr)
+VariableGraph::VariableGraph(const LifecycleGraph& graph, const IR::Temp* fp): badNode(nullptr)
 {
     nodes.reserve(graph.GetRegs().size());
     for(auto& t: graph.GetRegs()) {
         nodes.insert({t, std::make_unique<Node>(t)});
         dynamicNodes.insert(nodes.find(t)->second.get());
     }
-    buildGraph(graph);
-    colorizeGraph(6);
+    buildGraph(graph, fp);
+    colorizeGraph(4);
 }
 
-void VariableGraph::buildGraph(const LifecycleGraph& graph)
+void VariableGraph::buildGraph(const LifecycleGraph& graph, const IR::Temp* fp)
 {
     for(auto& node: graph.GetNodesList()) {
         auto instruction = node->GetInstruction();
@@ -89,6 +91,20 @@ void VariableGraph::buildGraph(const LifecycleGraph& graph)
                     nodes[*d]->AddConnection(nodes[t].get());
                 }
             }
+        }
+    }
+
+    for (auto& item: nodes) {
+        if (item.first == (*fp)) {
+            for (auto& connectedNode : item.second->ConnectedNodes()) {
+                connectedNode->JustRemoveConnection(item.second.get());
+            }
+            for (auto& connectedNode : item.second->Moves()) {
+                connectedNode->JustRemoveMove(item.second.get());
+            }
+            dynamicNodes.erase(item.second.get());
+            nodes.erase(item.first);
+            break;
         }
     }
 }
@@ -173,7 +189,7 @@ void VariableGraph::colorizeGraph(int colorsNumber) {
         }
 
         /* simplify phase */ {
-            std::cout << "Try simplify" << std::endl;
+            //std::cout << "Try simplify" << std::endl;
             std::stack<VariableGraph::INode*> eraseNodes;
             for (auto &node : dynamicNodes) {
                 if (node->Color() == -3 && node->Moves().empty()) {
@@ -195,13 +211,13 @@ void VariableGraph::colorizeGraph(int colorsNumber) {
                 eraseNodes.pop();
             }
             if (isSimplified) {
-                std::cout << "Simplify" << std::endl;
+                //std::cout << "Simplify" << std::endl;
                 continue;
             }
         }
 
         /* Briggs merge phase */ {
-            std::cout << "Try merge" << std::endl;
+            //std::cout << "Try merge" << std::endl;
             INode* a = nullptr;
             INode* b = nullptr;
             for (auto &node : dynamicNodes) {
@@ -235,13 +251,13 @@ void VariableGraph::colorizeGraph(int colorsNumber) {
                 dynamicNodes.insert(mergedNodes.top().get());
             }
             if (isMerged) {
-                std::cout << "Merge" << std::endl;
+                //std::cout << "Merge" << std::endl;
                 continue;
             }
         }
 
         /* freeze phase */ {
-            std::cout << "Try freeze" << std::endl;
+            //std::cout << "Try freeze" << std::endl;
             for (auto& node : dynamicNodes) {
                 if (node->Color() == -3 && node->Moves().size() == 1) {
                     INode* moveNode = *(node->Moves().begin());
@@ -254,13 +270,13 @@ void VariableGraph::colorizeGraph(int colorsNumber) {
                 }
             }
             if (isFrozen) {
-                std::cout << "Freeze" << std::endl;
+                //std::cout << "Freeze" << std::endl;
                 continue;
             }
         }
 
         /* Spill phase */ {
-            std::cout << "Try spill" << std::endl;
+            //std::cout << "Try spill" << std::endl;
             std::stack<VariableGraph::INode*> eraseNodes;
             for (auto &node : dynamicNodes) {
                 if (node->Color() == -3 && node->Moves().empty()) {
@@ -281,7 +297,7 @@ void VariableGraph::colorizeGraph(int colorsNumber) {
                 eraseNodes.pop();
             }
             if (isSpilled) {
-                std::cout << "Spill" << std::endl;
+                //std::cout << "Spill" << std::endl;
                 continue;
             }
         }
@@ -314,7 +330,7 @@ void VariableGraph::colorizeGraph(int colorsNumber) {
 
             if (badNode == nullptr && color >= colorsNumber){
                 badNode = stackNodes.top();
-                assert(false);
+                //assert(false);
             }
 
             stackNodes.top()->SetColor(color);

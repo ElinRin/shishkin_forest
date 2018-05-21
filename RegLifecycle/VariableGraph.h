@@ -74,7 +74,7 @@ public:
         MergedNode(const MergedNode& other) = delete;
     };
 
-    explicit VariableGraph(const LifecycleGraph& graph);
+    explicit VariableGraph(const LifecycleGraph& graph, const IR::Temp* fp);
 
     const std::unordered_map<IR::Temp, std::unique_ptr<Node> >& GetNodes() const { return nodes; }
 
@@ -84,7 +84,7 @@ private:
     std::unordered_map<IR::Temp, std::unique_ptr<Node> > nodes;
     std::unordered_set<INode*> dynamicNodes;
 
-    void buildGraph(const LifecycleGraph& graph);
+    void buildGraph(const LifecycleGraph& graph, const IR::Temp* fp);
     void colorizeGraph(int colorsNumber);
 
     VariableGraph::INode* badNode;
