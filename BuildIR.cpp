@@ -81,11 +81,12 @@ int main(void) {
             std::cout << "-------------------------" << std::endl;
 
             int iteration = 0;
+            std::unique_ptr<IR::Temp> fp = std::make_unique<IR::Temp>("my_fp");
             while (true) {
                 RegLifecycle::LifecycleGraph lifecycleGraph(list);
                 lifecycleGraph.BuildLifecycle();
 
-                RegLifecycle::VariableGraph variablesGraph(lifecycleGraph);
+                RegLifecycle::VariableGraph variablesGraph(lifecycleGraph, fp.get());
 
                 const RegLifecycle::VariableGraph::INode* badNode = variablesGraph.GetBadNode();
 
@@ -94,11 +95,21 @@ int main(void) {
                     printerVariableGraph.Print(variablesGraph);
                     break;
                 } else {
+
+                    if (iteration == 100) {
+                        printerLifecycle.Print(lifecycleGraph.GetNodesList());
+                        printerVariableGraph.Print(variablesGraph);
+                        std::cout << "100 ITERATION";
+                        break;
+                    }
+
                     ++iteration;
                     std::cout << "ITERATION" << std::endl;
+                    /*
                     list.Registers.push_back(std::make_unique<const IR::Temp>(
                             "Additional stack: " + std::to_string(iteration)));
                     const IR::Temp* stackRegister = list.Registers.back().get();
+                     */
                     int tempRead = 0;
                     int tempPush = 0;
                     for (int i = 0; i < list.Instructions.size(); ++i) {
@@ -112,13 +123,13 @@ int main(void) {
 
                                 list.Instructions.insert(list.Instructions.begin() + i,
                                                          std::make_unique<X86::RegMove>("MOV %0 [%1]",
-                                                                      stackRegister,
-                                                                      list.Registers.back().get()));
+                                                                                        fp.get(),
+                                                                                        list.Registers.back().get()));
                                 ++i;
                                 break;
                             }
                         }
-                        for (auto& var : list.Instructions[i]->DefinedVars()) {
+                        for (const IR::Temp* var : list.Instructions[i]->DefinedVars()) {
                             if ((*var) == badNode->GetReg()) {
                                 list.Instructions[i]->RemoveDefined(var);
                                 list.Registers.push_back(std::make_unique<const IR::Temp>(
@@ -129,7 +140,7 @@ int main(void) {
                                 list.Instructions.insert(list.Instructions.begin() + i + 1,
                                                          std::make_unique<X86::RegMove>("MOV %0 [%1]",
                                                                                         list.Registers.back().get(),
-                                                                                        stackRegister));
+                                                                                        fp.get()));
                                 ++i;
                                 break;
                             }
